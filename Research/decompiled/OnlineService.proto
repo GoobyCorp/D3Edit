@@ -1,0 +1,87 @@
+syntax = "proto2";
+
+package D3.OnlineService;
+
+message EntityId {
+	required uint64 id_high = 1 [default = 0];
+	required uint64 id_low = 2 [default = 0];
+}
+message GameId {
+	optional uint64 matchmaker_host = 1 [default = 0];
+	optional uint64 matchmaker_proxy = 2 [default = 0];
+	optional uint32 matchmaker_id = 5 [default = 0];
+	optional uint64 gameserver_host = 3 [default = 0];
+	optional uint64 gameserver_proxy = 4 [default = 0];
+	optional uint32 game_instance_id = 6 [default = 0];
+	optional uint64 matchmaker_guid = 7 [default = 0];
+	optional uint64 gameserver_guid = 8 [default = 0];
+}
+message ItemId {
+	required uint64 id_high = 1 [default = 0];
+	required uint64 id_low = 2 [default = 0];
+}
+message GameAccountHandle {
+	required fixed32 id = 1 [default = 0];
+	required fixed32 program = 2 [default = 0];
+	required uint32 region = 3 [default = 0];
+}
+message HeroId {
+	required uint64 hero_id = 1 [default = 0];
+}
+message ChannelId {
+	message Host {
+		required uint32 label = 1;
+		required uint32 epoch = 2;
+	}
+	optional uint32 type = 1;
+	optional .D3.OnlineService.ChannelId.Host host = 2;
+	optional fixed32 id = 3;
+}
+message CampaignOrAdventureModeCreateParams {
+	required sint32 act = 1 [default = 0];
+	required sfixed32 sno_quest = 2 [default = -1];
+	required int32 quest_step_id = 3 [default = -1];
+	optional .D3.OnlineService.EntityId resume_from_save_hero_id = 4;
+	optional bool deprecated_open_to_friends = 5 [default = false];
+	optional string deprecated_open_to_friends_message = 6;
+	optional int32 handicap_level = 7;
+	optional string game_tag = 8;
+	optional int32 monster_level = 9 [default = -1];
+	optional int32 deprecated_weekly_challenge_override = 10;
+}
+message PvPCreateParams {
+	required sfixed32 sno_world = 1 [default = -1];
+}
+message ChallengeCreateParams {
+	optional uint32 challenge_override = 1;
+}
+message GameCreateParams {
+	required sint32 game_type = 1;
+	required uint32 creation_flags = 2 [default = 0];
+	optional .D3.OnlineService.CampaignOrAdventureModeCreateParams campaign_or_adventure_mode = 3;
+	optional .D3.OnlineService.PvPCreateParams pvp = 4;
+	optional string name = 5;
+	optional bool open_to_friends = 6;
+	optional .D3.OnlineService.ChallengeCreateParams challenge = 7;
+}
+message HeroCreateParams {
+	required string name = 1;
+	required sfixed32 gbid_class = 2 [default = -1];
+	required bool is_hardcore = 3 [default = false];
+	required bool is_female = 4 [default = false];
+	required bool is_season = 5 [default = false];
+}
+message ContentHandle {
+	optional string hash = 1;
+	optional string usage = 2;
+	optional string region = 3;
+}
+message ContentLicense {
+	required int32 id = 1;
+	optional uint64 expire_time = 2;
+	optional uint32 quantity = 3;
+	optional uint32 property_flags = 4;
+}
+message ContentLicenses {
+	optional double licenses = 1;
+}
