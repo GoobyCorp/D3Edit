@@ -13,5 +13,5 @@ if __name__ == "__main__":
                         file_data = fr.read()
                     with open(file_path, "w") as fw:
                         if "syntax = \"proto2\";" not in file_data:
-                            file_data = "syntax = \"proto2\";\r\n\r\n" + file_data
+                            file_data = "syntax = \"proto2\"\n;" + file_data
                             fw.write(file_data)
