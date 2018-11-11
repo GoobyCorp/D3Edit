@@ -13,7 +13,7 @@ import Hero_pb2
 import Account_pb2
 
 BYTE_MAX_VALUE = 255
-XOR_KEY = 3485666093803610139
+XOR_KEY = 0x305F92D82EC9A01B
 
 GBIDS_FILE = "gbids.json"
 AFFIXES_FILE = "affixes.json"
@@ -77,29 +77,6 @@ def encrypt_save(data: (bytes, bytearray)) -> (bytes, bytearray):
         num1 = truncate(((num1 ^ num2) << 56) | num1 >> 8, 8, False)
 
     return bytes(data)
-
-def parse_gbids(data: str) -> dict:
-    ""
-    gbids = {}
-    for single in data.split(linesep):
-        split_line = [x.strip() for x in single.split("=")]
-        if len(split_line) == 4:
-            if split_line[0] != "":
-                split_line[0] = int(split_line[0])
-            index = split_line.pop(0)
-            gbids[index] = {"name": split_line[0], "category": split_line[1], "platform": split_line[2]}
-    return gbids
-
-def parse_affixes(data: str) -> dict:
-    affixes = {}
-    for single in data.split(linesep):
-        split_line = [x.strip() for x in single.split("=")]
-        if len(split_line) == 3:
-            if split_line[0] != "":
-                split_line[0] = int(split_line[0])
-            index = split_line.pop(0)
-            affixes[index] = {"effect": split_line[0], "effectiveness": split_line[1]}
-    return affixes
 
 if __name__ == "__main__":
     # make sure assets exist
