@@ -119,6 +119,7 @@ if __name__ == "__main__":
     # modify account here
     account_mod_dec = asd.SerializeToString()
     account_mod_enc = encrypt_save(account_mod_dec)
+    # output the modified account
 
     # hero ID is in big endian for god knows why (maybe PS3 and Xbox 360 releases?)
     last_hero_save = hexlify(pack(">Q", asd.digest.last_played_hero_id.id_low))
@@ -149,3 +150,4 @@ if __name__ == "__main__":
             # modify hero here
             hero_mod_dec = hsd.SerializeToString()
             hero_mod_enc = encrypt_save(hero_mod_dec)
+            # output the modified hero
