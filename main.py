@@ -124,9 +124,10 @@ if __name__ == "__main__":
     # modify account here
     if args.gold:
         for i in range(len(asd.partitions)):
-            for j in range(len(asd.partitions[i].currency_data.currency)):
-                # asd.partitions[j].currency_data.currency[j].id
-                asd.partitions[j].currency_data.currency[j].count = args.gold
+            #for j in range(len(asd.partitions[i].currency_data.currency)):
+            # asd.partitions[j].currency_data.currency[j].id
+            asd.partitions[i].currency_data.currency[0].count = args.gold
+            print("Set partition #%s gold to %s" % (i, args.gold))
     # end account modifications
     account_mod_dec = asd.SerializeToString()
     account_mod_enc = encrypt_save(account_mod_dec)
