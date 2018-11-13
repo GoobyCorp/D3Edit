@@ -94,8 +94,8 @@ if __name__ == "__main__":
 
     # account
     # decrypt
-    with open(join("saves", "Modded", "account.dat"), "rb") as fr:
-        account_enc = fr.read()
+    with open(join("saves", "Modded", "account.dat"), "rb") as f:
+        account_enc = f.read()
     account_dec = decrypt_save(account_enc)
 
     # parse
@@ -116,15 +116,15 @@ if __name__ == "__main__":
     if isdir(join("saves", "Modded", HERO_DIR)):
         last_hero_save_path = join("saves", "Modded", HERO_DIR, last_hero_save + ".dat")
         if isfile(last_hero_save_path):
-            with open(last_hero_save_path, "rb") as fr:
-                hero_enc = fr.read()
+            with open(last_hero_save_path, "rb") as f:
+                hero_enc = f.read()
             hero_dec = decrypt_save(hero_enc)
             hsd = Hero_pb2.SavedDefinition()
             hsd.ParseFromString(hero_dec)
             #print(hsd.items.items)
             for single in hsd.items.items:
-                #print(single)
                 gbid = single.generator.gb_handle.gbid
+                #print(single)
                 if str(gbid) in gbid_list:
                     print(gbid_list[str(gbid)])
                 else:
