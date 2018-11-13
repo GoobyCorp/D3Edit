@@ -14,3 +14,6 @@ optional arguments:
   -o OUT_FILE, --out-file OUT_FILE
                         The save file you want to output to
 ```
+
+Credits:
+> https://github.com/fry -> Diablo III Protobin Decompiler
