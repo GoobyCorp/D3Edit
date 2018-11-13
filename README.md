@@ -2,6 +2,11 @@
 
 This script is a WIP for modifying Xbox One, PS4, and Switch saves for Diablo III
 
+
+An example of how to mod gold would work like this (this is the only thing implemented ATM):
+
+`python -i account.dat -o account_mod.dat --gold 999999999`
+
 ```
 usage: main.py [-h] -i IN_FILE [-o OUT_FILE] [--gold GOLD]
 

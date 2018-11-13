@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--in-file", type=str, required=True, help="The save file you want to work with")
     parser.add_argument("-o", "--out-file", type=str, help="The save file you want to output to")
     mod_group = parser.add_argument_group("modifications")
-    mod_group.add_argument("--gold", type=int, default=999999999, help="The amount of gold you want your characters to have")
+    mod_group.add_argument("--gold", type=int, help="The amount of gold you want your characters to have")
     args = parser.parse_args()
 
     # make sure the input file exists
@@ -126,8 +126,9 @@ if __name__ == "__main__":
         for i in range(len(asd.partitions)):
             #for j in range(len(asd.partitions[i].currency_data.currency)):
             # asd.partitions[j].currency_data.currency[j].id
-            asd.partitions[i].currency_data.currency[0].count = args.gold
-            print("Set partition #%s gold to %s" % (i, args.gold))
+            if len(asd.partitions[i].currency_data.currency) > 0:
+                asd.partitions[i].currency_data.currency[0].count = args.gold
+                print("Set slot %s gold to %s" % (i, args.gold))
     # end account modifications
     account_mod_dec = asd.SerializeToString()
     account_mod_enc = encrypt_save(account_mod_dec)
@@ -150,14 +151,6 @@ if __name__ == "__main__":
             hsd.ParseFromString(hero_dec)
             #print(hsd.items.items)
             for single in hsd.items.items:
-                #gbid = single.generator.gb_handle.gbid
-                #print(single)
-                #if str(gbid) in gbid_list:
-                #    print("Item GBID: %s" % (gbid))
-                #    print(gbid_list[str(gbid)])
-                #else:
-                #    print("Unknown GBID: %s" % (gbid))
-                print(single)
                 for affix in single.generator.base_affixes:
                     if str(affix) in affix_list:
                         print(affix_list[str(affix)])
