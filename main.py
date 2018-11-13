@@ -81,9 +81,14 @@ def encrypt_save(data: (bytes, bytearray)) -> (bytes, bytearray):
 if __name__ == "__main__":
     # parse arguments
     parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")
-    parser.add_argument("-i", "--in-file", type=str, help="The save file you want to work with")
+    parser.add_argument("-i", "--in-file", type=str, required=True, help="The save file you want to work with")
     parser.add_argument("-o", "--out-file", type=str, help="The save file you want to output to")
+    mod_group = parser.add_argument_group("modifications")
+    mod_group.add_argument("--gold", type=int, default=999999999, help="The amount of gold you want your characters to have")
     args = parser.parse_args()
+
+    # make sure the input file exists
+    assert isfile(args.in_file), "input file doesn't exist"
 
     # make sure assets exist
     assert isfile(join(ASSET_DIR, GBIDS_FILE)), "%s doesn't exist" % (GBIDS_FILE)
@@ -102,7 +107,7 @@ if __name__ == "__main__":
 
     # account
     # decrypt
-    with open(join("saves", "Modded", "account.dat"), "rb") as f:
+    with open(args.in_file, "rb") as f:
         account_enc = f.read()
     account_dec = decrypt_save(account_enc)
 
@@ -117,9 +122,19 @@ if __name__ == "__main__":
             else:
                 print("Unknown currency ID: %s" % (currency.id))
     # modify account here
+    if args.gold:
+        for i in range(len(asd.partitions)):
+            for j in range(len(asd.partitions[i].currency_data.currency)):
+                # asd.partitions[j].currency_data.currency[j].id
+                asd.partitions[j].currency_data.currency[j].count = args.gold
+    # end account modifications
     account_mod_dec = asd.SerializeToString()
     account_mod_enc = encrypt_save(account_mod_dec)
     # output the modified account
+    if args.out_file:
+        with open(args.out_file, "wb") as f:
+            f.write(account_mod_enc)
+    # end account output
 
     # hero ID is in big endian for god knows why (maybe PS3 and Xbox 360 releases?)
     last_hero_save = hexlify(pack(">Q", asd.digest.last_played_hero_id.id_low))
