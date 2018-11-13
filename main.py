@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from json import load
-from os import linesep
 from sys import getsizeof
 from struct import pack, unpack
 from argparse import ArgumentParser
@@ -16,6 +15,7 @@ BYTE_MAX_VALUE = 255
 XOR_KEY = 0x305F92D82EC9A01B
 
 GBIDS_FILE = "gbids.json"
+SLOTS_FILE = "slots.json"
 AFFIXES_FILE = "affixes.json"
 CURRENCY_FILE = "currencies.json"
 
@@ -79,6 +79,12 @@ def encrypt_save(data: (bytes, bytearray)) -> (bytes, bytearray):
     return bytes(data)
 
 if __name__ == "__main__":
+    # parse arguments
+    parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")
+    parser.add_argument("-i", "--in-file", type=str, help="The save file you want to work with")
+    parser.add_argument("-o", "--out-file", type=str, help="The save file you want to output to")
+    args = parser.parse_args()
+
     # make sure assets exist
     assert isfile(join(ASSET_DIR, GBIDS_FILE)), "%s doesn't exist" % (GBIDS_FILE)
     assert isfile(join(ASSET_DIR, AFFIXES_FILE)), "%s doesn't exist" % (AFFIXES_FILE)
@@ -91,6 +97,8 @@ if __name__ == "__main__":
         affix_list = load(f)
     with open(join(ASSET_DIR, CURRENCY_FILE), "r") as f:
         currency_list = load(f)
+    with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:
+        slot_list = load(f)
 
     # account
     # decrypt
@@ -106,6 +114,8 @@ if __name__ == "__main__":
         for currency in currencies:
             if str(currency.id) in currency_list:
                 print("%s: %s" % (currency_list[str(currency.id)], currency.count))
+            else:
+                print("Unknown currency ID: %s" % (currency.id))
     # modify account here
     account_mod_dec = asd.SerializeToString()
     account_mod_enc = encrypt_save(account_mod_dec)
@@ -123,12 +133,14 @@ if __name__ == "__main__":
             hsd.ParseFromString(hero_dec)
             #print(hsd.items.items)
             for single in hsd.items.items:
-                gbid = single.generator.gb_handle.gbid
+                #gbid = single.generator.gb_handle.gbid
                 #print(single)
-                if str(gbid) in gbid_list:
-                    print(gbid_list[str(gbid)])
-                else:
-                    print("Unknown GBID: %s" % (gbid))
+                #if str(gbid) in gbid_list:
+                #    print("Item GBID: %s" % (gbid))
+                #    print(gbid_list[str(gbid)])
+                #else:
+                #    print("Unknown GBID: %s" % (gbid))
+                print(single)
                 for affix in single.generator.base_affixes:
                     if str(affix) in affix_list:
                         print(affix_list[str(affix)])
