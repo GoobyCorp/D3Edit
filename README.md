@@ -5,10 +5,10 @@ This script is a WIP for modifying Xbox One, PS4, and Switch saves for Diablo II
 
 An example of how to mod gold would work like this (this is the only thing implemented ATM):
 
-`python D3Edit.py -i account.dat -o account_mod.dat --gold 999999999`
+`python D3Edit.py -i account.dat -o account_mod.dat -s 0 --gold 999999999`
 
 ```
-usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE]
+usage: D3Edit.py [-h] -i IN_FILE -o OUT_FILE [-s SLOT]
                  [--gold GOLD]
                  [--blood-shards BLOOD_SHARDS]
                  [--reusable-parts REUSABLE_PARTS]
@@ -33,15 +33,19 @@ usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE]
 A script to encrypt/decrypt and modify Diablo III saves
 
 optional arguments:
-  -h, --help            
+  -h, --help
                         show this help message and exit
   -i IN_FILE, --in-file IN_FILE
                         The account file you want to work with
   -o OUT_FILE, --out-file OUT_FILE
                         The account file you want to output to
 
+selection:
+  -s SLOT, --slot SLOT
+                        The slot ID you want to work with
+
 modifications:
-  --gold GOLD           
+  --gold GOLD
                         The amount of gold you want your characters to have
   --blood-shards BLOOD_SHARDS
                         The amount of blood shards you want your characters to have
