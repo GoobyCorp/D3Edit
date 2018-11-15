@@ -9,7 +9,7 @@ An example of how to mod gold would work like this (this is the only thing imple
 
 ```
 usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [--gold GOLD]
-                 [--blood-shards BLOOD_SHARDS] [--platinum PLATINUM]
+                 [--blood-shards BLOOD_SHARDS]
                  [--reusable-parts REUSABLE_PARTS] [--arcane-dust ARCANE_DUST]
                  [--veiled-crystals VEILED_CRYSTALS]
                  [--deaths-breath DEATHS_BREATH]
@@ -19,13 +19,14 @@ usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [--gold GOLD]
                  [--arreat-war-tapestries ARREAT_WAR_TAPESTRIES]
                  [--corrupted-angel-flesh CORRUPTED_ANGEL_FLESH]
                  [--westmarch-holy-water WESTMARCH_HOLY_WATER]
-                 [--demon-organ-diablo DEMON_ORGAN_DIABLO]
-                 [--demon-organ-ghom DEMON_ORGAN_GHOM]
-                 [--demon-organ-siege-breaker DEMON_ORGAN_SIEGE_BREAKER]
-                 [--demon-organ-skeleton-king DEMON_ORGAN_SKELETON_KING]
-                 [--demon-organ-eye DEMON_ORGAN_EYE]
-                 [--demon-organ-spinal-cord DEMON_ORGAN_SPINAL_CORD]
-                 [--demon-organ-teeth DEMON_ORGAN_TEETH]
+                 [--hearts-of-fright HEARTS_OF_FRIGHT]
+                 [--vials-of-putridness VIALS_OF_PUTRIDNESS]
+                 [--idols-of-terror IDOLS_OF_TERROR]
+                 [--leorics-regrets LEORICS_REGRETS]
+                 [--vengeful-eyes VENGEFUL_EYES]
+                 [--writhing-spines WRITHING_SPINES]
+                 [--devils-fangs DEVILS_FANGS]
+                 [--all-currencies ALL_CURRENCIES]
 
 A script to encrypt/decrypt and modify Diablo III saves
 
@@ -40,7 +41,6 @@ modifications:
   --gold GOLD           The amount of gold you want your characters to have
   --blood-shards BLOOD_SHARDS
                         The amount of blood shards you want your characters to have
-  --platinum PLATINUM   The amount of platinum you want your characters to have
   --reusable-parts REUSABLE_PARTS
                         The amount of reusable parts you want your characters to have
   --arcane-dust ARCANE_DUST
@@ -61,20 +61,22 @@ modifications:
                         The amount of corrupted angel flesh you want your characters to have
   --westmarch-holy-water WESTMARCH_HOLY_WATER
                         The amount of Westmarch holy water you want your characters to have
-  --demon-organ-diablo DEMON_ORGAN_DIABLO
-                        The amount of Diablo demon organs you want your characters to have
-  --demon-organ-ghom DEMON_ORGAN_GHOM
-                        The amount of Ghom demon organs you want your characters to have
-  --demon-organ-siege-breaker DEMON_ORGAN_SIEGE_BREAKER
-                        The amount of siege breaker demon organs you want your characters to have
-  --demon-organ-skeleton-king DEMON_ORGAN_SKELETON_KING
-                        The amount of skeleton king demon organs you want your characters to have
-  --demon-organ-eye DEMON_ORGAN_EYE
-                        The amount of eye demon organs you want your characters to have
-  --demon-organ-spinal-cord DEMON_ORGAN_SPINAL_CORD
-                        The amount of spinal cord demon organs you want your characters to have
-  --demon-organ-teeth DEMON_ORGAN_TEETH
-                        The amount of teeth demon organs you want your characters to have
+  --hearts-of-fright HEARTS_OF_FRIGHT
+                        The amount of hearts of fright you want your characters to have
+  --vials-of-putridness VIALS_OF_PUTRIDNESS
+                        The amount of vials of putridness you want your characters to have
+  --idols-of-terror IDOLS_OF_TERROR
+                        The amount of idols of terror you want your characters to have
+  --leorics-regrets LEORICS_REGRETS
+                        The amount of Leoric's regrets you want your characters to have
+  --vengeful-eyes VENGEFUL_EYES
+                        The amount of vengeful eyes you want your characters to have
+  --writhing-spines WRITHING_SPINES
+                        The amount of writhing spines you want your characters to have
+  --devils-fangs DEVILS_FANGS
+                        The amount of devil's fangs you want your characters to have
+  --all-currencies ALL_CURRENCIES
+                        Set all currencies to the given value
 ```
 
 Credits:
