@@ -44,43 +44,44 @@ selection:
                         The slot ID you want to work with
 
 modifications:
-  --gold GOLD           Set the amount of Gold
+  --gold GOLD
+                        Set the amount of gold
   --blood-shards BLOOD_SHARDS
-                        Set the amount of Blood Shards
+                        Set the amount of blood shards
   --reusable-parts REUSABLE_PARTS
-                        Set the amount of Reusable Parts
+                        Set the amount of reusable parts
   --arcane-dust ARCANE_DUST
-                        Set the amount of Arcane Dust
+                        Set the amount of arcane dust
   --veiled-crystals VEILED_CRYSTALS
-                        Set the amount of Veiled Crystals
+                        Set the amount of veiled crystals
   --deaths-breath DEATHS_BREATH
-                        Set the amount of Death's Breath
+                        Set the amount of death's breath
   --forgotten-souls FORGOTTEN_SOULS
-                        Set the amount of Forgotten Souls
+                        Set the amount of forgotten souls
   --khanduran-runes KHANDURAN_RUNES
-                        Set the amount of Khanduran Runes
+                        Set the amount of khanduran runes
   --caldeum-nightshade CALDEUM_NIGHTSHADE
-                        Set the amount of Caldeum Nightshade
+                        Set the amount of caldeum nightshade
   --arreat-war-tapestries ARREAT_WAR_TAPESTRIES
-                        Set the amount of Arreat War Tapestries
+                        Set the amount of arreat war tapestries
   --corrupted-angel-flesh CORRUPTED_ANGEL_FLESH
-                        Set the amount of Corrupted Angel Flesh
+                        Set the amount of corrupted angel flesh
   --westmarch-holy-water WESTMARCH_HOLY_WATER
-                        Set the amount of Westmarch Holy Water
+                        Set the amount of westmarch holy water
   --hearts-of-fright HEARTS_OF_FRIGHT
-                        Set the amount of Hearts of Fright
+                        Set the amount of hearts of fright
   --vials-of-putridness VIALS_OF_PUTRIDNESS
-                        Set the amount of Vials of Putridness
+                        Set the amount of vials of putridness
   --idols-of-terror IDOLS_OF_TERROR
-                        Set the amount of Idols of Terror
+                        Set the amount of idols of terror
   --leorics-regrets LEORICS_REGRETS
-                        Set the amount of Leoric's Regrets
+                        Set the amount of leoric's regrets
   --vengeful-eyes VENGEFUL_EYES
-                        Set the amount of Vengeful Eyes
+                        Set the amount of vengeful eyes
   --writhing-spines WRITHING_SPINES
-                        Set the amount of Writhing Spines
+                        Set the amount of writhing spines
   --devils-fangs DEVILS_FANGS
-                        Set the amount of Devil's Fangs
+                        Set the amount of devil's fangs
   --all-currencies ALL_CURRENCIES
                         Set all currencies to the given value
 ```

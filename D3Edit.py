@@ -100,7 +100,7 @@ if __name__ == "__main__":
     select_group.add_argument("-s", "--slot", type=int, default=0, help="The slot ID you want to work with")
     mod_group = parser.add_argument_group("modifications")
     for single in currency_list:
-        mod_group.add_argument("--" + single.lower().replace("'", "").replace(" ", "-"), type=int, help="Set the amount of %s" % (single))
+        mod_group.add_argument("--" + single.lower().replace("'", "").replace(" ", "-"), type=int, help="Set the amount of %s" % (single.lower()))
     mod_group.add_argument("--all-currencies", type=int, help="Set all currencies to the given value")
     args = parser.parse_args()
 
