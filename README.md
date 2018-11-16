@@ -8,11 +8,9 @@ An example of how to mod gold would work like this (this is the only thing imple
 `python D3Edit.py -i account.dat -o account_mod.dat -s 0 --gold 999999999`
 
 ```
-usage: D3Edit.py [-h] -i IN_FILE -o OUT_FILE [-s SLOT]
-                 [--gold GOLD]
+usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [-s SLOT] [--gold GOLD]
                  [--blood-shards BLOOD_SHARDS]
-                 [--reusable-parts REUSABLE_PARTS]
-                 [--arcane-dust ARCANE_DUST]
+                 [--reusable-parts REUSABLE_PARTS] [--arcane-dust ARCANE_DUST]
                  [--veiled-crystals VEILED_CRYSTALS]
                  [--deaths-breath DEATHS_BREATH]
                  [--forgotten-souls FORGOTTEN_SOULS]
@@ -45,44 +43,43 @@ selection:
                         The slot ID you want to work with
 
 modifications:
-  --gold GOLD
-                        The amount of gold you want your characters to have
+  --gold GOLD           Set the amount of Gold
   --blood-shards BLOOD_SHARDS
-                        The amount of blood shards you want your characters to have
+                        Set the amount of Blood Shards
   --reusable-parts REUSABLE_PARTS
-                        The amount of reusable parts you want your characters to have
+                        Set the amount of Reusable Parts
   --arcane-dust ARCANE_DUST
-                        The amount of arcane dust you want your characters to have
+                        Set the amount of Arcane Dust
   --veiled-crystals VEILED_CRYSTALS
-                        The amount of veiled crystals you want your characters to have
+                        Set the amount of Veiled Crystals
   --deaths-breath DEATHS_BREATH
-                        The amount of deaths breath you want your characters to have
+                        Set the amount of Death's Breath
   --forgotten-souls FORGOTTEN_SOULS
-                        The amount of forgotten souls you want your characters to have
+                        Set the amount of Forgotten Souls
   --khanduran-runes KHANDURAN_RUNES
-                        The amount of Khanduran runes you want your characters to have
+                        Set the amount of Khanduran Runes
   --caldeum-nightshade CALDEUM_NIGHTSHADE
-                        The amount of Caldeum nightshade you want your characters to have
+                        Set the amount of Caldeum Nightshade
   --arreat-war-tapestries ARREAT_WAR_TAPESTRIES
-                        The amount of Arret War tapestries you want your characters to have
+                        Set the amount of Arreat War Tapestries
   --corrupted-angel-flesh CORRUPTED_ANGEL_FLESH
-                        The amount of corrupted angel flesh you want your characters to have
+                        Set the amount of Corrupted Angel Flesh
   --westmarch-holy-water WESTMARCH_HOLY_WATER
-                        The amount of Westmarch holy water you want your characters to have
+                        Set the amount of Westmarch Holy Water
   --hearts-of-fright HEARTS_OF_FRIGHT
-                        The amount of hearts of fright you want your characters to have
+                        Set the amount of Hearts of Fright
   --vials-of-putridness VIALS_OF_PUTRIDNESS
-                        The amount of vials of putridness you want your characters to have
+                        Set the amount of Vials of Putridness
   --idols-of-terror IDOLS_OF_TERROR
-                        The amount of idols of terror you want your characters to have
+                        Set the amount of Idols of Terror
   --leorics-regrets LEORICS_REGRETS
-                        The amount of Leoric's regrets you want your characters to have
+                        Set the amount of Leoric's Regrets
   --vengeful-eyes VENGEFUL_EYES
-                        The amount of vengeful eyes you want your characters to have
+                        Set the amount of Vengeful Eyes
   --writhing-spines WRITHING_SPINES
-                        The amount of writhing spines you want your characters to have
+                        Set the amount of Writhing Spines
   --devils-fangs DEVILS_FANGS
-                        The amount of devil's fangs you want your characters to have
+                        Set the amount of Devil's Fangs
   --all-currencies ALL_CURRENCIES
                         Set all currencies to the given value
 ```
