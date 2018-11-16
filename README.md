@@ -8,7 +8,8 @@ An example of how to mod gold would work like this (this is the only thing imple
 `python D3Edit.py -i account.dat -o account_mod.dat -s 0 --gold 999999999`
 
 ```
-usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [-s SLOT] [--gold GOLD]
+usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [-s SLOT]
+                 [--gold GOLD]
                  [--blood-shards BLOOD_SHARDS]
                  [--reusable-parts REUSABLE_PARTS] [--arcane-dust ARCANE_DUST]
                  [--veiled-crystals VEILED_CRYSTALS]
