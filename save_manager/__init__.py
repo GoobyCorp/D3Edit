@@ -6,7 +6,7 @@ from struct import pack
 
 
 class SaveData(object):
-    def __init__(self, account_file, output_file):
+    def __init__(self, account_file, output_file=None):
         self.account_file = account_file
         self.output_file = output_file
         self.account_file = account_file

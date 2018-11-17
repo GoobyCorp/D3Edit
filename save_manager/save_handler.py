@@ -71,7 +71,7 @@ def hexlify(b: (bytes, bytearray)) -> (bytes, bytearray):
 
 def load_encrypted_file(encrypted_file):
     # TODO: Unify account and hero loading
-    assert isfile(encrypted_file), "File {} doesn't exit".format(encrypted_file)
+    assert isfile(encrypted_file), "File {} doesn't exist".format(encrypted_file)
     with open(encrypted_file, 'rb') as f:
         file_enc = f.read()
     return file_enc
