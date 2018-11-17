@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import gui
 import save_manager
+import sys
 from argparse import ArgumentParser
 from settings import currency_list
 
@@ -11,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--in-file", type=str, required=True, help="The save file you want to work with")
     parser.add_argument("-o", "--out-file", type=str, default='account_modified.dat',
                         help="The save file you want to output to")
+    parser.add_argument("-g", "--gui", default=False, action='store_true', help="Launch GUI instead of CLI")
     mod_group = parser.add_argument_group("modifications")
     mod_group.add_argument('--all-currencies', type=int,
                            help="Set all currencies to this amount (overrides other changes)")
@@ -23,6 +26,12 @@ if __name__ == "__main__":
         #    currency_parser.add_argument('--{0}'.format(curr_currency), type=int,
     args = parser.parse_args()
 
+    # TESTING GUI
+    if args.gui:
+        gui.start()
+        sys.exit(0)
+    else:
+        assert args.in_file, "Must specify a file when running in CLI mode."
     # instance account object
     account = save_manager.SaveData(args.in_file, args.out_file)
     # modify save file here
