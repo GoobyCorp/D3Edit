@@ -1,7 +1,7 @@
 import Account_pb2
 
 from save_manager import save_handler
-from settings import CURRENCY_LIST
+from settings import currency_list
 from struct import pack
 
 
@@ -33,8 +33,8 @@ class SaveData(object):
             currencies = partition.currency_data.currency
             for currency in currencies:
                 currency_id = str(currency.id)
-                if currency_id in CURRENCY_LIST:
-                    currency_name = CURRENCY_LIST[currency_id]
+                if currency_id in currency_list:
+                    currency_name = currency_list[currency_id]
                     currency_names[currency_name.lower().replace(' ', '-')] = currency_id
                     print("Loaded %s: %s" % (currency_name, currency.count))
                 else:
@@ -56,7 +56,8 @@ class SaveData(object):
                     current_currency.count = amount
                     print("Set currency {0} to {1}".format(self.currency_names[str(currency_id)], current_currency.count))
         else:
-            print("Currency not found on the account, this normally means you need to play and collect some currency first.")
+            print("Currency {0} found on the account, this normally means you need to play and collect some currency "
+                  "first.".format(currency_id))
 
     def commit_all_changes(self):
         # TODO: perhaps automatically backup account.dat
