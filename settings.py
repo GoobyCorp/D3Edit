@@ -25,4 +25,4 @@ with open(join(ASSET_DIR, AFFIXES_FILE), "r") as f:
 with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:
     SLOT_LIST = load(f)
 with open(join(ASSET_DIR, CURRENCY_FILE), "r") as f:
-    CURRENCY_LIST = load(f)
+    currency_list = load(f)
