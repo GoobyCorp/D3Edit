@@ -1,13 +1,18 @@
 import Account_pb2
+import Hero_pb2
 
+import glob
+from os.path import dirname, basename
 from save_manager import save_handler
 from settings import currency_list
 from struct import pack
 
 
 class SaveData(object):
-    def __init__(self, account_file, output_file):
+    def __init__(self, account_file, output_file=None):
         self.account_file = account_file
+        self.save_folder = dirname(self.account_file)
+        self.hero_files = glob.glob('{}/heroes/*.dat'.format(self.save_folder))
         self.output_file = output_file
         self.account_file = account_file
         # load encrypted save data
@@ -22,7 +27,13 @@ class SaveData(object):
         self.last_played_hero_id = save_handler.hexlify(pack(">Q", self.asd.digest.last_played_hero_id.id_low))
         # load last played hero
         self.heroes = {}
-        self.heroes[self.last_played_hero_id] = save_handler.load_hero(self.last_played_hero_id)
+        self.hsd = Hero_pb2.SavedDefinition()
+        for hero_path in self.hero_files:
+            hero_id = basename(hero_path)
+            if self.last_played_hero_id in hero_id:
+                enc_hero = save_handler.load_encrypted_file(hero_path)
+                dec_hero = save_handler.decrypt_save(enc_hero)
+                self.heroes[hero_id] = self.hsd.ParseFromString(dec_hero)
 
     def load_currencies(self):
         """
@@ -36,7 +47,7 @@ class SaveData(object):
                 if currency_id in currency_list:
                     currency_name = currency_list[currency_id]
                     currency_names[currency_name.lower().replace(' ', '-')] = currency_id
-                    print("Loaded %s: %s" % (currency_name, currency.count))
+                    # print("Loaded %s: %s" % (currency_name, currency.count))
                 else:
                     print("Unknown currency ID: %s" % currency.id)
         return currency_names
@@ -49,14 +60,15 @@ class SaveData(object):
         :return:
         """
         currency_id = int(currency_id)
-        if currency_id in list(self.currency_names.values()):
+        if str(currency_id) in list(self.currency_names.values()):
             for i in range(len(self.asd.partitions)):
                 if len(self.asd.partitions[i].currency_data.currency) > 0:
                     current_currency = self.asd.partitions[i].currency_data.currency[currency_id]
                     current_currency.count = amount
-                    print("Set currency {0} to {1}".format(self.currency_names[str(currency_id)], current_currency.count))
+                    print("Set currency {0} to {1}".format(
+                        currency_list[str(currency_id)], current_currency.count, currency_id))
         else:
-            print("Currency {0} found on the account, this normally means you need to play and collect some currency "
+            print("Currency {0} not found on the account, this normally means you need to play and collect some currency "
                   "first.".format(currency_id))
 
     def commit_all_changes(self):
