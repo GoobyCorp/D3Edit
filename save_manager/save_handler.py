@@ -78,7 +78,6 @@ def load_encrypted_file(encrypted_file):
 
 
 def load_hero(hero_id):
-    # hero ID is in big endian for god knows why (maybe PS3 and Xbox 360 releases?)
     if isdir(join("saves", "Modded", HERO_DIR)):
         last_hero_save_path = join("saves", "Modded", HERO_DIR, hero_id + ".dat")
         if isfile(last_hero_save_path):

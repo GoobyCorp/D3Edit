@@ -10,7 +10,7 @@ from settings import currency_list
 if __name__ == "__main__":
     # parse arguments
     parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")
-    parser.add_argument("-i", "--in-file", type=str, required=True, help="The save file you want to work with")
+    parser.add_argument("-i", "--in-file", type=str, required=False, help="The save file you want to work with")
     parser.add_argument("-o", "--out-file", type=str, default='account_modified.dat',
                         help="The save file you want to output to")
     parser.add_argument("-g", "--gui", default=False, action='store_true', help="Launch GUI instead of CLI")
@@ -48,7 +48,6 @@ if __name__ == "__main__":
                 pass
             if amount:
                 account.set_currency(id, amount)
-
 
     # This should be the only write we do, a final commit_all_changes().
     account.commit_all_changes()
