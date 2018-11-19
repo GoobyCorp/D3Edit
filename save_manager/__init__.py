@@ -76,9 +76,11 @@ class SaveData(object):
             print("Currency {0} not found on the account, this normally means you need to play and collect some currency "
                   "first.".format(currency_id))
 
-    def commit_all_changes(self):
+    def commit_all_changes(self, target_file=None):
         # TODO: perhaps automatically backup account.dat
         # serialize and encrypt account file
+        if target_file:
+            self.output_file = target_file
         account_mod_dec = self.asd.SerializeToString()
         account_mod_enc = save_handler.encrypt_save(account_mod_dec)
         # commit account file to storage only if it changed
