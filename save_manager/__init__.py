@@ -34,6 +34,11 @@ class SaveData(object):
                 enc_hero = save_handler.load_encrypted_file(hero_path)
                 dec_hero = save_handler.decrypt_save(enc_hero)
                 self.heroes[hero_id] = self.hsd.ParseFromString(dec_hero)
+            else:
+                self.heroes[hero_id] = Hero_pb2.SavedDefinition()
+                enc_hero = save_handler.load_encrypted_file(hero_path)
+                dec_hero = save_handler.decrypt_save(enc_hero)
+                self.heroes[hero_id].ParseFromString(dec_hero)
 
     def load_currencies(self):
         """
