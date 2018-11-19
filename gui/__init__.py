@@ -8,10 +8,16 @@ from tkinter import ttk
 
 class D3Edit(object):
     def __init__(self):
+        message = None
         self.current_file = None
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
-        self.draw_welcome()
+        try:
+            from google import protobuf
+            del protobuf
+        except:
+            message = "Could not import protobuff, please install the protobuf python package."
+        self.draw_welcome(message)
 
     def draw_welcome(self, message=None):
         if not message:
