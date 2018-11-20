@@ -26,12 +26,16 @@ class D3Edit(object):
         self.style = None
         self.account = None
         self.previous_file = None
+        self.wcoords = None
         self.setupframe()
         self.draw_welcome(message)
 
     def setupframe(self):
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
+        self.main_window.minsize(600, 450)
+        if self.wcoords:
+            self.main_window.geometry("+{0}+{1}".format(self.wcoords[0], self.wcoords[1]))
         self.style = ttk.Style(self.main_window)
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
@@ -40,11 +44,13 @@ class D3Edit(object):
         if not message:
             message = "Account not loaded, please load an account file to begin."
         message_label = ttk.Label(self.main_window, text=message, style="TLabel")
-        message_label.grid(column=0, row=0)
+        message_label.grid(column=0, row=0, sticky='NEW')
+        message_label.configure(anchor='center')
         open_file = ttk.Button(self.main_window, text="Open File", command=self.openfile)
-        open_file.grid(column=0, row=1)
+        open_file.place(rely=0.5, relx=0.5, anchor='center')
 
     def destroy_loaded_view(self):
+        self.wcoords = (self.main_window.winfo_x(), self.main_window.winfo_y())
         self.main_window.destroy()
         self.setupframe()
 
