@@ -9,13 +9,24 @@ from tkinter import ttk
 class D3Edit(object):
     def __init__(self):
         message = None
-        self.current_file = None
-        self.setupframe()
         try:
             from google import protobuf
             del protobuf
-        except:
+        except ImportError:
+            protobuf = None
             message = "Could not import protobuff, please install the protobuf python package."
+        self.current_file = None
+        self.scvalues = {}
+        self.hcvalues = {}
+        self.sccurrencies = None
+        self.hccurrencies = None
+        self.scparagon = None
+        self.hcparagon = None
+        self.main_window = None
+        self.style = None
+        self.account = None
+        self.previous_file = None
+        self.setupframe()
         self.draw_welcome(message)
 
     def setupframe(self):
@@ -28,10 +39,10 @@ class D3Edit(object):
     def draw_welcome(self, message=None):
         if not message:
             message = "Account not loaded, please load an account file to begin."
-        self.first_label = ttk.Label(self.main_window, text=message, style="TLabel")
-        self.first_label.grid(column=0, row=0)
-        self.open_button = ttk.Button(self.main_window, text="Open File", command=self.openfile)
-        self.open_button.grid(column=0, row=1)
+        message_label = ttk.Label(self.main_window, text=message, style="TLabel")
+        message_label.grid(column=0, row=0)
+        open_file = ttk.Button(self.main_window, text="Open File", command=self.openfile)
+        open_file.grid(column=0, row=1)
 
     def destroy_loaded_view(self):
         self.main_window.destroy()
@@ -64,11 +75,9 @@ class D3Edit(object):
         self.draw_welcome("Account data saved.")
 
     def draw_account_view(self):
-        self.account_header = ttk.Label(text=self.current_file, style="TLabel").grid(column=0, row=0)
+        ttk.Label(text=self.current_file, style="TLabel").grid(column=0, row=0)
         self.sccurrencies = self.account.asd.partitions[0].currency_data.currency
         self.hccurrencies = self.account.asd.partitions[1].currency_data.currency
-        self.scvalues = {}
-        self.hcvalues = {}
         startcol = 0
         startrow = 3
         ttk.Label(self.main_window, text="Softcore").grid(column=0, row=2, sticky='E', padx=128)
@@ -98,9 +107,7 @@ class D3Edit(object):
                 .grid(column=startcol, row=startrow, sticky='E')
         ttk.Button(self.main_window, text="Save all changes",
                    command=self.savecurrencies).grid(column=0, row=99, sticky='E', padx=40)
+
     def start(self):
         self.main_window.mainloop()
-        self.stop_gui()
-
-    def stop_gui(self):
         sys.exit(0)
