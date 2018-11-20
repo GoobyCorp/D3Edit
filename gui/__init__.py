@@ -54,7 +54,6 @@ class D3Edit(object):
             if self.current_file:
                 self.previous_file = self.current_file
             self.current_file = selected_file
-            self.first_label.configure(text=self.current_file)
             self.loadaccount(self.current_file)
 
     def loadaccount(self, file):
@@ -63,18 +62,24 @@ class D3Edit(object):
         self.destroy_loaded_view()
         self.draw_account_view()
 
-    def savecurrencies(self):
+    def savechanges(self):
         for currency in self.account.asd.partitions[0].currency_data.currency:
             amount = getattr(self.scvalues[str(currency.id)], 'get')
             currency.count = int(amount())
         for currency in self.account.asd.partitions[1].currency_data.currency:
             amount = getattr(self.hcvalues[str(currency.id)], 'get')
             currency.count = int(amount())
+        scplvl = getattr(self.scvalues['plvl'], 'get')
+        hcplvl = getattr(self.hcvalues['plvl'], 'get')
+        self.account.asd.partitions[0].alt_level = int(scplvl())
+        self.account.asd.partitions[1].alt_level = int(hcplvl())
         self.account.commit_all_changes()
         self.destroy_loaded_view()
         self.draw_welcome("Account data saved.")
 
     def draw_account_view(self):
+        message_label = ttk.Label(self.main_window, text=self.current_file, style="TLabel")
+        message_label.grid(column=0, row=0)
         ttk.Label(text=self.current_file, style="TLabel").grid(column=0, row=0)
         self.sccurrencies = self.account.asd.partitions[0].currency_data.currency
         self.hccurrencies = self.account.asd.partitions[1].currency_data.currency
@@ -106,7 +111,7 @@ class D3Edit(object):
             ttk.Entry(self.main_window, textvariable=self.hcvalues[currid])\
                 .grid(column=startcol, row=startrow, sticky='E')
         ttk.Button(self.main_window, text="Save all changes",
-                   command=self.savecurrencies).grid(column=0, row=99, sticky='E', padx=40)
+                   command=self.savechanges).grid(column=0, row=99, sticky='E', padx=40)
 
     def start(self):
         self.main_window.mainloop()
