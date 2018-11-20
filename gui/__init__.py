@@ -65,8 +65,6 @@ class D3Edit(object):
 
     def draw_account_view(self):
         self.account_header = ttk.Label(text=self.current_file, style="TLabel").grid(column=0, row=0)
-        self.currency_button = ttk.Button(self.main_window, text="Save all currency changes",
-                                          command=self.savecurrencies).grid(column=0, row=1, sticky='E', padx=30)
         self.sccurrencies = self.account.asd.partitions[0].currency_data.currency
         self.hccurrencies = self.account.asd.partitions[1].currency_data.currency
         self.scvalues = {}
@@ -75,22 +73,31 @@ class D3Edit(object):
         startrow = 3
         ttk.Label(self.main_window, text="Softcore").grid(column=0, row=2, sticky='E', padx=128)
         ttk.Label(self.main_window, text="Hardcore").grid(column=1, row=2, sticky='W')
+        self.scparagon = self.account.asd.partitions[0].alt_level
+        self.scvalues['plvl'] = tk.StringVar(value=self.scparagon)
+        self.hcparagon = self.account.asd.partitions[1].alt_level
+        self.hcvalues['plvl'] = tk.StringVar(value=self.hcparagon)
+        ttk.Label(self.main_window, text="Paragon Level").grid(column=startcol, row=startrow, sticky='W')
+        ttk.Entry(self.main_window, textvariable=self.scvalues['plvl']).grid(column=startcol, row=startrow, sticky='E')
         for currency in self.sccurrencies:
+            startrow = startrow + 1
             currid = str(currency.id)
             self.scvalues[currid] = tk.StringVar(value=currency.count)
             ttk.Label(self.main_window, text=currency_list[currid]).grid(column=startcol, row=startrow, sticky='W')
             ttk.Entry(self.main_window, textvariable=self.scvalues[currid])\
                 .grid(column=startcol, row=startrow, sticky='E')
-            startrow = startrow + 1
         startcol = 1
         startrow = 3
+        ttk.Entry(self.main_window, textvariable=self.hcvalues['plvl']).grid(column=startcol, row=startrow, sticky='W')
         for currency in self.hccurrencies:
+            startrow = startrow + 1
             currid = str(currency.id)
             self.hcvalues[currid] = tk.StringVar(value=currency.count)
             ttk.Label(self.main_window, text=currency_list[currid]).grid(column=startcol, row=startrow, sticky='W')
             ttk.Entry(self.main_window, textvariable=self.hcvalues[currid])\
                 .grid(column=startcol, row=startrow, sticky='E')
-            startrow = startrow + 1
+        ttk.Button(self.main_window, text="Save all changes",
+                   command=self.savecurrencies).grid(column=0, row=99, sticky='E', padx=40)
     def start(self):
         self.main_window.mainloop()
         self.stop_gui()
