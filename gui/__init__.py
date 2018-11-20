@@ -1,6 +1,7 @@
 import save_manager
 import sys
 import tkinter as tk
+from gui import tabs
 from settings import currency_list
 from tkinter import filedialog
 from tkinter import ttk
@@ -16,12 +17,6 @@ class D3Edit(object):
             protobuf = None
             message = "Could not import protobuff, please install the protobuf python package."
         self.current_file = None
-        self.scvalues = {}
-        self.hcvalues = {}
-        self.sccurrencies = None
-        self.hccurrencies = None
-        self.scparagon = None
-        self.hcparagon = None
         self.main_window = None
         self.style = None
         self.account = None
@@ -39,6 +34,7 @@ class D3Edit(object):
         self.style = ttk.Style(self.main_window)
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
+        self.style.configure("TNotebook", background="white")
 
     def draw_welcome(self, message=None):
         if not message:
@@ -70,13 +66,13 @@ class D3Edit(object):
 
     def savechanges(self):
         for currency in self.account.asd.partitions[0].currency_data.currency:
-            amount = getattr(self.scvalues[str(currency.id)], 'get')
+            amount = getattr(self.tabs.scvalues[str(currency.id)], 'get')
             currency.count = int(amount())
         for currency in self.account.asd.partitions[1].currency_data.currency:
-            amount = getattr(self.hcvalues[str(currency.id)], 'get')
+            amount = getattr(self.tabs.hcvalues[str(currency.id)], 'get')
             currency.count = int(amount())
-        scplvl = getattr(self.scvalues['plvl'], 'get')
-        hcplvl = getattr(self.hcvalues['plvl'], 'get')
+        scplvl = getattr(self.tabs.scvalues['plvl'], 'get')
+        hcplvl = getattr(self.tabs.hcvalues['plvl'], 'get')
         self.account.asd.partitions[0].alt_level = int(scplvl())
         self.account.asd.partitions[1].alt_level = int(hcplvl())
         self.account.commit_all_changes()
@@ -84,40 +80,8 @@ class D3Edit(object):
         self.draw_welcome("Account data saved.")
 
     def draw_account_view(self):
-        message_label = ttk.Label(self.main_window, text=self.current_file, style="TLabel")
-        message_label.grid(column=0, row=0)
-        ttk.Label(text=self.current_file, style="TLabel").grid(column=0, row=0)
-        self.sccurrencies = self.account.asd.partitions[0].currency_data.currency
-        self.hccurrencies = self.account.asd.partitions[1].currency_data.currency
-        startcol = 0
-        startrow = 3
-        ttk.Label(self.main_window, text="Softcore").grid(column=0, row=2, sticky='E', padx=128)
-        ttk.Label(self.main_window, text="Hardcore").grid(column=1, row=2, sticky='W')
-        self.scparagon = self.account.asd.partitions[0].alt_level
-        self.scvalues['plvl'] = tk.StringVar(value=self.scparagon)
-        self.hcparagon = self.account.asd.partitions[1].alt_level
-        self.hcvalues['plvl'] = tk.StringVar(value=self.hcparagon)
-        ttk.Label(self.main_window, text="Paragon Level").grid(column=startcol, row=startrow, sticky='W')
-        ttk.Entry(self.main_window, textvariable=self.scvalues['plvl']).grid(column=startcol, row=startrow, sticky='E')
-        for currency in self.sccurrencies:
-            startrow = startrow + 1
-            currid = str(currency.id)
-            self.scvalues[currid] = tk.StringVar(value=currency.count)
-            ttk.Label(self.main_window, text=currency_list[currid]).grid(column=startcol, row=startrow, sticky='W')
-            ttk.Entry(self.main_window, textvariable=self.scvalues[currid])\
-                .grid(column=startcol, row=startrow, sticky='E')
-        startcol = 1
-        startrow = 3
-        ttk.Entry(self.main_window, textvariable=self.hcvalues['plvl']).grid(column=startcol, row=startrow, sticky='W')
-        for currency in self.hccurrencies:
-            startrow = startrow + 1
-            currid = str(currency.id)
-            self.hcvalues[currid] = tk.StringVar(value=currency.count)
-            ttk.Label(self.main_window, text=currency_list[currid]).grid(column=startcol, row=startrow, sticky='W')
-            ttk.Entry(self.main_window, textvariable=self.hcvalues[currid])\
-                .grid(column=startcol, row=startrow, sticky='E')
-        ttk.Button(self.main_window, text="Save all changes",
-                   command=self.savechanges).grid(column=0, row=99, sticky='E', padx=40)
+        self.tabs = tabs.Notebook(self.main_window, account=self.account.asd)
+        ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
 
     def start(self):
         self.main_window.mainloop()
