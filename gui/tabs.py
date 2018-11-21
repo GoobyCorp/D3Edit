@@ -9,8 +9,10 @@ class Notebook(ttk.Notebook):
         self.tabs = ttk.Notebook(parent)
         self.account_tab = ttk.Frame(self.tabs, style="TNotebook")
         self.hero_tab = ttk.Frame(self.tabs, style="TNotebook")
+        self.stash_tab = ttk.Frame(self.tabs, style="TNotebook")
         self.tabs.add(self.account_tab, text="Account")
         self.tabs.add(self.hero_tab, text="Heroes")
+        self.tabs.add(self.stash_tab, text="Stash")
         self.tabs.pack(expan=1, fill="both")
         # dictionary holding textvariables for Entry fields
         self.scvalues = {}
@@ -18,10 +20,12 @@ class Notebook(ttk.Notebook):
         self.active_hero = None
         self.active_hero_data = {}
         self.active_hero_frame = tk.Frame(self.hero_tab)
-        self.active_hero_frame.grid(column=0, row=1)
         self.heroframes = None
+        self.active_stash_frame = tk.Frame(self.stash_tab)
+        self.active_stash = None
         self.configure_account_tab()
         self.configure_hero_tab()
+        self.configure_stash_tab()
         self.populate_sc_data()
         self.populate_hc_data()
 
@@ -87,3 +91,13 @@ class Notebook(ttk.Notebook):
             else:
                 self.active_hero = tk.StringVar(value=hero[0])
         self.generate_hero_frame()
+
+    def configure_stash_tab(self, event=None):
+        if event:
+            self.active_stash_frame.destroy()
+            self.active_stash_frame = tk.Frame(self.stash_tab)
+            self.active_stash_frame.grid(column=0, row=1)
+        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=['SC', 'HC'], state='readonly')
+        c.grid(column=1, row=0)
+        c.bind("<<ComboboxSelected>>", self.configure_stash_tab)
+        self.active_stash_frame.grid(column=0, row=0, sticky='NEWS')
