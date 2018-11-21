@@ -2,7 +2,6 @@ import save_manager
 import sys
 import tkinter as tk
 from gui import tabs
-from settings import currency_list
 from tkinter import filedialog
 from tkinter import ttk
 
@@ -80,7 +79,7 @@ class D3Edit(object):
         self.draw_welcome("Account data saved.")
 
     def draw_account_view(self):
-        self.tabs = tabs.Notebook(self.main_window, account=self.account.asd)
+        self.tabs = tabs.Notebook(self.main_window, account=self.account)
         ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
 
     def start(self):
