@@ -70,10 +70,10 @@ class SaveData(object):
                     print("Set currency {0} to {1}".format(
                         currency_list[str(currency_id)], current_currency.count, currency_id))
         else:
-            print("Currency {0} not found on the account, this normally means you need to play and collect some currency "
-                  "first.".format(currency_id))
+            print("Currency {0} not found on the account, this normally means you need to play and collect "
+                  "some currency first.".format(currency_id))
 
-    def commit_all_changes(self, target_file=None):
+    def commit_account_changes(self, target_file=None):
         # TODO: perhaps automatically backup account.dat
         # serialize and encrypt account file
         if target_file:
@@ -83,3 +83,14 @@ class SaveData(object):
         # commit account file to storage only if it changed
         if self.output_file and (account_mod_enc != self.account_enc):
             save_handler.commit_to_file(account_mod_enc, self.output_file)
+
+    def commit_hero_changes(self, hid):
+        if hid.startswith('modded_'):
+            target_file = "{0}/heroes/{1}.dat".format(self.save_folder, hid)
+        else:
+            target_file = "{0}/heroes/modded_{1}.dat".format(self.save_folder, hid)
+        hero_mod_dec = self.heroes[hid].SerializeToString()
+        hero_mod_enc = save_handler.encrypt_save(hero_mod_dec)
+        save_handler.commit_to_file(hero_mod_enc, target_file)
+
+        return target_file
