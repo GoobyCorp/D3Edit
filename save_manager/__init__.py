@@ -29,16 +29,13 @@ class SaveData(object):
         self.heroes = {}
         self.hsd = Hero_pb2.SavedDefinition()
         for hero_path in self.hero_files:
-            hero_id = basename(hero_path)
-            if self.last_played_hero_id in hero_id:
-                enc_hero = save_handler.load_encrypted_file(hero_path)
-                dec_hero = save_handler.decrypt_save(enc_hero)
-                self.heroes[hero_id] = self.hsd.ParseFromString(dec_hero)
-            else:
-                self.heroes[hero_id] = Hero_pb2.SavedDefinition()
-                enc_hero = save_handler.load_encrypted_file(hero_path)
-                dec_hero = save_handler.decrypt_save(enc_hero)
-                self.heroes[hero_id].ParseFromString(dec_hero)
+            hero_id = basename(hero_path.replace('.dat', ''))
+            self.heroes[hero_id] = Hero_pb2.SavedDefinition()
+            enc_hero = save_handler.load_encrypted_file(hero_path)
+            dec_hero = save_handler.decrypt_save(enc_hero)
+            self.heroes[hero_id].ParseFromString(dec_hero)
+            if isinstance(self.heroes[hero_id], int):
+                del self.heroes[hero_id]
 
     def load_currencies(self):
         """
