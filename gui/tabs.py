@@ -17,14 +17,14 @@ class Notebook(ttk.Notebook):
         # dictionary holding textvariables for Entry fields
         self.scvalues = {}
         self.hcvalues = {}
-        self.active_hero = None
+        self.active_hid = None
+        self.active_hero_name = None
         self.active_hero_data = {}
         self.active_hero_frame = tk.Frame(self.hero_tab)
         self.heroframes = None
         self.active_stash_frame = tk.Frame(self.stash_tab)
         self.active_stash = None
         self.configure_account_tab()
-        self.configure_hero_tab()
         self.configure_stash_tab()
         self.populate_sc_data()
         self.populate_hc_data()
@@ -61,36 +61,36 @@ class Notebook(ttk.Notebook):
             self.active_hero_frame.destroy()
             self.active_hero_frame = tk.Frame(self.hero_tab)
             self.active_hero_frame.grid(column=0, row=1)
-        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero, values=self.heroes, state='readonly')
+        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
         c.grid(column=1, row=0)
         c.bind("<<ComboboxSelected>>", self.generate_hero_frame)
-        active_hid = self.active_hero.get().split(" - ")[1]
-        current_hero_data = self.account.heroes[active_hid]
-        self.active_hero_data['name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
-        self.active_hero_data['level'] = tk.StringVar(value=current_hero_data.digest.level)
-        self.active_hero_data['rift'] = tk.StringVar(value=current_hero_data.digest.highest_solo_rift_completed)
-        hnamelabel = ttk.Label(self.active_hero_frame, text="Name")
-        hnameentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['name'])
-        hlevellabel = ttk.Label(self.active_hero_frame, text="Level")
-        hlevelentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['level'])
-        hriftlabel = ttk.Label(self.active_hero_frame, text="Highest Solo Rift")
-        hriftentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['rift'])
-        hnamelabel.grid(column=0, row=1, sticky='W')
-        hnameentry.grid(column=1, row=1, sticky='W')
-        hlevellabel.grid(column=0, row=2, sticky='W')
-        hlevelentry.grid(column=1, row=2, sticky='W')
-        hriftlabel.grid(column=0, row=3, sticky='W')
-        hriftentry.grid(column=1, row=3, sticky='W')
+        self.active_hid = self.active_hero_name.get().split(" - ")[1]
+        current_hero_data = self.account.heroes[self.active_hid]
+        self.active_hero_data['Name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
+        self.active_hero_data['Level'] = tk.StringVar(value=current_hero_data.digest.level)
+        self.active_hero_data['Highest Solo Rift'] = tk.StringVar(
+            value=current_hero_data.digest.highest_solo_rift_completed)
+        row = 1
+        for key, value in self.active_hero_data.items():
+            ttk.Label(self.active_hero_frame, text=key).grid(column=0, row=row, sticky='W')
+            ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data[key]).grid(column=1, row=row)
+            row = row + 1
+        self.active_hero_frame.rowconfigure(98, weight=1)
+        self.active_hero_frame.rowconfigure(99, weight=1)
+        self.active_hero_frame.columnconfigure(1, weight=0)
         self.active_hero_frame.grid(column=0, row=0, sticky='NEWS')
 
     def configure_hero_tab(self):
         self.heroes = ['{1} - {0}'.format(h, d.digest.hero_name) for h, d in self.account.heroes.items()]
         for hero in self.heroes:
             if hero.endswith(self.account.last_played_hero_id):
-                self.active_hero = tk.StringVar(value=hero)
+                self.active_hero_name = tk.StringVar(value=hero)
             else:
-                self.active_hero = tk.StringVar(value=hero[0])
+                self.active_hero_name = tk.StringVar(value=hero[0])
         self.generate_hero_frame()
+
+    def hero_tab_message(self, message):
+        ttk.Label(self.active_hero_frame, text=message).grid(column=1, row=98)
 
     def configure_stash_tab(self, event=None):
         if event:

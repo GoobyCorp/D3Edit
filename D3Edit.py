@@ -49,4 +49,4 @@ if __name__ == "__main__":
 
 
     # This should be the only write we do, a final commit_all_changes().
-    account.commit_all_changes()
+    account.commit_account_changes()
