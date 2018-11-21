@@ -21,6 +21,7 @@ class D3Edit(object):
         self.account = None
         self.previous_file = None
         self.wcoords = None
+        self.tabs = None
         self.setupframe()
         self.draw_welcome(message)
 
@@ -61,7 +62,11 @@ class D3Edit(object):
         self.account = save_manager.SaveData(file)
         self.account.output_file = file
         self.destroy_loaded_view()
-        self.draw_account_view()
+        self.tabs = tabs.Notebook(self.main_window, account=self.account)
+        if self.account.heroes:
+            self.tabs.configure_hero_tab()
+            ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=1, row=99)
+        ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
 
     def savechanges(self):
         for currency in self.account.asd.partitions[0].currency_data.currency:
@@ -74,13 +79,19 @@ class D3Edit(object):
         hcplvl = getattr(self.tabs.hcvalues['plvl'], 'get')
         self.account.asd.partitions[0].alt_level = int(scplvl())
         self.account.asd.partitions[1].alt_level = int(hcplvl())
-        self.account.commit_all_changes()
+        self.account.commit_account_changes()
         self.destroy_loaded_view()
         self.draw_welcome("Account data saved.")
 
-    def draw_account_view(self):
-        self.tabs = tabs.Notebook(self.main_window, account=self.account)
-        ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
+    def savehero(self):
+        hid = self.tabs.active_hid
+        name = getattr(self.tabs.active_hero_data['Name'], 'get')
+        level = getattr(self.tabs.active_hero_data['Level'], 'get')
+        rift = getattr(self.tabs.active_hero_data['Highest Solo Rift'], 'get')
+        self.account.heroes[hid].digest.hero_name = name()
+        self.account.heroes[hid].digest.level = int(level())
+        self.account.heroes[hid].digest.highest_solo_rift_completed = int(rift())
+        self.account.commit_hero_changes(hid)
 
     def start(self):
         self.main_window.mainloop()
