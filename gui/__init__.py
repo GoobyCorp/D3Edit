@@ -65,7 +65,7 @@ class D3Edit(object):
         self.tabs = tabs.Notebook(self.main_window, account=self.account)
         if self.account.heroes:
             self.tabs.configure_hero_tab()
-            ttk.Button(self.tabs.active_hero_frame, text="Save Hero", command=self.savehero).grid(column=1, row=99)
+            ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=1, row=99)
         ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
 
     def savechanges(self):
