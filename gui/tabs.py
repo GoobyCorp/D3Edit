@@ -17,6 +17,7 @@ class Notebook(ttk.Notebook):
         # dictionary holding textvariables for Entry fields
         self.scvalues = {}
         self.hcvalues = {}
+        self.heroes = None
         self.active_hid = None
         self.active_hero_name = None
         self.active_hero_data = {}
@@ -61,7 +62,8 @@ class Notebook(ttk.Notebook):
             self.active_hero_frame.destroy()
             self.active_hero_frame = tk.Frame(self.hero_tab)
             self.active_hero_frame.grid(column=0, row=1)
-        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
+        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero_name,
+                         values=self.heroes, state='readonly')
         c.grid(column=1, row=0)
         c.bind("<<ComboboxSelected>>", self.generate_hero_frame)
         self.active_hid = self.active_hero_name.get().split(" - ")[1]
