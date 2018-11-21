@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package D3.Hireling;
+
+message Info {
+	sint32 hireling_class = 1;
+	sfixed32 gbid_name = 2;
+	sint32 level_deprecated = 3;
+	uint32 attribute_experience_next_deprecated = 4;
+	repeated sint32 power_key_params = 5;
+	bool dead = 6;
+}
+message SavedData {
+	repeated .D3.Hireling.Info hirelings = 1;
+	uint32 active_hireling = 2;
+	uint32 available_hirelings_bitfield = 3;
+}

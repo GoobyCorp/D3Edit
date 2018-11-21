@@ -2,10 +2,12 @@
 
 import zlib
 from os import makedirs
-from struct import unpack
+from struct import unpack, pack
 from argparse import ArgumentParser
 from os.path import isfile, isdir, join, split
 from ctypes import Structure, sizeof, c_uint32, c_uint64
+
+from binascii import hexlify
 
 CPK_MAGIC = 0xA1B2C3D4
 
@@ -21,13 +23,13 @@ class HeaderStruct(Structure):
         ("Version", c_uint32),
         ("Header08", c_uint64),
         ("Header10", c_uint32),
-        ("FileCount", c_uint32),
-        ("Header18", c_uint32),
+        ("FileCount_0", c_uint32),
+        ("FileCount_1", c_uint32),
         ("Header1C", c_uint32),
-        ("Header20", c_uint32),
-        ("Header24", c_uint32),
-        ("Header28", c_uint32),
-        ("Header2C", c_uint32),
+        ("FileSizeBitCount", c_uint32),
+        ("FileLocationCountBitCount", c_uint32),
+        ("FileLocationIndexBitCount", c_uint32),
+        ("LocationBitCount", c_uint32),
         ("Header30", c_uint32),
         ("Header34", c_uint32),
         ("Header38", c_uint32)
@@ -94,16 +96,16 @@ class CPKFile(object):
 
     def read_block_1(self) -> None:
         size = 0x40
-        size += self.header.Header20
-        size += self.header.Header24
-        size += self.header.Header28
-        size *= self.header.FileCount
+        size += self.header.FileSizeBitCount
+        size += self.header.FileLocationCountBitCount
+        size += self.header.FileLocationIndexBitCount
+        size *= self.header.FileCount_0
         size += 7
         size = size >> 3
         self.block_1 = self.read(size)
 
     def read_block_2(self) -> None:
-        size = self.header.Header2C * self.header.Header18
+        size = self.header.LocationBitCount * self.header.FileCount_1
         size += 7
         size = size >> 3
         self.block_2 = self.read(size)
@@ -117,7 +119,7 @@ class CPKFile(object):
         c = c >> 50
         b += c
         b = b >> 0xE
-        size = b * self.header.Header2C
+        size = b * self.header.LocationBitCount
         size += 7
         size = size >> 3
         self.block_3 = self.read(size)
@@ -145,13 +147,13 @@ class CPKFile(object):
     def read_block_5(self) -> None:
         self.seek(4, SEEK_CURRENT)  # off by 4 for some reason?
         block_5 = []
-        for i in range(self.header.FileCount):
+        for i in range(self.header.FileCount_0):
             block_5.append(unpack("<I", self.read(4))[0])
         self.block_5 = block_5
 
     def read_file_names(self) -> None:
         pos = self.tell()
-        for i in range(self.header.FileCount):
+        for i in range(self.header.FileCount_0):
             self.seek(pos + self.block_5[i])
             self.file_names.append(self.read_string())
 
@@ -211,24 +213,6 @@ if __name__ == "__main__":
 
             print(len(cpk.file_names))
             print(len(cpk.file_offsets))
-
-            #for i in range(len(cpk.file_names)):
-            (pos, size) = cpk.file_offsets[0]
-            file_name = cpk.file_names[0]
-            cpk.seek(pos)
-            file_data = cpk.read(size)
-            file_dec = zlib.decompress(file_data)
-            file_path = split(file_name)
-            if len(file_path) > 1:
-                mkdir_path = join(EXTRACTION_DIR, file_path[0])
-                if not isdir(mkdir_path):
-                    makedirs(mkdir_path)
-            final_path = join(EXTRACTION_DIR, file_name)
-            if "|" in final_path:
-                final_path = final_path.split("|", 1)[0]
-            print(final_path)
-            with open(final_path, "wb") as f:
-                f.write(file_dec)
         else:
             parser.print_usage()
 

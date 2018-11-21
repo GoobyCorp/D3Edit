@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package D3.AttributeSerializer;
+
+import "GameBalance.proto";
+
+message SavedAttribute {
+	sint32 key = 1;
+	sint32 value = 2;
+}
+message SavedAttributes {
+	.D3.GameBalance.Handle gb_handle = 1;
+	repeated .D3.AttributeSerializer.SavedAttribute attributes = 2;
+}

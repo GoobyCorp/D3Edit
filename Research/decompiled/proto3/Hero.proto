@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package D3.Hero;
+
+import "AttributeSerializer.proto";
+import "Hireling.proto";
+import "Items.proto";
+import "OnlineService.proto";
+import "HeroCommon.proto";
+import "Profile.proto";
+import "GameBalance.proto";
+
+message Digest {
+	uint32 version = 1;
+	.D3.OnlineService.EntityId hero_id = 2;
+	string hero_name = 3;
+	sfixed32 gbid_class = 4;
+	sint32 level = 5;
+	uint32 player_flags = 6;
+	.D3.Hero.VisualEquipment visual_equipment = 7;
+	repeated .D3.Hero.QuestHistoryEntry quest_history = 8;
+	sint32 last_played_act = 9;
+	sint32 highest_unlocked_act = 10;
+	sint32 last_played_difficulty_deprecated = 11;
+	sint32 highest_unlocked_difficulty_deprecated = 12;
+	sfixed32 last_played_quest = 13;
+	sint32 last_played_quest_step = 14;
+	uint32 time_played = 15;
+	sint32 highest_completed_difficulty_deprecated = 16;
+	uint32 create_time = 17;
+	uint32 last_played_time = 18;
+	uint32 delete_time = 19;
+	uint32 highest_solo_rift_completed = 25;
+	sint32 deprecated_alt_level = 20;
+	sint32 pvp_rank = 21;
+	uint32 season_created = 22;
+	uint32 last_played_mode_deprecated = 23;
+	.D3.OnlineService.EntityId original_hero_id = 24;
+}
+message DigestUI {
+	sint32 last_played_act = 1;
+	sint32 highest_unlocked_act = 2;
+	sint32 last_played_difficulty_deprecated = 3;
+	sint32 highest_unlocked_difficulty_deprecated = 4;
+	sfixed32 last_played_quest = 5;
+	sint32 last_played_quest_step = 6;
+	uint32 time_played = 7;
+	sint32 highest_completed_difficulty_deprecated = 8;
+	uint32 last_played_mode_deprecated = 9;
+	uint32 highest_solo_rift_completed = 10;
+}
+message SavedData {
+	uint32 time_played = 1;
+	uint32 activated_waypoints = 2;
+	.D3.Hireling.SavedData hireling_saved_data = 3;
+	uint32 last_level_time = 4;
+	.D3.GameBalance.BitPackedGbidArray learned_lore = 5;
+	.D3.Hero.SavedConversations saved_conversations = 6;
+	repeated sfixed32 sno_traits = 7;
+	.D3.Hero.SavePointData_Proto save_point = 8;
+	sfixed32 gbid_potion_button = 9;
+	repeated .D3.Hero.SkillWithRune active_skills = 10;
+	bytes skill_slot_ever_assigned = 11;
+	uint32 skill_version = 12;
+	repeated uint32 boss_kill_flags = 13;
+	uint32 event_flags = 14;
+	uint32 skill_kit_version = 15;
+	.D3.Hero.SavedItemLink potion_button_item = 16;
+	int32 main_quest_handicap_snapshot = 17;
+	repeated sfixed32 gbid_legendary_powers = 18;
+}
+message SavedDefinition {
+	uint32 version = 1;
+	.D3.Hero.Digest digest = 2;
+	.D3.AttributeSerializer.SavedAttributes saved_attributes = 3;
+	.D3.Hero.SavedData saved_data = 4;
+	repeated .D3.Hero.SavedQuest saved_quest = 5;
+	.D3.Items.ItemList items = 6;
+	repeated .D3.Hero.QuestRewardHistoryEntry quest_reward_history = 7;
+	uint64 accepted_license_bits = 8;
+	.D3.Hero.ConsoleData console_data = 10;
+	.D3.Hero.EquipmentManagerData equipment_manager_data = 11;
+}
+message DigestList {
+	repeated .D3.Hero.Digest digests = 1;
+}
+message BasicAttributeList {
+	repeated .D3.AttributeSerializer.SavedAttribute attributes = 1;
+}
+message ConsoleRandomVendorSeed {
+	sint32 item_slot_key = 1;
+	sint32 random_item_seed = 2;
+	sint32 random_item_carry = 3;
+}
+message ConsoleRandomVendorSeedList {
+	repeated .D3.Hero.ConsoleRandomVendorSeed console_random_vendor_seed = 1;
+}
+message ConsoleData {
+	.D3.Profile.HeroProfile hero_profile = 1;
+	sint32 last_played_handicap = 2;
+	string killer_name = 3;
+	sint32 last_played_adventure_mode_act = 4;
+	.D3.Hero.ConsoleRandomVendorSeedList random_item_vendor_seed_list = 5;
+}

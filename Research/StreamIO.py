@@ -342,7 +342,7 @@ class StreamIO(object):
         shift = 0
         result = 0
         while True:
-            i = self.read_ubyte()
+            i = self.read_byte()
             result |= (i & 0x7f) << shift
             shift += 7
             if not (i & 0x80):
@@ -359,7 +359,7 @@ class StreamIO(object):
             else:
                 buff += bytes([towrite])
                 break
-        return self.write_ubytes(buff)
+        return self.write_bytes(buff)
 
     #strings
     def read_7bit_encoded_int(self) -> int:

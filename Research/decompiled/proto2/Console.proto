@@ -1,0 +1,59 @@
+syntax = "proto2";
+
+package D3.Console;
+import "Research/decompiled/proto2/Hero.proto";
+import "Research/decompiled/proto2/HeroCommon.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+import "Research/decompiled/proto2/Profile.proto";
+import "Research/decompiled/proto2/Account.proto";
+
+message HeroInfo {
+	required .D3.OnlineService.EntityId hero_id = 1;
+	required string hero_name = 2;
+	required sfixed32 gbid_class = 3;
+	required sint32 level = 4;
+	required sint32 alt_level = 5;
+	required uint32 player_flags = 6;
+	required sint32 last_played_act = 7;
+	optional sint32 last_played_difficulty_deprecated = 8;
+	required .D3.Hero.VisualEquipment visual_equipment = 9;
+	required uint32 create_time = 10 [default = 0];
+	required string filename = 11;
+	required uint32 death_time = 12;
+	required .D3.Profile.KillerInfo killer_info = 13;
+	optional string killer_name = 19;
+	required uint64 monsters_killed = 14;
+	required uint64 elites_killed = 16;
+	required uint64 gold_collected = 15;
+	optional uint32 time_played = 17;
+	optional sint32 highest_unlocked_difficulty_deprecated = 18 [default = 0];
+	optional uint32 season_created = 20 [default = 0];
+}
+message HeroInfoList {
+	repeated .D3.Console.HeroInfo heroes = 1;
+}
+message Profile {
+	required .D3.Profile.AccountProfile account_profile = 1;
+	repeated .D3.Console.HeroInfo fallen_heroes = 2;
+}
+message BalanceUpdateConfig {
+	optional sint32 title_version = 1;
+	optional sint32 version = 2;
+	optional string toc = 3;
+	optional string locale = 4;
+	optional string locale_toc = 5;
+}
+message MigrationData {
+	enum Platform {
+		PLATFORM_XBOX360 = 1;
+		PLATFORM_XBOXONE = 2;
+		PLATFORM_PS3 = 3;
+		PLATFORM_PS4 = 4;
+	}
+	required uint32 title_version = 1;
+	required uint32 export_platform = 2;
+	required .D3.Account.SavedDefinition account = 3;
+	required .D3.Console.Profile profile = 4;
+	repeated .D3.Hero.SavedDefinition heroes = 5;
+	optional uint32 licenses = 6;
+}

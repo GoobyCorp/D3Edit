@@ -1,0 +1,101 @@
+syntax = "proto2";
+
+package D3.Items;
+import "Research/decompiled/proto2/GameBalance.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+
+message RareItemName {
+	required bool item_name_is_prefix = 1 [default = false];
+	required sfixed32 sno_affix_string_list = 2 [default = -1];
+	required sint32 affix_string_list_index = 3 [default = -1];
+	required sint32 item_string_list_index = 4 [default = -1];
+}
+message Generator {
+	required uint32 seed = 1 [default = 0];
+	required .D3.GameBalance.Handle gb_handle = 2;
+	repeated sfixed32 base_affixes = 3;
+	optional .D3.Items.RareItemName rare_item_name = 4;
+	optional sfixed32 deprecated_enchant_affix = 5 [default = -1];
+	required uint32 flags = 6 [default = 0];
+	required uint32 durability = 7;
+	required uint64 stack_size = 8;
+	optional uint32 dye_type = 9 [default = 0];
+	optional sint32 item_quality_level = 10 [default = 1];
+	optional sint32 item_binding_level = 11 [default = 0];
+	optional uint32 max_durability = 12 [default = 0];
+	repeated .D3.Items.EmbeddedGenerator contents = 13;
+	optional uint64 item_unlock_timestamp = 14 [default = 0];
+	optional uint32 deprecated_enchant_range_val = 15 [default = 0];
+	optional uint32 legendary_item_level = 16 [default = 0];
+	optional sfixed32 transmog_gbid = 17 [default = -1];
+	optional uint32 season_created = 18 [default = 0];
+	optional uint32 max_durability_original = 19 [default = 0];
+	optional sfixed32 enchanted_affix_old = 20 [default = -1];
+	optional sfixed32 enchanted_affix_new = 21 [default = -1];
+	optional sfixed32 legendary_base_item_gbid = 22 [default = -1];
+	optional uint32 enchanted_affix_seed = 23 [default = 0];
+	optional uint32 enchanted_affix_count = 24 [default = 0];
+	repeated uint64 trade_account_id = 25;
+	optional uint32 trade_ticks_left = 26 [default = 0];
+	optional sint32 jewel_rank = 27 [default = 0];
+	optional uint32 console_max_level = 28;
+	optional bool console_promo_item = 29 [default = false];
+	optional bool hardcore = 30 [default = false];
+	optional uint32 deprecated_crafted_item_level = 31 [default = 0];
+	optional uint32 cube_enchanted_gem_type = 32 [default = 0];
+	optional sint32 cube_enchanted_gem_rank = 33 [default = -1];
+}
+message GeneratorList {
+	repeated .D3.Items.Generator generators = 1;
+}
+message EmbeddedGenerator {
+	required .D3.OnlineService.ItemId id = 1;
+	required .D3.Items.Generator generator = 2;
+}
+message FriendGiftInfo {
+	required uint64 id_friend_recipient = 1 [default = 0];
+	required string recipient_name = 2 [default = "NONE"];
+}
+message SavedItem {
+	required .D3.OnlineService.ItemId id = 1;
+	optional .D3.OnlineService.EntityId owner_entity_id = 2;
+	optional .D3.OnlineService.ItemId socket_id = 3;
+	required sint32 hireling_class = 4;
+	required sint32 item_slot = 5;
+	required sint32 square_index = 6;
+	required uint32 used_socket_count = 7 [default = 0];
+	optional .D3.Items.Generator generator = 8;
+	optional .D3.Items.FriendGiftInfo friend_gift_info = 9;
+}
+message ItemList {
+	repeated .D3.Items.SavedItem items = 1;
+}
+message MailAttachments {
+	optional .D3.Items.ItemList items = 1;
+}
+message Mail {
+	required .D3.OnlineService.EntityId account_to = 1;
+	required .D3.OnlineService.EntityId account_from = 2;
+	required uint64 mail_id = 3;
+	optional string title = 4;
+	optional string body = 5;
+	optional uint32 status = 6;
+	optional uint32 send_time = 7;
+	optional .D3.Items.MailAttachments attachments = 8;
+	optional uint32 partition_id = 9;
+	optional uint32 season_created = 10;
+	optional uint64 expire_at = 11;
+	optional uint32 flags = 12;
+}
+message Mails {
+	repeated .D3.Items.Mail mails = 1;
+}
+message CurrencyData {
+	optional sfixed32 gbid_deprecated = 1;
+	required int64 count = 2 [default = 0];
+	optional uint32 id = 3 [default = 0];
+	optional uint32 data_persist_flags = 4 [default = 0];
+}
+message CurrencySavedData {
+	repeated .D3.Items.CurrencyData currency = 1;
+}

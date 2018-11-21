@@ -1,0 +1,38 @@
+syntax = "proto2";
+
+package D3.Achievements;
+import "Research/decompiled/proto2/OnlineService.proto";
+
+message AchievementUpdateRecord {
+	required uint64 achievement_id = 1;
+	required int32 completion = 2;
+}
+message CriteriaUpdateRecord {
+	required uint32 criteria_Id_32_and_flags_8 = 1;
+	optional uint32 start_time_32 = 2 [default = 0];
+	optional uint32 quantity_32 = 3 [default = 0];
+}
+message Snapshot {
+	repeated .D3.Achievements.AchievementUpdateRecord achievement_snapshot = 1;
+	repeated .D3.Achievements.CriteriaUpdateRecord criteria_snapshot = 2;
+	optional uint64 header = 3 [default = 0];
+	optional string content_handle = 4;
+}
+message PartitionSnapshot {
+	optional uint32 partition = 1;
+	optional .D3.Achievements.Snapshot achievements = 2;
+}
+message AchievementsResetDate {
+	optional int64 date = 1;
+}
+message AchievementAwardedNotification {
+	required .D3.OnlineService.GameAccountHandle game_account_id = 1;
+	repeated uint64 achievement_ids = 2;
+}
+message DBAchievement {
+	required uint32 achievement = 1;
+	required uint32 completion = 2;
+}
+message DBAchievements {
+	repeated .D3.Achievements.DBAchievement achievements = 1;
+}

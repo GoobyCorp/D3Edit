@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package D3.CosmeticItems;
+import "Research/decompiled/proto2/GameBalance.proto";
+
+message CosmeticItem {
+	optional sfixed32 gbid = 1;
+	optional int64 expiration_time = 2;
+}
+message CosmeticItems {
+	repeated .D3.CosmeticItems.CosmeticItem cosmetic_items = 1;
+}
+message CosmeticItemSavedData {
+	optional .D3.GameBalance.BitPackedGbidArray cosmetic_items = 1;
+}

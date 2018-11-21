@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package D3.OnlineService;
+
+message EntityId {
+	uint64 id_high = 1;
+	uint64 id_low = 2;
+}
+message GameId {
+	uint64 matchmaker_host = 1;
+	uint64 matchmaker_proxy = 2;
+	uint32 matchmaker_id = 5;
+	uint64 gameserver_host = 3;
+	uint64 gameserver_proxy = 4;
+	uint32 game_instance_id = 6;
+	uint64 matchmaker_guid = 7;
+	uint64 gameserver_guid = 8;
+}
+message ItemId {
+	uint64 id_high = 1;
+	uint64 id_low = 2;
+}
+message GameAccountHandle {
+	fixed32 id = 1;
+	fixed32 program = 2;
+	uint32 region = 3;
+}
+message HeroId {
+	uint64 hero_id = 1;
+}
+message ChannelId {
+	message Host {
+		uint32 label = 1;
+		uint32 epoch = 2;
+	}
+	uint32 type = 1;
+	.D3.OnlineService.ChannelId.Host host = 2;
+	fixed32 id = 3;
+}
+message CampaignOrAdventureModeCreateParams {
+	sint32 act = 1;
+	sfixed32 sno_quest = 2;
+	int32 quest_step_id = 3;
+	.D3.OnlineService.EntityId resume_from_save_hero_id = 4;
+	bool deprecated_open_to_friends = 5;
+	string deprecated_open_to_friends_message = 6;
+	int32 handicap_level = 7;
+	string game_tag = 8;
+	int32 monster_level = 9;
+	int32 deprecated_weekly_challenge_override = 10;
+}
+message PvPCreateParams {
+	sfixed32 sno_world = 1;
+}
+message ChallengeCreateParams {
+	uint32 challenge_override = 1;
+}
+message GameCreateParams {
+	sint32 game_type = 1;
+	uint32 creation_flags = 2;
+	.D3.OnlineService.CampaignOrAdventureModeCreateParams campaign_or_adventure_mode = 3;
+	.D3.OnlineService.PvPCreateParams pvp = 4;
+	string name = 5;
+	bool open_to_friends = 6;
+	.D3.OnlineService.ChallengeCreateParams challenge = 7;
+}
+message HeroCreateParams {
+	string name = 1;
+	sfixed32 gbid_class = 2;
+	bool is_hardcore = 3;
+	bool is_female = 4;
+	bool is_season = 5;
+}
+message ContentHandle {
+	string hash = 1;
+	string usage = 2;
+	string region = 3;
+}
+message ContentLicense {
+	int32 id = 1;
+	uint64 expire_time = 2;
+	uint32 quantity = 3;
+	uint32 property_flags = 4;
+}
+message ContentLicenses {
+	double licenses = 1;
+}

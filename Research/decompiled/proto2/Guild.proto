@@ -1,0 +1,183 @@
+syntax = "proto2";
+
+package D3.Guild;
+import "Research/decompiled/proto2/OnlineService.proto";
+
+message Rank {
+	required uint32 rank_id = 1;
+	required uint32 rank_order = 2;
+	required string name = 3;
+	required uint32 permissions = 4;
+}
+message RankList {
+	repeated .D3.Guild.Rank ranks = 1;
+}
+message Member {
+	required uint64 account_id = 1;
+	required uint32 rank_id = 2;
+	required string note = 3;
+	required uint64 news_time = 4;
+	required uint32 achievement_points = 5;
+}
+message MemberList {
+	repeated .D3.Guild.Member members = 1;
+}
+message News {
+	required uint64 news_id = 1;
+	required uint64 account_id = 2;
+	required uint32 news_type = 3;
+	required uint64 news_time = 4;
+	optional bytes news_data = 5;
+	optional uint32 news_flags = 6;
+}
+message NewsList {
+	repeated .D3.Guild.News news = 1;
+}
+message NewsPost {
+	required string headline = 1;
+	required string body = 2;
+}
+message Invite {
+	required uint64 account_id = 1;
+	required uint64 inviter_id = 2;
+	required uint32 invite_time = 3;
+	required uint32 invite_type = 4;
+	required uint32 expire_time = 5;
+}
+message InviteList {
+	repeated .D3.Guild.Invite invites = 1;
+}
+message AchievementNews {
+	required uint64 achievement_id = 1;
+}
+message HardcoreDeathNews {
+	required .D3.OnlineService.EntityId hero_id = 1;
+	required string hero_name = 2;
+	required sint32 hero_level = 3;
+	required uint32 hero_player_flags = 4;
+	required sfixed32 hero_class = 5;
+	required uint64 hero_seconds_played = 6;
+}
+message KickedNews {
+	required uint64 kicker_id = 1;
+}
+message Guild {
+	required uint64 guild_id = 1;
+	optional uint64 creator = 2;
+	optional uint32 create_time = 3;
+	optional string name = 4;
+	optional string motd = 5;
+	optional .D3.Guild.NewsList news = 6;
+	optional .D3.Guild.RankList ranks = 7;
+	optional .D3.Guild.MemberList members = 8;
+	optional uint32 total_members = 9;
+	optional string tag = 11;
+	optional uint32 category = 12;
+	optional bool requires_invitation = 13;
+	optional string description = 14;
+	optional uint32 language = 15;
+	optional .D3.Guild.InviteList invites = 16;
+	optional bool searchable = 17;
+	optional bool allow_suggestions = 18;
+	optional uint32 search_category = 19;
+	optional uint32 motd_last_update_time = 20;
+	optional uint64 motd_last_update_account = 21;
+	optional uint32 description_last_update_time = 22;
+	optional uint64 description_last_update_account = 23;
+}
+message GuildList {
+	repeated uint64 guild_ids = 1;
+}
+message InviteInfo {
+	required uint64 guild_id = 1;
+	required string guild_name = 2;
+	required uint64 inviter_id = 3;
+	required uint32 category = 4;
+	required uint32 invite_type = 5;
+	required uint32 expire_time = 6;
+	optional string guild_tag = 7;
+}
+message InviteInfoList {
+	repeated .D3.Guild.InviteInfo invites = 1;
+}
+message GuildInfo {
+	required uint64 guild_id = 1;
+	required uint32 guild_category = 2;
+	optional string name = 3;
+	optional string tag = 10;
+	optional bool requires_invite = 11;
+	optional uint64 member_news_time = 4 [default = 0];
+	optional uint32 total_members = 5 [default = 0];
+	optional uint64 guild_leader_id = 6 [default = 0];
+	repeated uint64 validated_member_ids = 7;
+	optional uint32 rank_id = 8;
+	optional bool searchable = 9;
+	optional bool allow_suggestions = 13;
+	optional bool deleted = 12;
+}
+message GuildInfoList {
+	repeated .D3.Guild.GuildInfo guilds = 1;
+}
+message GuildSearchResult {
+	required uint64 guild_id = 1;
+	required string guild_name = 2;
+	optional string guild_tag = 3;
+	optional uint32 search_category = 4;
+	required uint32 category = 5;
+	required uint32 language = 6;
+	required bool requires_invite = 7;
+	required uint32 total_members = 8;
+	optional uint32 members_in_chat = 9 [default = 0];
+	required uint64 last_activity = 10;
+	required uint64 last_officer_activity = 11;
+}
+message GuildSearchResultList {
+	repeated .D3.Guild.GuildSearchResult results = 1;
+}
+message SearchAttributes {
+	required uint64 guild_id = 1;
+	optional string guild_name = 2;
+	optional string guild_tag = 3;
+	optional uint32 category = 4;
+	optional uint32 language = 5;
+	optional uint32 total_members = 6;
+	optional uint32 members_in_chat = 7;
+	optional uint64 last_activity = 8;
+	optional uint64 last_officer_activity = 9;
+	optional uint32 search_category = 10;
+	optional bool requires_invite = 11;
+	optional bool searchable = 12;
+	optional bool disbanded = 13;
+}
+message SearchAttributesList {
+	repeated .D3.Guild.SearchAttributes results = 1;
+}
+message GroupRosterResponse {
+	required .D3.Guild.MemberList members = 1;
+	required uint32 total_members = 2;
+	required uint32 active_members = 3;
+}
+message GuildSummary {
+	required uint64 guild_id = 1;
+	required string guild_name = 2;
+	required string guild_tag = 3;
+	required uint32 guild_flags = 4;
+}
+message GroupMembership {
+	repeated uint64 guild_id = 1;
+}
+message ExtendedInfo {
+	required uint64 guild_id = 1;
+	required string description = 2;
+	required uint64 leader_id = 3;
+	repeated uint64 officers = 4;
+}
+message GuildAccountRestrictions {
+	required uint64 account_id = 1;
+	required uint32 num_groups_created = 2;
+	required float recent_groups_created = 3;
+	required uint64 recent_groups_last_update = 4;
+	required uint32 num_clans_created = 5;
+	required float recent_clans_created = 6;
+	required uint64 recent_clans_last_update = 7;
+}

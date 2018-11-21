@@ -1,0 +1,103 @@
+syntax = "proto2";
+
+package D3.Hero;
+import "Research/decompiled/proto2/AttributeSerializer.proto";
+import "Research/decompiled/proto2/Hireling.proto";
+import "Research/decompiled/proto2/Items.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+import "Research/decompiled/proto2/HeroCommon.proto";
+import "Research/decompiled/proto2/Profile.proto";
+import "Research/decompiled/proto2/GameBalance.proto";
+
+message Digest {
+	required uint32 version = 1;
+	required .D3.OnlineService.EntityId hero_id = 2;
+	optional string hero_name = 3;
+	required sfixed32 gbid_class = 4;
+	required sint32 level = 5;
+	required uint32 player_flags = 6;
+	required .D3.Hero.VisualEquipment visual_equipment = 7;
+	repeated .D3.Hero.QuestHistoryEntry quest_history = 8;
+	required sint32 last_played_act = 9;
+	required sint32 highest_unlocked_act = 10;
+	optional sint32 last_played_difficulty_deprecated = 11;
+	optional sint32 highest_unlocked_difficulty_deprecated = 12;
+	required sfixed32 last_played_quest = 13;
+	required sint32 last_played_quest_step = 14;
+	required uint32 time_played = 15 [default = 0];
+	optional sint32 highest_completed_difficulty_deprecated = 16 [default = -1];
+	optional uint32 create_time = 17;
+	optional uint32 last_played_time = 18;
+	optional uint32 delete_time = 19;
+	optional uint32 highest_solo_rift_completed = 25 [default = 0];
+	optional sint32 deprecated_alt_level = 20;
+	optional sint32 pvp_rank = 21;
+	optional uint32 season_created = 22 [default = 0];
+	optional uint32 last_played_mode_deprecated = 23 [default = 0];
+	optional .D3.OnlineService.EntityId original_hero_id = 24;
+}
+message DigestUI {
+	required sint32 last_played_act = 1;
+	required sint32 highest_unlocked_act = 2;
+	optional sint32 last_played_difficulty_deprecated = 3;
+	optional sint32 highest_unlocked_difficulty_deprecated = 4;
+	required sfixed32 last_played_quest = 5;
+	required sint32 last_played_quest_step = 6;
+	required uint32 time_played = 7 [default = 0];
+	optional sint32 highest_completed_difficulty_deprecated = 8;
+	optional uint32 last_played_mode_deprecated = 9 [default = 0];
+	optional uint32 highest_solo_rift_completed = 10 [default = 0];
+}
+message SavedData {
+	required uint32 time_played = 1 [default = 0];
+	required uint32 activated_waypoints = 2 [default = 0];
+	required .D3.Hireling.SavedData hireling_saved_data = 3;
+	required uint32 last_level_time = 4 [default = 0];
+	required .D3.GameBalance.BitPackedGbidArray learned_lore = 5;
+	required .D3.Hero.SavedConversations saved_conversations = 6;
+	repeated sfixed32 sno_traits = 7;
+	required .D3.Hero.SavePointData_Proto save_point = 8;
+	required sfixed32 gbid_potion_button = 9 [default = -1];
+	repeated .D3.Hero.SkillWithRune active_skills = 10;
+	required bytes skill_slot_ever_assigned = 11;
+	required uint32 skill_version = 12 [default = 0];
+	repeated uint32 boss_kill_flags = 13;
+	optional uint32 event_flags = 14 [default = 0];
+	optional uint32 skill_kit_version = 15 [default = 0];
+	optional .D3.Hero.SavedItemLink potion_button_item = 16;
+	optional int32 main_quest_handicap_snapshot = 17 [default = -1];
+	repeated sfixed32 gbid_legendary_powers = 18;
+}
+message SavedDefinition {
+	required uint32 version = 1;
+	optional .D3.Hero.Digest digest = 2;
+	required .D3.AttributeSerializer.SavedAttributes saved_attributes = 3;
+	optional .D3.Hero.SavedData saved_data = 4;
+	repeated .D3.Hero.SavedQuest saved_quest = 5;
+	optional .D3.Items.ItemList items = 6;
+	repeated .D3.Hero.QuestRewardHistoryEntry quest_reward_history = 7;
+	optional uint64 accepted_license_bits = 8;
+	optional .D3.Hero.ConsoleData console_data = 10;
+	optional .D3.Hero.EquipmentManagerData equipment_manager_data = 11;
+}
+message DigestList {
+	repeated .D3.Hero.Digest digests = 1;
+}
+message BasicAttributeList {
+	repeated .D3.AttributeSerializer.SavedAttribute attributes = 1;
+}
+message ConsoleRandomVendorSeed {
+	required sint32 item_slot_key = 1;
+	required sint32 random_item_seed = 2;
+	optional sint32 random_item_carry = 3 [default = 666];
+}
+message ConsoleRandomVendorSeedList {
+	repeated .D3.Hero.ConsoleRandomVendorSeed console_random_vendor_seed = 1;
+}
+message ConsoleData {
+	optional .D3.Profile.HeroProfile hero_profile = 1;
+	optional sint32 last_played_handicap = 2 [default = 2];
+	optional string killer_name = 3;
+	optional sint32 last_played_adventure_mode_act = 4;
+	optional .D3.Hero.ConsoleRandomVendorSeedList random_item_vendor_seed_list = 5;
+}

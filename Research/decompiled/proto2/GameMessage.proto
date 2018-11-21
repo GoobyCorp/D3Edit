@@ -1,0 +1,635 @@
+syntax = "proto2";
+
+package D3.GameMessage;
+import "Research/decompiled/proto2/Hero.proto";
+import "Research/decompiled/proto2/HeroCommon.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+import "Research/decompiled/proto2/Settings.proto";
+import "Research/decompiled/proto2/Account.proto";
+import "Research/decompiled/proto2/Items.proto";
+import "Research/decompiled/proto2/CS.proto";
+import "Research/decompiled/proto2/Guild.proto";
+import "Research/decompiled/proto2/Leaderboard.proto";
+import "Research/decompiled/proto2/Achievements.proto";
+import "Research/decompiled/proto2/Profile.proto";
+
+message HeroDigestList {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	repeated .D3.Hero.Digest digest_list = 2;
+}
+message ClientToonSettings {
+	required uint64 toon_id = 1;
+	required .D3.Client.ToonSettings client_toon_settings = 2;
+}
+message HeroDigestListRequest {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	repeated uint64 toon_id = 2;
+	optional bool get_deleted_hero = 3 [default = false];
+}
+message HeroDigestListResponse {
+	repeated .D3.Hero.Digest digest_list = 1;
+}
+message PlayerBanner {
+	required uint32 player_index = 1;
+	required .D3.Account.BannerConfiguration banner = 2;
+}
+message SaveBannerConfiguration {
+	required .D3.Account.BannerConfiguration banner = 1;
+	optional uint32 slot_index = 2 [default = 0];
+	optional bool make_active = 3 [default = true];
+}
+message HeroDigestBanner {
+	required .D3.Hero.Digest hero_digest = 1;
+	required .D3.Account.BannerConfiguration banner = 2;
+}
+message GameCurrentPlayers {
+	repeated .D3.GameMessage.HeroDigestBanner players = 1;
+}
+message TooltipIds {
+	required uint32 locale = 1;
+	repeated .D3.OnlineService.ItemId ids = 2;
+}
+message TooltipGenerators {
+	required uint32 locale = 1;
+	required .D3.Items.ItemList items = 2;
+}
+message TutorialMessage {
+	required uint32 tutorial_sno = 1;
+	optional string ui_anchor_name = 2;
+	optional int32 actor_id = 3 [default = -1];
+}
+message TutorialState {
+	required bytes seen_tutorials = 1;
+}
+message CreateHeroResponse {
+	required uint64 hero_id = 1;
+}
+message SelectHero {
+	required uint64 hero_id = 1;
+}
+message DeleteHero {
+	required uint64 hero_id = 1;
+}
+message UndeleteHero {
+	required uint64 undelete_hero_id = 1;
+	optional uint64 replace_hero_id = 2;
+}
+message GetFallenHeros {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+}
+message ArchiveHardcore {
+	required uint64 hero_id = 1;
+	required string epitaph = 2;
+}
+message ArchiveHardcoreResponse {
+	required uint64 hero_id = 1;
+}
+message DeleteFallenHero {
+	required uint64 hero_id = 1;
+}
+message AccountVersionList {
+	required .D3.OnlineService.EntityId account_id = 1;
+	optional bool return_snapshots = 2 [default = false];
+}
+message AccountVersionSync {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required uint64 version = 2;
+	optional bool allow_hardcore_resurrect = 4 [default = false];
+	optional bool bind_on_restore = 3 [default = true];
+	optional .D3.CS.PartitionedGBIDList recreate_item_list = 5;
+	optional .D3.OnlineService.EntityId source_account_id = 6;
+}
+message ServerDeleteHero {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required .D3.OnlineService.EntityId hero_id = 2;
+}
+message ServerUndeleteHero {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required .D3.OnlineService.EntityId undelete_hero_id = 2;
+	optional .D3.OnlineService.EntityId replace_hero_id = 3;
+}
+message ServerForceRenameHero {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required .D3.OnlineService.EntityId hero_id = 2;
+}
+message ServerFetchHeros {
+	required .D3.OnlineService.EntityId account_id = 1;
+}
+message ServerFetchInventory {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required .D3.OnlineService.EntityId hero_id = 2;
+}
+message ServerSnapshot {
+	required .D3.OnlineService.EntityId account_id = 1;
+}
+message ServerSnapshotResponse {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required uint64 version = 2;
+}
+message ServerFetchSnapshot {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required uint64 version = 2;
+}
+message ServerRevokeItem {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required .D3.OnlineService.EntityId hero_id = 2;
+	required .D3.OnlineService.ItemId item_id = 3;
+}
+message ServerGuildFilterDef {
+	required uint64 guild_id = 1;
+	required uint32 filter_bits = 2;
+}
+message ServerGuildRename {
+	required uint64 guild_id = 1;
+	required string new_name = 2;
+	required string new_tag = 3;
+}
+message ServerGuildDescriptionClear {
+	required .D3.OnlineService.EntityId guild_id = 1;
+}
+message ServerGuildPlayerGroups {
+	required .D3.OnlineService.EntityId account_id = 2;
+}
+message ServerForceColdStorage {
+	required .D3.OnlineService.EntityId account_id = 1;
+}
+message ServerForceColdStorageResponse {
+	required .D3.OnlineService.EntityId account_id = 1;
+	required uint64 version = 2;
+}
+message ServerFetchAccountData {
+	required .D3.OnlineService.EntityId account_id = 1;
+}
+message InitialLoginDataRequest {
+	required uint32 country_id_fourcc = 1;
+	optional string patch_version = 2;
+}
+message InitialLoginDataQueuedResponse {
+	required uint32 service_id = 1;
+	required uint32 timeout_tick_interval = 2;
+}
+message CancelLoginDataRequest {
+}
+message RenameHero {
+	required uint64 hero_id = 1;
+	required string new_name = 2;
+}
+message RebirthHeroRequest {
+	required uint64 hero_id = 1;
+	required bool is_current_hero = 2;
+}
+message RebirthHeroResponse {
+	required .D3.Hero.Digest hero_digest = 1;
+}
+message SetGameAccountSettings {
+	required .D3.Client.GameAccountSettings settings = 1;
+}
+message GetToonSettings {
+	required uint64 hero_id = 1;
+}
+message SetToonSettings {
+	required uint64 hero_id = 1;
+	required .D3.Client.ToonSettings settings = 2;
+}
+message GetAccountDigest {
+}
+message GetHeroItems {
+	required uint64 hero_id = 1;
+}
+message GetAccountItems {
+	required bool hardcore = 1;
+}
+message GetAccountProfile {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	optional int32 season_id = 2 [default = 0];
+}
+message GetHeroProfiles {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	repeated uint64 hero_ids = 2;
+}
+message GetAccountPrefs {
+}
+message SetAccountPrefs {
+	required .D3.Client.Preferences prefs = 1;
+}
+message GetCosmeticItems {
+}
+message GetHeroDigest {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	required uint64 hero_id = 2;
+}
+message GetHeroIds {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+}
+message GetHeroIdsResponse {
+	repeated uint64 hero_ids = 1;
+}
+message GetDeletedHero {
+}
+message CSGetSnapshots {
+}
+message CSPullSnapshot {
+	required uint64 version = 1;
+}
+message CSPushSnapshot {
+	required .D3.CS.Snapshot data = 1;
+}
+message CSWriteSnapshot {
+}
+message CSGiveCarePackage {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	required uint32 care_id = 2;
+	required uint32 locale = 3;
+}
+message CSForceColdStorage {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+}
+message TransferAccountCheck {
+	required .D3.OnlineService.GameAccountHandle local_account_id = 1;
+}
+message TransferAccountCheckResponse {
+	required int32 status = 1;
+	required int32 available_time = 2;
+}
+message TransferAccountBegin {
+	required .D3.OnlineService.GameAccountHandle local_account_id = 1;
+	required .D3.OnlineService.GameAccountHandle source_account_id = 2;
+	required string region = 3;
+	required bool force = 4;
+}
+message TransferAccountGetStatus {
+	required .D3.OnlineService.GameAccountHandle local_account_id = 1;
+	required uint64 token = 2;
+}
+message TransferAccountResponse {
+	required .D3.OnlineService.GameAccountHandle local_account_id = 1;
+	required uint64 token = 2;
+	required int32 status = 3;
+}
+message BannerSaveConfirm {
+	required .D3.OnlineService.GameAccountHandle account_id = 1;
+	required .D3.Account.BannerConfiguration banner = 2;
+	required int32 dbErrCode = 3;
+}
+message ClientAccountTransferRequest {
+	required string region = 1;
+	optional uint64 game_account_id = 2;
+}
+message NumPlayersRequest {
+}
+message NumPlayersResponse {
+	required int32 result = 1;
+}
+message GetHeroAttributesRequest {
+	required uint64 hero_id = 1;
+}
+message MailContents {
+	required bool append_messages = 1;
+	required .D3.Items.Mails mails = 2;
+}
+message MailOperation {
+	enum Operation {
+		MAIL_RETRIEVE = 0;
+		MAIL_DELETE = 1;
+		MAIL_READ = 2;
+	}
+	required .D3.GameMessage.MailOperation.Operation mail_operation = 1;
+	repeated uint64 mail_ids = 2;
+}
+message MailOperationResponseResult {
+	required uint64 mail_id = 1;
+	optional uint32 mail_error = 2 [default = 0];
+}
+message MailOperationResponse {
+	required .D3.GameMessage.MailOperation.Operation mail_operation = 1;
+	repeated .D3.GameMessage.MailOperationResponseResult mail_operation_results = 2;
+}
+message TutorialFlags {
+	required bytes seen_tutorials = 1;
+}
+message ResetHeroStoryProgress {
+	required uint64 hero_id = 1;
+}
+message ForceAccountMigration {
+}
+message EquipCosmeticItem {
+	required uint64 hero_id = 1;
+	required int32 cosmetic_item_type = 2;
+	optional sfixed32 gbid = 3 [default = -1];
+}
+message GuildId {
+	required uint64 guild_id = 1;
+}
+message GuildIds {
+	repeated uint64 guild_ids = 1;
+}
+message GuildCreate {
+	required string name = 1;
+	required string tag = 2;
+	required uint32 language = 3;
+	required bool looking_for_members = 4;
+}
+message GroupCreate {
+	required string name = 1;
+	required uint32 search_category = 2;
+	required uint32 language = 3;
+	required uint32 privacy_level = 4;
+}
+message GuildInvite {
+	required uint64 guild_id = 1;
+	optional uint64 invitee_id = 2;
+	optional string battle_tag_or_email = 3;
+}
+message GuildInviteResponse {
+	required uint64 guild_id = 1;
+	required bool result = 2;
+	optional bool apply_cooldown = 3 [default = false];
+}
+message GuildFetchPlayerNote {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+}
+message GuildSetMotd {
+	required uint64 guild_id = 1;
+	required string motd = 2;
+}
+message GuildSetDescription {
+	required uint64 guild_id = 1;
+	required string description = 2;
+}
+message GuildSetNews {
+	required uint64 guild_id = 1;
+	required .D3.OnlineService.GameAccountHandle account_id = 2;
+	required uint32 news_type = 3;
+	required bytes news_data = 4;
+	required uint32 news_flags = 5 [default = 0];
+}
+message GuildEditNews {
+	required uint64 guild_id = 1;
+	required uint64 news_id = 2;
+	required bytes news_data = 3;
+	required uint32 news_flags = 4;
+}
+message GuildDeleteNews {
+	required uint64 guild_id = 1;
+	required uint64 news_id = 2;
+}
+message GuildDeleteAccountNews {
+	required uint64 account_id = 1;
+	required uint64 guild_id = 2;
+	repeated uint64 news_id = 3;
+}
+message GuildCreateRank {
+	required uint64 guild_id = 1;
+	required string name = 2;
+}
+message GuildDeleteRank {
+	required uint64 guild_id = 1;
+	required uint32 rank_id = 2;
+}
+message GuildModifyRank {
+	required uint64 guild_id = 1;
+	required uint32 rank_id = 2;
+	required string name = 3;
+	required uint32 permission = 4;
+}
+message GuildPromoteMember {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+}
+message GuildDemoteMember {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+}
+message GuildSetPlayerNote {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+	required string note = 3;
+}
+message GuildSetBanner {
+	required uint64 guild_id = 1;
+	required .D3.Account.BannerConfiguration banner = 2;
+}
+message GuildKickMember {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+}
+message GuildFetchRoster {
+	required uint64 guild_id = 1;
+	required uint32 start_position = 2;
+	required uint32 num_members = 3;
+}
+message GuildMoveRank {
+	required uint64 guild_id = 1;
+	required uint32 rank_id = 2;
+	required bool move_up = 3;
+}
+message GuildSearch {
+	required uint32 locale = 1;
+	optional uint32 search_category = 2;
+	optional string name = 3;
+	required uint32 clan_or_group = 4;
+}
+message GuildInviteGroupChat {
+	required uint64 guild_id = 1;
+	required uint64 invitee_id = 2;
+}
+message GuildAcceptGroupChat {
+	required uint64 guild_id = 1;
+	required bool result = 2;
+	required .D3.OnlineService.ChannelId party_id = 3;
+}
+message GuildSetLeader {
+	required uint64 guild_id = 1;
+	required uint32 member_id = 2;
+}
+message GuildCancelInvite {
+	required uint64 guild_id = 1;
+	required uint64 account_id = 2;
+}
+message GuildSuggest {
+	required uint64 guild_id = 1;
+	required uint64 other_account_id = 2;
+}
+message GuildSuggestionResponse {
+	required uint64 guild_id = 1;
+	required uint64 invitee_id = 2;
+	required bool result = 3;
+}
+message GuildFetchNews {
+	required uint64 guild_id = 1;
+	required uint64 news_time = 2;
+}
+message GuildSetSearchSettings {
+	required uint64 guild_id = 1;
+	required uint32 search_category = 2;
+	required uint32 language = 3;
+}
+message GuildSetLFM {
+	required uint64 guild_id = 1;
+	required bool lfm = 2;
+}
+message GroupSetPrivacyLevel {
+	required uint64 group_id = 1;
+	required uint32 privacy_level = 2;
+}
+message GetPlayerGuilds {
+	required uint32 guild_category = 1;
+	required uint64 target_id = 2;
+}
+message GuildResponseId {
+	required uint64 guild_id = 1;
+}
+message GuildResponseString {
+	required string response = 1;
+}
+message GuildResponseGuilds {
+	required .D3.Guild.GuildList guild_ids = 1;
+}
+message GuildSummaryResolution {
+	required uint64 guild_id = 1;
+	optional uint32 error_code = 2;
+	optional .D3.Guild.GuildSummary summary = 3;
+}
+message GuildSummariesResponse {
+	repeated .D3.GameMessage.GuildSummaryResolution guild_summaries = 1;
+}
+message LeaderboardList {
+	required uint64 leaderboard_id = 1;
+	required uint32 scope_id = 2;
+	required uint32 offset = 3;
+	required uint32 limit = 4;
+	optional uint64 version = 6;
+	optional uint32 partition_id = 7;
+}
+message LeaderboardListResponse {
+	required uint32 offset = 1;
+	required uint32 limit = 2;
+	repeated .D3.Leaderboard.Slot entry = 3;
+	required uint32 total_leaderboard_entries = 4;
+	optional uint32 own_rank = 5;
+	optional uint64 version = 6;
+}
+message LeaderboardFetchScores {
+	required uint32 partition_id = 2;
+	repeated uint64 game_account_ids = 3;
+	optional uint64 leaderboard_id = 4;
+	optional uint32 scope_id = 5;
+	optional .D3.Leaderboard.PartitionType partition_type = 1 [default = SEASON];
+}
+message LeaderboardFetchScoresResponse {
+	repeated .D3.Leaderboard.Score entry = 1;
+}
+message LeaderboardGetHeroSnapshot {
+	required uint64 game_account_id = 1;
+	required uint32 partition_id = 2;
+	required uint32 scope_id = 3;
+	required uint64 leaderboard_id = 4;
+}
+message LeaderboardGetHeroSnapshotResponse {
+	optional .D3.Leaderboard.HeroSnapshot snapshot = 1;
+}
+message CheatRefetchProductCatalog {
+}
+message CheatModifyStoreState {
+	optional bool enable = 1;
+}
+message RiftEndScreenAddParticipants {
+	repeated .D3.OnlineService.GameAccountHandle participant_game_accounts = 1;
+}
+message RiftEndScreenConsolePlayerInfo {
+	optional string player_name = 1;
+	optional sfixed32 hero_gbid_class = 2;
+	optional uint32 hero_flags = 3;
+	optional uint32 hero_level = 4;
+	optional uint32 alt_level = 5;
+	optional .D3.Hero.VisualEquipment hero_visual_equipment = 6;
+}
+message RiftEndScreenInfo {
+	required int32 rift_tier = 1;
+	required bool success = 2;
+	required int32 completion_time_ms = 3;
+	required sint64 xp_reward = 4;
+	required int32 gold_reward = 5;
+	repeated .D3.OnlineService.GameAccountHandle participant_game_accounts = 6;
+	required bool is_from_cheat = 7;
+	required bool new_personal_best = 8;
+	required .D3.Account.BannerConfiguration banner_configuration = 9;
+	repeated .D3.GameMessage.RiftEndScreenConsolePlayerInfo console_player_info = 10;
+	optional uint32 console_num_participants = 15;
+	optional int32 challenge_rift_reward_gbid = 11;
+	optional int32 challenge_rift_time_to_beat_ms = 12;
+	optional int32 challenge_rift_reward_state = 13;
+	optional uint32 challenge_rift_number = 14;
+}
+message RiftStartPreloadingLeaderBoardData {
+	required int32 rift_tier = 1;
+	required int32 num_participants = 2;
+	required int32 completion_time_ms = 3;
+}
+message AchievementsGetSnapshot {
+	required .D3.OnlineService.GameAccountHandle game_account_id = 1;
+}
+message AchievementsResetAchievements {
+	required .D3.OnlineService.GameAccountHandle game_account_id = 1;
+}
+message AchievementsCriteriaUpdateConsole {
+	message Criteria {
+		required uint32 id = 1;
+		optional bool deleted = 2;
+		optional uint32 quantity = 3;
+	}
+	repeated .D3.GameMessage.AchievementsCriteriaUpdateConsole.Criteria criteria = 1;
+}
+message AchievementsAwardedConsole {
+	required uint32 player_index = 1;
+	repeated uint64 achievements = 2;
+}
+message AchievementsSnapshot {
+	required .D3.OnlineService.GameAccountHandle game_account_id = 1;
+	optional .D3.Achievements.Snapshot snapshot = 2;
+	optional uint32 error_code = 3;
+}
+message MatchmakingGetStats {
+	optional string version = 1;
+	optional int32 partition = 2 [default = -1];
+	optional string server_pool = 3;
+	optional int32 game_act = 4;
+	optional fixed32 game_quest = 5;
+	optional int32 handicap_level = 6;
+	optional string game_tag = 7;
+	optional int32 monster_level = 8;
+	optional int32 game_content_act_license = 9;
+}
+message MatchmakingStatsBucket {
+	optional uint32 forming_games = 1 [default = 0];
+	optional uint32 waiting_players = 2 [default = 0];
+	optional uint32 open_games_total = 3 [default = 0];
+	optional uint32 players_in_open_games_total = 4 [default = 0];
+}
+message MatchmakingGetStatsResponse {
+	repeated .D3.GameMessage.MatchmakingStatsBucket stats_bucket = 1;
+}
+message TriggerNewClientAvailable {
+	required uint32 client_build_number = 1;
+}
+message UnlockedDyesRequest {
+}
+message UnlockedDyesData {
+	repeated sfixed32 dye_gbids = 1;
+}
+message ChallengeRiftFetchHeroData {
+	required uint32 challenge_number = 1;
+}
+message ChallengeRiftFetchHeroDataResponse {
+	required uint32 alt_level = 1;
+	required .D3.Hero.Digest hero_digest = 2;
+	required .D3.Profile.HeroProfile hero_profile = 3;
+	optional sfixed32 reward_gbid = 4;
+	required uint32 target_millisecond = 5;
+	optional string battle_tag = 6;
+	optional uint64 challenge_end_time_unix_seconds = 7;
+}
+message ChallengeRiftClearRewardRecord {
+	required uint32 last_challenge_reward_earned = 1;
+}

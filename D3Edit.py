@@ -12,13 +12,7 @@ import Account_pb2
 BYTE_MAX_VALUE = 255
 XOR_KEY = 0x305F92D82EC9A01B
 
-GBIDS_FILE = "gbids.json"
-SLOTS_FILE = "slots.json"
-AFFIXES_FILE = "affixes.json"
-CURRENCY_FILE = "currencies.json"
-
-HERO_DIR = "heroes"
-ASSET_DIR = "assets"
+SETTINGS_FILE = "settings.json"
 
 def hexlify(b: (bytes, bytearray)) -> (bytes, bytearray):
     """
@@ -77,20 +71,28 @@ def encrypt_save(data: (bytes, bytearray)) -> (bytes, bytearray):
     return bytes(data)
 
 if __name__ == "__main__":
+    # make sure settings exist
+    assert isfile(SETTINGS_FILE), "%s doesn't exist" % (SETTINGS_FILE)
+
+    # load settings
+    with open(SETTINGS_FILE, "r") as f:
+        settings = load(f)
+
     # make sure assets exist
-    assert isfile(join(ASSET_DIR, GBIDS_FILE)), "%s doesn't exist" % (GBIDS_FILE)
-    assert isfile(join(ASSET_DIR, AFFIXES_FILE)), "%s doesn't exist" % (AFFIXES_FILE)
-    assert isfile(join(ASSET_DIR, CURRENCY_FILE)), "%s doesn't exist" % (CURRENCY_FILE)
+    assert isfile(join(settings["asset_dir"], settings["gbids_file"])), "%s doesn't exist" % (settings["gbids_file"])
+    assert isfile(join(settings["asset_dir"], settings["slots_file"])), "%s doesn't exist" % (settings["slots_file"])
+    assert isfile(join(settings["asset_dir"], settings["affixes_file"])), "%s doesn't exist" % (settings["affixes_file"])
+    assert isfile(join(settings["asset_dir"], settings["currencies_file"])), "%s doesn't exist" % (settings["currencies_file"])
 
     # load assets
-    with open(join(ASSET_DIR, GBIDS_FILE), "r") as f:
+    with open(join(settings["asset_dir"], settings["gbids_file"]), "r") as f:
         gbid_list = load(f)
-    with open(join(ASSET_DIR, AFFIXES_FILE), "r") as f:
-        affix_list = load(f)
-    with open(join(ASSET_DIR, CURRENCY_FILE), "r") as f:
-        currency_list = load(f)
-    with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:
+    with open(join(settings["asset_dir"], settings["slots_file"]), "r") as f:
         slot_list = load(f)
+    with open(join(settings["asset_dir"], settings["affixes_file"]), "r") as f:
+        affix_list = load(f)
+    with open(join(settings["asset_dir"], settings["currencies_file"]), "r") as f:
+        currency_list = load(f)
 
     # parse arguments
     parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")

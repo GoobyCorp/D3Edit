@@ -1,0 +1,149 @@
+syntax = "proto2";
+
+package D3.Leaderboard;
+import "Research/decompiled/proto2/Account.proto";
+import "Research/decompiled/proto2/Hero.proto";
+import "Research/decompiled/proto2/HeroCommon.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+import "Research/decompiled/proto2/Items.proto";
+import "Research/decompiled/proto2/Profile.proto";
+
+enum PartitionType {
+	UNSPECIFIED = 0;
+	SEASON = 1;
+	ERA = 2;
+	CHALLENGE = 3;
+}
+message HeroEquippedItem {
+	optional .D3.Items.Generator generator = 1;
+	optional int32 visual_inventory_slot = 2;
+	optional sfixed32 item_visual_gbid = 3 [default = -1];
+	optional sint32 item_effect_type = 4 [default = 0];
+	optional sint32 effect_level = 5 [default = -1];
+	optional bool is_potion = 6 [default = false];
+	optional sint32 dye_type = 7 [default = 0];
+}
+message HeroCosmeticItem {
+	optional int32 cosmetic_visual_inventory_slot = 1;
+	optional sfixed32 gbid = 2;
+}
+message HeroSnapshot {
+	optional .D3.Profile.SkillsWithRunes active_skills = 1;
+	repeated .D3.Leaderboard.HeroEquippedItem equipped_items = 2;
+	optional .D3.Profile.PassiveSkills active_traits = 3;
+	optional .D3.Profile.ParagonPointAllocations paragon_allocation = 4;
+	optional .D3.OnlineService.EntityId hero_id = 5;
+	repeated .D3.Leaderboard.HeroCosmeticItem cosmetic_items = 6;
+	repeated sfixed32 gbid_legendary_powers = 7;
+}
+message Member {
+	optional uint64 account_id = 1;
+	optional string hero_name = 2;
+	optional fixed32 hero_gbid_class = 3;
+	optional uint32 hero_flags = 4;
+	optional uint32 hero_season_created = 11;
+	optional uint32 hero_level = 12;
+	optional uint32 hero_alt_level = 13;
+	optional uint64 clan_id = 5;
+	optional string clan_name = 6;
+	optional string clan_tag = 7;
+	optional bool deprecated_clan_requires_invite = 8;
+	optional .D3.Hero.VisualEquipment hero_visual_equipment = 9;
+	optional string battle_tag = 10;
+	optional string battle_tag_override = 14;
+	optional .D3.Leaderboard.HeroSnapshot hero_snapshot = 15;
+	optional bool hero_snapshot_available = 16 [default = false];
+}
+message Metadata {
+	optional bool cheated = 1;
+	repeated .D3.Leaderboard.Member team_member = 10;
+	optional int64 DEPRECATED_expire_at_timestamp = 11;
+	optional uint32 act_1_time_ms = 20;
+	optional uint32 act_2_time_ms = 21;
+	optional uint32 act_3_time_ms = 22;
+	optional uint32 act_4_time_ms = 23;
+	optional uint32 act_5_time_ms = 24;
+	optional fixed32 level_seed = 30;
+	optional .D3.Leaderboard.WeeklyChallengeData challenge_data = 40;
+}
+message CompressedMetadata {
+	optional int32 uncompressed_size = 1;
+	optional bytes compressed_data = 2;
+}
+message Slot {
+	required uint64 game_account_id = 1;
+	required fixed64 score = 2;
+	required fixed64 timestamp = 3;
+	optional .D3.Leaderboard.Metadata metadata = 4;
+}
+message Score {
+	required uint64 leaderboard_id = 1;
+	required uint32 scope_id = 2;
+	required fixed64 score = 3;
+	required fixed64 timestamp = 4;
+	optional .D3.Leaderboard.Metadata metadata = 5;
+	optional uint64 game_account_id = 6;
+	optional uint32 score_band = 7;
+	optional uint32 score_player_count = 8;
+}
+message PostScore {
+	optional uint64 category_id = 1;
+	optional uint32 scope_id = 2;
+	optional uint64 game_account_id = 3;
+	optional fixed64 score = 4;
+	optional fixed64 timestamp = 5;
+	optional .D3.Leaderboard.Metadata metadata = 6;
+	optional uint32 partition_id = 8;
+	optional fixed32 service_hash = 9;
+	optional string generating_service = 10;
+	optional int32 generating_game_id = 11;
+}
+message CompressedPostScore {
+	optional bytes data = 1;
+}
+message LeaderboardScores {
+	repeated .D3.Leaderboard.Score scores = 1;
+}
+message RemoveAccount {
+	optional uint64 game_account_id = 1;
+	optional bool ignore_conquest_leaderboards = 2;
+}
+message ReloadScoreBands {
+	optional uint32 leaderboard_type = 1;
+	optional uint32 partition_id = 2;
+}
+message Snapshot {
+	repeated .D3.Leaderboard.Slot entries = 3;
+}
+message InvalidateCache {
+	optional uint32 leaderboard_type = 1;
+	optional uint32 partition_id = 2;
+}
+message RiftFloor {
+	required sfixed32 sno_world = 1;
+	required sfixed32 population_hash = 2;
+}
+message RiftPylon {
+	required sfixed32 sno_pylon = 1;
+	required uint32 rift_floor = 2;
+	required float position_x = 3;
+	required float position_y = 4;
+}
+message RiftSnapshot {
+	required uint32 rift_tier = 1;
+	required sfixed32 rift_seed = 2;
+	required sfixed32 sno_boss = 3;
+	required sfixed32 sno_dungeon_finder = 4;
+	repeated .D3.Leaderboard.RiftFloor floors = 5;
+	repeated .D3.Leaderboard.RiftPylon pylons = 6;
+	required uint32 deprecated_completion_seconds = 7;
+	required uint32 num_deaths = 8;
+	optional uint32 completion_milliseconds = 9 [default = 0];
+}
+message WeeklyChallengeData {
+	required .D3.Leaderboard.RiftSnapshot rift_snapshot = 1;
+	required .D3.Hero.SavedDefinition hero_snapshot = 2;
+	required .D3.Account.SavedDefinition account_snapshot = 3;
+	optional uint32 bnet_account_id = 4;
+	optional .D3.OnlineService.GameAccountHandle game_account_id = 5;
+}

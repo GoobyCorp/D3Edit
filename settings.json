@@ -1,0 +1,8 @@
+{
+  "hero_dir": "heroes",
+  "asset_dir": "assets",
+  "gbids_file": "gbids.json",
+  "slots_file": "slots.json",
+  "affixes_file": "affixes.json",
+  "currencies_file": "currencies.json"
+}

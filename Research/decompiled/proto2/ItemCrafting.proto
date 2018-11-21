@@ -1,0 +1,22 @@
+syntax = "proto2";
+
+package D3.ItemCrafting;
+import "Research/decompiled/proto2/GameBalance.proto";
+
+message CrafterData {
+	repeated sfixed32 recipes = 1;
+	repeated sfixed32 deprecated_available_enchants = 2;
+	required int32 level = 3;
+	optional sfixed64 cooldown_end = 4;
+	optional bytes recipes_bitfield = 5;
+	optional int32 bitfield_leading_null_bytes = 6;
+}
+message CrafterDevilsHandData {
+	repeated sfixed32 unlocked_sets = 1;
+}
+message CrafterSavedData {
+	repeated .D3.ItemCrafting.CrafterData crafter_data = 1;
+	optional .D3.GameBalance.BitPackedGbidArray transmog_data = 2;
+	optional .D3.ItemCrafting.CrafterDevilsHandData deprecated_devils_hand_data = 3;
+	optional .D3.GameBalance.BitPackedGbidArray extracted_legendaries_data = 4;
+}

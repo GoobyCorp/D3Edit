@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package D3.Items;
+
+import "GameBalance.proto";
+import "OnlineService.proto";
+
+message RareItemName {
+	bool item_name_is_prefix = 1;
+	sfixed32 sno_affix_string_list = 2;
+	sint32 affix_string_list_index = 3;
+	sint32 item_string_list_index = 4;
+}
+message Generator {
+	uint32 seed = 1;
+	.D3.GameBalance.Handle gb_handle = 2;
+	repeated sfixed32 base_affixes = 3;
+	.D3.Items.RareItemName rare_item_name = 4;
+	sfixed32 deprecated_enchant_affix = 5;
+	uint32 flags = 6;
+	uint32 durability = 7;
+	uint64 stack_size = 8;
+	uint32 dye_type = 9;
+	sint32 item_quality_level = 10;
+	sint32 item_binding_level = 11;
+	uint32 max_durability = 12;
+	repeated .D3.Items.EmbeddedGenerator contents = 13;
+	uint64 item_unlock_timestamp = 14;
+	uint32 deprecated_enchant_range_val = 15;
+	uint32 legendary_item_level = 16;
+	sfixed32 transmog_gbid = 17;
+	uint32 season_created = 18;
+	uint32 max_durability_original = 19;
+	sfixed32 enchanted_affix_old = 20;
+	sfixed32 enchanted_affix_new = 21;
+	sfixed32 legendary_base_item_gbid = 22;
+	uint32 enchanted_affix_seed = 23;
+	uint32 enchanted_affix_count = 24;
+	repeated uint64 trade_account_id = 25;
+	uint32 trade_ticks_left = 26;
+	sint32 jewel_rank = 27;
+	uint32 console_max_level = 28;
+	bool console_promo_item = 29;
+	bool hardcore = 30;
+	uint32 deprecated_crafted_item_level = 31;
+	uint32 cube_enchanted_gem_type = 32;
+	sint32 cube_enchanted_gem_rank = 33;
+}
+message GeneratorList {
+	repeated .D3.Items.Generator generators = 1;
+}
+message EmbeddedGenerator {
+	.D3.OnlineService.ItemId id = 1;
+	.D3.Items.Generator generator = 2;
+}
+message FriendGiftInfo {
+	uint64 id_friend_recipient = 1;
+	string recipient_name = 2;
+}
+message SavedItem {
+	.D3.OnlineService.ItemId id = 1;
+	.D3.OnlineService.EntityId owner_entity_id = 2;
+	.D3.OnlineService.ItemId socket_id = 3;
+	sint32 hireling_class = 4;
+	sint32 item_slot = 5;
+	sint32 square_index = 6;
+	uint32 used_socket_count = 7;
+	.D3.Items.Generator generator = 8;
+	.D3.Items.FriendGiftInfo friend_gift_info = 9;
+}
+message ItemList {
+	repeated .D3.Items.SavedItem items = 1;
+}
+message MailAttachments {
+	.D3.Items.ItemList items = 1;
+}
+message Mail {
+	.D3.OnlineService.EntityId account_to = 1;
+	.D3.OnlineService.EntityId account_from = 2;
+	uint64 mail_id = 3;
+	string title = 4;
+	string body = 5;
+	uint32 status = 6;
+	uint32 send_time = 7;
+	.D3.Items.MailAttachments attachments = 8;
+	uint32 partition_id = 9;
+	uint32 season_created = 10;
+	uint64 expire_at = 11;
+	uint32 flags = 12;
+}
+message Mails {
+	repeated .D3.Items.Mail mails = 1;
+}
+message CurrencyData {
+	sfixed32 gbid_deprecated = 1;
+	int64 count = 2;
+	uint32 id = 3;
+	uint32 data_persist_flags = 4;
+}
+message CurrencySavedData {
+	repeated .D3.Items.CurrencyData currency = 1;
+}

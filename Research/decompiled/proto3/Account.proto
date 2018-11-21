@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+package D3.Account;
+
+import "AttributeSerializer.proto";
+import "Achievements.proto";
+import "Items.proto";
+import "OnlineService.proto";
+import "ItemCrafting.proto";
+import "CosmeticItems.proto";
+import "GameBalance.proto";
+import "ChallengeRifts.proto";
+
+message BannerConfiguration {
+	uint32 banner_shape = 1;
+	uint32 sigil_main = 2;
+	uint32 sigil_accent = 3;
+	uint32 pattern_color = 4;
+	uint32 background_color = 5;
+	uint32 sigil_color = 6;
+	uint32 sigil_placement = 7;
+	uint32 pattern = 8;
+	bool use_sigil_variant = 9;
+	uint32 epic_banner = 10;
+}
+message Digest {
+	enum Flags {
+        UNUSED = 0;
+		HARDCORE_HERO_UNLOCKED_DEPRECATED = 1;
+		ADVENTURE_MODE_UNLOCKED = 2;
+		PARAGON_100_VANILLA_FEAT = 3;
+		MASTER_DIFFICULTY_UNLOCKED = 4;
+		TORMENT_DIFFICULTY_UNLOCKED = 5;
+		ADVENTURE_MODE_TUTORIAL_PLAYED = 6;
+		HARDCORE_MASTER_DIFFICULTY_UNLOCKED = 7;
+		HARDCORE_TORMENT_DIFFICULTY_UNLOCKED = 8;
+		HARDCORE_ADVENTURE_MODE_UNLOCKED = 9;
+		TORMENT_DIFFICULTY_7_AND_OVER_UNLOCKED = 10;
+		HARDCORE_TORMENT_DIFFICULTY_7_AND_OVER_UNLOCKED_DEPRECATED = 11;
+		BANNED = 12;
+	}
+	uint32 version = 1;
+	.D3.OnlineService.EntityId last_played_hero_id = 2;
+	.D3.Account.BannerConfiguration banner_configuration = 3;
+	uint32 flags = 4;
+	uint64 pvp_cooldown = 5;
+	uint32 season_id = 7;
+	uint64 guild_id = 8;
+	repeated uint32 alt_levels = 9;
+	uint32 stash_tabs_rewarded_from_seasons = 10;
+	uint32 rebirths_used = 11;
+	string patch_version = 12;
+	.D3.ChallengeRifts.AccountData challenge_rift_account_data = 13;
+	bool completed_solo_rift = 14;
+	uint32 last_publish_time = 15;
+}
+message ConsoleRandomTransmuteSeed {
+	sint32 item_slot_key = 1;
+	sint32 random_item_seed = 2;
+	sint32 random_item_carry = 3;
+}
+message ConsoleRandomTransmuteSeedList {
+	repeated .D3.Account.ConsoleRandomTransmuteSeed console_random_transmute_seed = 1;
+}
+message ConsolePartitionData {
+	message SeasonalRolloverItem {
+		.D3.Items.SavedItem item = 1;
+		uint32 create_time = 2;
+	}
+	repeated sint32 seasonal_gift_gbids_redeemed = 1;
+	repeated .D3.Account.ConsolePartitionData.SeasonalRolloverItem seasonal_rollover_item = 2;
+	.D3.Account.ConsoleRandomTransmuteSeedList console_random_transmute_seed_list = 3;
+}
+message AccountPartition {
+	int32 partition_id = 1;
+	.D3.AttributeSerializer.SavedAttributes saved_attributes = 2;
+	.D3.Items.ItemList items = 3;
+	.D3.ItemCrafting.CrafterSavedData crafter_data = 4;
+	.D3.OnlineService.EntityId gold_id_deprecated = 5;
+	bytes stash_icons = 6;
+	uint64 accepted_license_bits = 7;
+	uint32 alt_level = 8;
+	.D3.Items.CurrencySavedData currency_data = 9;
+	uint32 flags = 10;
+	.D3.Account.ConsolePartitionData console_partition_data = 11;
+}
+message SavedDefinition {
+	uint32 version = 1;
+	.D3.Account.Digest digest = 2;
+	.D3.AttributeSerializer.SavedAttributes saved_attributes = 3;
+	bytes seen_tutorials = 9;
+	sfixed64 num_vote_kicks_participated_in = 10;
+	sfixed64 num_vote_kicks_initiated = 11;
+	sfixed64 num_public_games_no_kick = 12;
+	sfixed64 times_vote_kicked = 13;
+	uint32 create_time = 19;
+	uint32 num_groups_created_deprecated = 22;
+	repeated .D3.Account.AccountPartition partitions = 20;
+	.D3.AttributeSerializer.SavedAttributes deprecated_saved_attributes_hardcore = 4;
+	.D3.Items.ItemList deprecated_normal_shared_saved_items = 5;
+	.D3.Items.ItemList deprecated_hardcore_shared_saved_items = 6;
+	.D3.ItemCrafting.CrafterSavedData deprecated_crafter_normal_data = 7;
+	.D3.ItemCrafting.CrafterSavedData deprecated_crafter_hardcore_data = 8;
+	.D3.OnlineService.EntityId deprecated_gold_id_normal = 14;
+	.D3.OnlineService.EntityId deprecated_gold_id_hardcore = 15;
+	bytes deprecated_stash_icons_normal = 16;
+	uint64 deprecated_accepted_license_bits = 17;
+	bytes deprecated_stash_icons_hardcore = 18;
+	.D3.Account.ConsoleData console_data = 21;
+	.D3.GameBalance.BitPackedGbidArray account_wide_transmog_data = 23;
+	.D3.CosmeticItems.CosmeticItemSavedData account_wide_cosmetic_item_data = 24;
+	.D3.Items.CurrencySavedData account_wide_currency_data = 26;
+	.D3.Account.DeliveredRewards delivered_rewards = 27;
+	.D3.Account.Consumables consumables = 28;
+}
+message AvengerVictim {
+	uint32 gbid_class = 1;
+	bool is_female = 2;
+}
+message Avenger {
+	enum State {
+		ALIVE = 0;
+		KILLED_PLAYER = 1;
+		KILLED = 2;
+	}
+	uint32 deprecated_player_kills = 1;
+	string avenger_name = 2;
+	sint32 deprecated_monster_sno = 3;
+	bool deprecated_resolved = 4;
+	.D3.Account.Avenger.State deprecated_result = 5;
+	uint64 sent_from = 6;
+	int32 affix_bucket = 7;
+	repeated .D3.Account.AvengerVictim victims = 8;
+}
+message AvengerData {
+	.D3.Account.Avenger deprecated_avenger_hardcore = 1;
+	.D3.Account.Avenger avenger_solo = 2;
+	.D3.Account.Avenger avenger_friends = 3;
+}
+message ConsoleChallengeRiftReward {
+	repeated .D3.Items.SavedItem items = 1;
+	uint32 challenge_rift = 2;
+	uint32 create_time = 3;
+	uint32 season_earned = 4;
+}
+message ConsoleChallengeRiftPersonalBest {
+	uint64 id = 1;
+	uint64 score = 2;
+	int64 timestamp = 3;
+}
+message ConsoleData {
+	uint32 version_= 1;
+	.D3.Achievements.Snapshot achievement_snapshot = 2;
+	sint32 highest_completed_difficulty_deprecated = 3;
+	bool has_demo_save = 4;
+	.D3.Account.AvengerData avenger_data = 5;
+	float progress = 6;
+	bool has_bnet_account = 7;
+	uint32 legacy_license_bits = 8;
+	uint32 leaderboard_heal_achievements = 9;
+	repeated uint64 leaderboard_heal_conquests = 10;
+	repeated .D3.Account.ConsoleChallengeRiftReward challenge_rift_reward = 11;
+	uint32 challenge_rift_personal_best_rift_number = 12;
+	repeated .D3.Account.ConsoleChallengeRiftPersonalBest challenge_rift_personal_best = 13;
+	uint32 console_cube_base_seed = 14;
+	int32 nfp_default_time = 15;
+	int32 nfp_goblin_time = 16;
+}
+message DeliveredAchievementReward {
+	fixed64 achievement_id = 1;
+}
+message DeliveredRewards {
+	repeated .D3.Account.DeliveredAchievementReward achievement_reward = 1;
+	uint32 entitled_reward_license_bits = 2;
+	uint32 outstanding_reward_license_bits = 3;
+	repeated fixed64 legacy_achievements_to_deliver = 4;
+}
+message Consumable {
+	uint64 license_instance_id = 1;
+	uint64 license_id = 2;
+	uint64 transaction_id = 3;
+	int64 quantity = 4;
+	int64 consume_time = 5;
+	int64 revoke_time = 6;
+	int32 type = 7;
+	uint32 data_persist_flags = 8;
+}
+message Consumables {
+	repeated .D3.Account.Consumable consumed_licenses = 1;
+}

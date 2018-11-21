@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package D3.Console;
+import "Research/decompiled/proto2/Items.proto";
+import "Research/decompiled/proto2/Account.proto";
+
+message ItemMail {
+	required .D3.Items.Generator item_generator = 1;
+}
+message GiftMail {
+	required sint32 item_quality_level = 1;
+}
+message AvengerMail {
+	optional uint32 deprecated_player_kills = 1 [default = 1];
+	optional string deprecated_avenger_name = 2 [default = "Avenger"];
+	optional sint32 deprecated_monster_sno = 3 [default = -1];
+	required uint64 sent_from = 4 [default = 0];
+	optional uint32 affix_bucket = 5 [default = 0];
+	repeated .D3.Account.AvengerVictim victims = 6;
+}
+message MailItem {
+	optional .D3.Console.ItemMail item_mail = 1;
+	optional .D3.Console.GiftMail gift_mail = 2;
+	optional .D3.Console.AvengerMail avenger_mail = 3;
+	optional bool hardcore = 4 [default = false];
+	optional uint64 gold_amount = 5 [default = 0];
+	optional string gamer_display_name = 6;
+	optional int32 crafting_material_type = 7 [default = -1];
+	optional uint64 crafting_material_amount = 8 [default = 0];
+}

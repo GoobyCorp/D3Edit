@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package D3.Hero;
+
+message VisualItem {
+	sfixed32 gbid = 1;
+	sint32 dye_type = 2;
+	sint32 item_effect_type = 3;
+	sint32 effect_level = 4;
+}
+message VisualCosmeticItem {
+	sfixed32 gbid = 1;
+}
+message VisualEquipment {
+	repeated .D3.Hero.VisualItem visual_item = 1;
+	repeated .D3.Hero.VisualCosmeticItem cosmetic_item = 2;
+}
+message QuestHistoryEntry {
+	sfixed32 sno_quest = 1;
+	sint32 difficulty_deprecated = 2;
+	sint32 highest_played_quest_step = 3;
+}
+message QuestRewardHistoryEntry {
+	sfixed32 sno_quest = 1;
+	sint32 step_uid = 2;
+	sint32 difficulty_deprecated = 3;
+	uint32 difficulty_flags = 4;
+}
+message SavedQuest {
+	sfixed32 sno_quest = 1;
+	sint32 difficulty_deprecated = 2;
+	sint32 current_step_uid = 3;
+	repeated sint32 objective_state = 4;
+	repeated sint32 failure_condition_state = 5;
+}
+message SavedConversations {
+	bytes played_conversations_bitfield = 1;
+	repeated sfixed32 sno_saved_conversations = 2;
+	bytes sno_saved_conversations_bitfield = 3;
+	int32 bitfield_leading_null_bytes = 4;
+}
+message SavePointData_Proto {
+	sfixed32 sno_world = 1;
+	sint32 savepoint_number = 2;
+	uint32 creates_portal = 3;
+}
+message SkillWithRune {
+	sfixed32 sno_skill = 1;
+	sint32 rune_type = 2;
+}
+message SavedItemLink {
+	sint32 x = 1;
+	sint32 y = 2;
+}
+message Timestamps {
+	sint64 create_time = 1;
+	sint64 delete_time = 2;
+}
+message NameText {
+	string name = 1;
+}
+message QuestHistoryList {
+	repeated .D3.Hero.QuestHistoryEntry quest_history = 1;
+}
+message SavedQuestList {
+	repeated .D3.Hero.SavedQuest saved_quests = 1;
+}
+message QuestRewardHistoryList {
+	repeated .D3.Hero.QuestRewardHistoryEntry quest_reward_history = 1;
+}
+message LoadoutItem {
+	sfixed64 item_id_low = 1;
+	repeated sfixed32 gbid_sockets = 2;
+}
+message LoadoutPotion {
+	sfixed64 item_id_low = 1;
+	sfixed32 gbid_potion = 2;
+}
+message Loadout {
+	repeated .D3.Hero.LoadoutItem equipped_items = 1;
+	repeated .D3.Hero.SkillWithRune active_skills = 2;
+	repeated sfixed32 sno_traits = 3;
+	repeated sfixed32 gbid_legendary_powers = 4;
+	string name = 5;
+	sint32 tab_icon = 6;
+	.D3.Hero.LoadoutPotion equipped_potion = 7;
+}
+message EquipmentManagerData {
+	repeated .D3.Hero.Loadout loadouts = 1;
+}

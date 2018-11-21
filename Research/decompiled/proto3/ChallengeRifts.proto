@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package D3.ChallengeRifts;
+
+import "HeroCommon.proto";
+
+message ChallengeData {
+	uint32 challenge_number = 1;
+	int64 challenge_start_unix_time = 2;
+	int64 challenge_last_broadcast_unix_time = 3;
+	int64 challenge_end_unix_time_console = 4;
+	uint64 challenge_hash = 5;
+	float challenge_nephalem_orb_multiplier = 6;
+}
+message AccountData {
+	uint32 last_challenge_reward_earned = 1;
+	uint32 last_challenge_tried = 2;
+	.D3.Hero.SavedConversations saved_conversations = 3;
+}

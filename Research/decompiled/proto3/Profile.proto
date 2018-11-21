@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package D3.Profile;
+
+import "Items.proto";
+import "OnlineService.proto";
+import "HeroCommon.proto";
+
+message ClassInfo {
+	uint64 playtime = 1;
+	uint32 highest_level = 2;
+	uint32 deprecated_highest_difficulty = 3;
+	uint32 pvp_games = 4;
+}
+message SkillWithRune {
+	sfixed32 skill = 1;
+	sint32 rune_type = 2;
+}
+message SkillsWithRunes {
+	repeated .D3.Profile.SkillWithRune runes = 1;
+}
+message PassiveSkills {
+	repeated sfixed32 sno_traits = 1;
+}
+message ParagonPointAllocation {
+	fixed32 slot = 1;
+	uint32 points = 2;
+}
+message ParagonPointAllocations {
+	repeated .D3.Profile.ParagonPointAllocation category = 1;
+}
+message LegendaryPowers {
+	repeated sfixed32 gbid_legendary_powers = 1;
+}
+message KillerInfo {
+	int32 sno_killer = 1;
+	uint32 rarity = 2;
+	repeated int32 rare_name_gbids = 3;
+}
+message HeroProfile {
+	uint64 monsters_killed = 1;
+	uint64 elites_killed = 2;
+	uint64 gold_collected = 3;
+	uint32 highest_level = 4;
+	uint32 deprecated_highest_difficulty = 5;
+	uint32 create_time = 6;
+	bool hardcore = 7;
+	uint32 strength = 8;
+	uint32 dexterity = 9;
+	uint32 intelligence = 10;
+	uint32 vitality = 11;
+	uint32 deprecated_armor = 12;
+	float dps = 13;
+	uint32 resist_arcane = 14;
+	uint32 resist_fire = 15;
+	uint32 resist_lightning = 16;
+	uint32 resist_poison = 17;
+	uint32 resist_cold = 18;
+	.D3.Items.ItemList equipment = 19;
+	.D3.Profile.SkillsWithRunes sno_active_skills = 20;
+	.D3.Profile.PassiveSkills sno_traits = 21;
+	uint32 death_time = 22;
+	.D3.Profile.KillerInfo killer_info = 23;
+	uint32 sno_kill_location = 24;
+	.D3.OnlineService.EntityId hero_id = 27;
+	float deprecated_damage_increase = 28;
+	float deprecated_crit_chance = 29;
+	float deprecated_damage_reduction = 30;
+	uint32 deprecated_life = 31;
+	uint32 pvp_glory = 35;
+	uint32 pvp_wins = 36;
+	uint32 pvp_takedowns = 37;
+	uint64 pvp_damage = 38;
+	float toughness = 39;
+	float healing = 40;
+	.D3.Profile.LegendaryPowers legendary_powers = 41;
+}
+message HeroProfileList {
+	repeated .D3.Profile.HeroProfile heros = 1;
+}
+message HeroMiniProfile {
+	uint32 hero_id = 1;
+	string hero_name = 2;
+	sfixed32 hero_gbid_class = 3;
+	uint32 hero_flags = 4;
+	uint32 hero_level = 5;
+	.D3.Hero.VisualEquipment hero_visual_equipment = 6;
+}
+message AccountProfile {
+	uint32 deprecated_highest_difficulty = 1;
+	uint32 highest_boss_difficulty_1 = 2;
+	uint32 highest_boss_difficulty_2 = 3;
+	uint32 highest_boss_difficulty_3 = 4;
+	uint32 highest_boss_difficulty_4 = 5;
+	uint64 monsters_killed = 6;
+	uint64 elites_killed = 7;
+	uint64 gold_collected = 8;
+	uint64 highest_hardcore_level = 9;
+	uint64 hardcore_monsters_killed = 10;
+	.D3.Profile.ClassInfo class_barbarian = 11;
+	.D3.Profile.ClassInfo class_demonhunter = 12;
+	.D3.Profile.ClassInfo class_monk = 13;
+	.D3.Profile.ClassInfo class_witchdoctor = 14;
+	.D3.Profile.ClassInfo class_wizard = 15;
+	.D3.Profile.ClassInfo class_crusader = 16;
+	.D3.Profile.ClassInfo class_necromancer = 17;
+	uint32 pvp_wins = 18;
+	uint32 pvp_takedowns = 19;
+	uint64 pvp_damage = 20;
+	uint32 season_id = 21;
+	uint32 highest_boss_difficulty_5 = 22;
+	uint32 deprecated_best_ladder_paragon_level = 23;
+	uint32 paragon_level = 24;
+	uint64 paragon_xp_next = 25;
+	repeated uint32 seasons = 26;
+	uint32 paragon_level_hardcore = 27;
+	uint64 paragon_xp_next_hardcore = 28;
+	uint32 bounties_completed = 29;
+	uint32 loot_runs_completed = 30;
+	uint64 highest_level = 31;
+	uint64 blood_shards_collected = 32;
+	repeated .D3.Profile.HeroMiniProfile heroes = 34;
+	repeated uint32 leaderboard_eras_with_scores = 35;
+	uint32 num_fallen_heroes = 36;
+	uint64 season_journey_rank = 37;
+	repeated uint32 deleted_heroes = 38;
+}
+message PvpMatchPlayer {
+	uint64 account_id = 1;
+	uint32 gbid_class = 2;
+	bool is_female = 3;
+}
+message PvpMatchPlayers {
+	repeated .D3.Profile.PvpMatchPlayer team_0 = 1;
+	repeated .D3.Profile.PvpMatchPlayer team_1 = 2;
+}
+message PvpMatch {
+	uint32 arena = 1;
+	.D3.Profile.PvpMatchPlayers players = 2;
+	uint32 score_team_0 = 3;
+	uint32 score_team_1 = 4;
+	uint32 play_time = 5;
+	uint32 hero_id = 6;
+	uint32 game_mode = 7;
+}
+message PvpMatchList {
+	repeated .D3.Profile.PvpMatch matches = 1;
+}
+message PvpTeam {
+	uint64 team_id = 1;
+	float rating = 2;
+	float rating_variance = 3;
+	float bootstrap = 4;
+	int32 games_played = 5;
+	uint32 last_played = 6;
+	int32 num_members = 7;
+	int32 game_mode = 8;
+}

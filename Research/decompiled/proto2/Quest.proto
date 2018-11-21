@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+package D3.Quests;
+import "Research/decompiled/proto2/Items.proto";
+
+message QuestReward {
+	optional uint64 xp_granted = 1 [default = 0];
+	optional int32 gold_granted = 2 [default = 0];
+	optional .D3.Items.Generator item = 3;
+	optional sfixed32 sno_quest = 4 [default = -1];
+	repeated .D3.Items.Generator items = 5;
+	optional uint64 bonus_xp_granted = 6 [default = 0];
+	optional sfixed32 platinum_granted = 7 [default = 0];
+}
+message QuestStepComplete {
+	required bool is_quest_complete = 1;
+	optional .D3.Quests.QuestReward reward = 2;
+	optional bool was_reward_autoequipped = 3 [default = false];
+}
+message QuestTieredRiftComplete {
+	required bool is_finished_in_time = 1;
+	required int32 rift_depth = 2;
+	optional .D3.Quests.QuestReward reward = 3;
+}

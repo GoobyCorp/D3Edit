@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package D3.CS;
+
+import "Items.proto";
+import "OnlineService.proto";
+import "Hero.proto";
+import "Account.proto";
+import "Profile.proto";
+import "Guild.proto";
+import "Settings.proto";
+import "Leaderboard.proto";
+import "Achievements.proto";
+
+message ToolTip {
+	.D3.OnlineService.ItemId itemId = 1;
+	uint32 ItemQualityLevel = 2;
+	string Name = 3;
+	string Type = 4;
+	int32 SetItem = 5;
+	string Flavor = 6;
+	string Cost = 7;
+	string Durability = 8;
+	string ClassReqs = 9;
+	string Requirements = 10;
+	string Enhancement_deprecated = 11;
+	uint64 StackCount = 12;
+	uint32 NumSockets = 13;
+	uint32 FilledSockets = 14;
+	string DisplayName = 15;
+}
+message HeroesList {
+	.D3.Hero.DigestList digests = 1;
+	uint32 current_season_num = 2;
+	uint32 current_season_state = 3;
+}
+message TooltipList {
+	repeated .D3.CS.ToolTip tooltips = 1;
+}
+message FallenHero {
+	.D3.Profile.HeroProfile profile = 1;
+	.D3.Hero.Digest digest = 2;
+	string time = 3;
+}
+message PersonalBests {
+	.D3.Leaderboard.PartitionType partition_type = 1;
+	uint32 partition_id = 2;
+	repeated .D3.Leaderboard.Score scores = 3;
+}
+message ConsumedLicense_deprecated {
+	sint64 id = 1;
+	sint64 instance_id = 2;
+}
+message ConsumedLicenses_deprecated {
+	repeated .D3.CS.ConsumedLicense_deprecated license = 1;
+}
+message Snapshot {
+	uint64 version = 1;
+	.D3.Account.SavedDefinition definition = 2;
+	repeated .D3.Hero.SavedDefinition heros = 3;
+	.D3.Profile.HeroProfileList hero_profiles = 5;
+	repeated .D3.CS.FallenHero fallen_heros = 6;
+	.D3.Items.Mails mails = 7;
+	uint32 create_time = 8;
+	repeated .D3.Profile.AccountProfile account_profiles = 9;
+	.D3.OnlineService.EntityId account_id = 10;
+	.D3.Profile.AccountProfile deprecated_account_profile = 4;
+	.D3.Guild.GuildAccountRestrictions guild_restrictions = 11;
+	.D3.Client.GameAccountSettings game_account_settings = 12;
+	.D3.Client.Preferences preferences = 13;
+	bool banned = 14;
+	repeated .D3.CS.PersonalBests all_personal_bests = 18;
+	.D3.CS.ConsumedLicenses_deprecated deprecated_consumed_licenses = 19;
+	repeated .D3.Achievements.PartitionSnapshot achievement_snapshots = 20;
+}
+message SnapshotVersion {
+	uint64 version = 1;
+	.D3.CS.Snapshot snapshot = 2;
+}
+message SnapshotVersions {
+	repeated .D3.CS.SnapshotVersion versions = 1;
+	uint32 current_season_num = 2;
+	uint32 current_season_state = 3;
+}
+message PartitionedGBID {
+	sfixed32 gbid = 1;
+	uint32 partition_id = 2;
+}
+message PartitionedGBIDList {
+	repeated .D3.CS.PartitionedGBID partitioned_gbids = 1;
+}
+message PartitionedGBIDCapQuantity {
+	sfixed32 gbid = 1;
+	uint32 partition_id = 2;
+	uint64 cap_quantity = 3;
+}
+message PartitionedGBIDCapQuantityList {
+	repeated .D3.CS.PartitionedGBIDCapQuantity partitioned_gbids = 1;
+}
+message AccountData {
+	.D3.Account.Digest digest = 1;
+	repeated .D3.Account.AccountPartition partitions = 2;
+	.D3.Items.CurrencySavedData account_wide_currency_data = 3;
+}

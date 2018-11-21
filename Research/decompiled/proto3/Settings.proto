@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package D3.Client;
+
+import "OnlineService.proto";
+
+enum SocialListFlags {
+	INVITELIST_COLLAPSED = 0;
+	OFFLINELIST_COLLAPSED = 1;
+	FRIENDLIST_COLLAPSED = 2;
+	RECENTPLAYERLIST_COLLAPSED = 3;
+	NEARBYPLAYERLIST_COLLAPSED = 4;
+	GUILDLIST_COLLAPSED = 5;
+	GUILDINVITESLIST_COLLAPSED = 6;
+	GROUPSLIST_COLLAPSED = 7;
+	GROUPSINVITESLIST_COLLAPSED = 8;
+	GROUPSREQUESTSLIST_COLLAPSED = 9;
+	GUILDREQUESTLIST_COLLAPSED = 10;
+}
+message ToonSettings {
+	uint32 ui_flags = 1;
+	uint32 game_handicap = 2;
+	.D3.Client.SavedSelectedPublicGameParams saved_selected_public_game_params = 3;
+	uint32 last_played_mode = 4;
+}
+message ActionBinding {
+	int32 key_1 = 1;
+	uint32 key_modifier_flags_1 = 2;
+	int32 key_2 = 3;
+	uint32 key_modifier_flags_2 = 4;
+}
+message ChannelColorSetting {
+	uint32 channel_name_hash = 1;
+	uint32 channel_color = 2;
+}
+message SavedSelectedPublicGameParams {
+	int32 difficulty_level_deprecated = 1;
+	sint32 act = 2;
+	sfixed32 sno_quest = 3;
+	int32 handicap_level = 4;
+	string game_tag = 5;
+}
+message GameAccountSettings {
+	int32 use_last_hero = 1;
+	int32 show_offline_toast_deprecated = 2;
+	string rmt_last_used_currency = 3;
+	int32 coop_last_create_game_privacy = 4;
+	string rmt_preferred_currency = 5;
+	repeated string auto_join_channels_deprecated = 6;
+	uint64 rmt_last_used_payment = 7;
+	repeated .D3.OnlineService.EntityId hero_list_order = 8;
+	bool use_game_handicap_deprecated = 9;
+	uint32 chat_font_size = 10;
+	uint64 achievements_time_last_viewed = 11;
+	repeated .D3.Client.ChannelColorSetting public_channel_colors = 12;
+	string coop_last_game_tag = 13;
+	uint32 social_list_flags = 14;
+	bool show_difficulty_selector = 15;
+	uint32 account_flags = 16;
+	repeated uint64 auto_join_group_chats = 17;
+	repeated uint32 auto_join_channels = 18;
+	uint32 guild_news_filters = 19;
+	uint32 viewed_whats_new_version = 20;
+	uint32 viewed_whats_new_season = 21;
+	uint32 last_known_number_owned_character_slot = 22;
+	uint32 last_known_number_owned_stash_tabs = 23;
+	uint64 enrolled_season_journey_achievementid = 24;
+	uint32 season_journey_season_number = 25;
+	uint32 viewed_anniversary_screen_year = 26;
+}
+message Preferences {
+	enum Flags {
+        UNUSED = 0;
+		SHOW_ITEM_TOOLTIP_ON_DROP = 1;
+		SHOW_MONSTER_HP_BARS = 2;
+		SHOW_PLAYER_HP_BARS = 3;
+		SHOW_ITEMS_ON_GROUND = 6;
+		SHOW_DAMAGE_NUMBERS = 8;
+		SHOW_CRITICALS = 9;
+		SHOW_DEFENSIVE_MESSAGES = 10;
+		INVENTORY_ZOOM = 11;
+		AUTO_EQUIP_ITEMS = 12;
+		SHOW_TUTORIALS = 13;
+		SHOW_BREAD_CRUMB = 14;
+		DISABLE_OS_SHORTCUTS = 17;
+		SHOW_HEAL_NUMBERS = 18;
+		SHOW_PLAYER_NAMES = 19;
+		SHOW_HP_BAR_NUMBERS = 20;
+		SHOW_CLOCK = 21;
+		SHOW_ADVANCED_TOOLTIPS = 22;
+		ELECTIVE_MODE = 23;
+		NOTIFY_FRIEND_ONLINE = 24;
+		NOTIFY_FRIEND_OFFLINE = 25;
+		NOTIFY_FRIEND_REQUEST = 26;
+		NOTIFY_FRIEND_ACHIEVEMENT = 27;
+		NOTIFY_DISPLAY_WINDOW = 28;
+		MATURE_LANGUAGE_FILTER = 29;
+		ALLOW_QUICK_JOIN = 30;
+		ECHO_QUEST_DIALOG_TO_CHAT = 31;
+	}
+	enum Flags2 {
+        UNUSED = 0;
+		USE_COMMAND_AS_CONTROL = 1;
+		USE_COMMAND_CLICK_AS_RIGHT_CLICK = 2;
+		DISABLE_CUTSCENES = 3;
+		NOTIFY_AUCTION_HOUSE_EVENTS = 4;
+		NOTIFY_FRIEND_BROADCAST_DISABLED = 5;
+		DISABLE_WARNING_ON_RARE_SALVAGE_DEPRECATED = 6;
+		SHOW_LOCALPLAYERS_DISABLED = 7;
+		ITEM_TAGS_AS_ICONS = 8;
+		NOTIFY_GUILD_MEMBER_ONLINE_DISABLED = 9;
+		SHOW_ITEM_RARITY_ICONS = 10;
+		NOTIFY_GUILD_ACHIEVEMENT_DISABLED = 11;
+		DISABLE_SHORT_FLOATING_NUMBERS = 12;
+		EQUIPMENT_MANAGER_DROP_TO_STASH = 13;
+	}
+	int32 version = 1;
+	uint32 flags = 2;
+	uint32 items_on_ground_setting = 3;
+	.D3.Client.ActionBinding action_binding_inventory = 4;
+	.D3.Client.ActionBinding action_binding_hireling = 5;
+	.D3.Client.ActionBinding action_binding_skills = 6;
+	.D3.Client.ActionBinding action_binding_quests = 74;
+	.D3.Client.ActionBinding action_binding_lore = 8;
+	.D3.Client.ActionBinding action_binding_social = 9;
+	.D3.Client.ActionBinding action_binding_worldmap = 10;
+	.D3.Client.ActionBinding action_binding_help = 11;
+	.D3.Client.ActionBinding action_binding_recentplayers = 12;
+	.D3.Client.ActionBinding action_binding_chatlobby = 13;
+	.D3.Client.ActionBinding action_binding_achievements = 14;
+	.D3.Client.ActionBinding action_binding_profile = 15;
+	.D3.Client.ActionBinding action_binding_auctionhouse = 16;
+	.D3.Client.ActionBinding action_binding_clear = 17;
+	.D3.Client.ActionBinding action_binding_console = 18;
+	.D3.Client.ActionBinding action_binding_map = 19;
+	.D3.Client.ActionBinding action_binding_skillcycle = 20;
+	.D3.Client.ActionBinding action_binding_togglemonsterhpbars = 21;
+	.D3.Client.ActionBinding action_binding_toggleplayerhpbars = 22;
+	.D3.Client.ActionBinding action_binding_toggledamagenumbers = 23;
+	.D3.Client.ActionBinding action_binding_toggleitemsonground = 24;
+	.D3.Client.ActionBinding action_binding_rewhisper = 25;
+	.D3.Client.ActionBinding action_binding_whisperreply = 26;
+	.D3.Client.ActionBinding action_binding_voiceptt = 27;
+	.D3.Client.ActionBinding action_binding_skill1 = 28;
+	.D3.Client.ActionBinding action_binding_skill2 = 29;
+	.D3.Client.ActionBinding action_binding_skill3 = 30;
+	.D3.Client.ActionBinding action_binding_skill4 = 31;
+	.D3.Client.ActionBinding action_binding_potion = 32;
+	.D3.Client.ActionBinding action_binding_bannerdrop = 33;
+	.D3.Client.ActionBinding action_binding_zoom = 34;
+	.D3.Client.ActionBinding action_binding_emotefollow = 35;
+	.D3.Client.ActionBinding action_binding_emotegive = 36;
+	.D3.Client.ActionBinding action_binding_emotethanks = 37;
+	.D3.Client.ActionBinding action_binding_emotesorry = 38;
+	.D3.Client.ActionBinding action_binding_emotebye = 39;
+	.D3.Client.ActionBinding action_binding_emotedie = 40;
+	.D3.Client.ActionBinding action_binding_emoterun = 41;
+	.D3.Client.ActionBinding action_binding_emotewait = 42;
+	.D3.Client.ActionBinding action_binding_emotego = 43;
+	.D3.Client.ActionBinding action_binding_emotehelp = 44;
+	.D3.Client.ActionBinding action_binding_emoteyes = 45;
+	.D3.Client.ActionBinding action_binding_emoteno = 46;
+	.D3.Client.ActionBinding action_binding_emotestay = 47;
+	.D3.Client.ActionBinding action_binding_emoteattack = 48;
+	.D3.Client.ActionBinding action_binding_emoteretreat = 49;
+	.D3.Client.ActionBinding action_binding_emotehold = 50;
+	.D3.Client.ActionBinding action_binding_emotetakeobjective = 51;
+	.D3.Client.ActionBinding action_binding_emotelaugh = 52;
+	.D3.Client.ActionBinding action_binding_holdposition = 53;
+	.D3.Client.ActionBinding action_binding_systemmastervolumeup = 54;
+	.D3.Client.ActionBinding action_binding_systemmastervolumedown = 55;
+	.D3.Client.ActionBinding action_binding_systemtogglemusic = 56;
+	.D3.Client.ActionBinding action_binding_systemtogglesound = 57;
+	.D3.Client.ActionBinding action_binding_systemscreenshot = 58;
+	.D3.Client.ActionBinding action_binding_stoneofrecall = 59;
+	.D3.Client.ActionBinding action_binding_bannerscreen = 60;
+	.D3.Client.ActionBinding action_binding_lmb = 61;
+	.D3.Client.ActionBinding action_binding_rmb = 62;
+	.D3.Client.ActionBinding action_binding_walk = 63;
+	.D3.Client.ActionBinding action_binding_systemtogglefps = 64;
+	.D3.Client.ActionBinding action_binding_chatpageup = 65;
+	.D3.Client.ActionBinding action_binding_chatpagedown = 66;
+	.D3.Client.ActionBinding action_binding_groups = 67;
+	.D3.Client.ActionBinding action_binding_clan = 68;
+	.D3.Client.ActionBinding action_binding_paragon = 69;
+	.D3.Client.ActionBinding action_binding_chat_next_view = 70;
+	.D3.Client.ActionBinding action_binding_chat_previous_view = 71;
+	.D3.Client.ActionBinding action_binding_leaderboards = 72;
+	.D3.Client.ActionBinding action_binding_chat_reset_fade = 73;
+	.D3.Client.ActionBinding action_binding_store = 75;
+	.D3.Client.ActionBinding action_binding_seasonjourney = 76;
+	.D3.Client.ActionBinding action_binding_show_hidden_buffs = 77;
+	.D3.Client.ActionBinding action_binding_hide_ui = 78;
+	uint32 notify_duration = 100;
+	uint32 keybinding_version = 101;
+	uint32 flags2 = 200;
+}

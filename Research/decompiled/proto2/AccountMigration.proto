@@ -1,0 +1,136 @@
+syntax = "proto2";
+
+package D3.AccountMigration;
+import "Research/decompiled/proto2/Account.proto";
+import "Research/decompiled/proto2/AttributeSerializer.proto";
+import "Research/decompiled/proto2/CS.proto";
+import "Research/decompiled/proto2/Hero.proto";
+import "Research/decompiled/proto2/HeroCommon.proto";
+import "Research/decompiled/proto2/ItemCrafting.proto";
+import "Research/decompiled/proto2/OnlineService.proto";
+import "Research/decompiled/proto2/Profile.proto";
+import "Research/decompiled/proto2/Settings.proto";
+
+message AccountReadData_107 {
+	required uint32 version = 1;
+	required uint32 flags = 2;
+	optional .D3.ItemCrafting.CrafterSavedData deprecated_crafter_normal_data = 3;
+	optional .D3.ItemCrafting.CrafterSavedData deprecated_crafter_hardcore_data = 4;
+	optional .D3.OnlineService.EntityId deprecated_gold_id_normal = 5;
+	optional .D3.OnlineService.EntityId deprecated_gold_id_hardcore = 6;
+	optional uint64 deprecated_accepted_license_bits = 7;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes = 8;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes_hardcore = 9;
+}
+message HeroReadData_107 {
+	required .D3.OnlineService.EntityId hero_id = 1;
+	required sint32 alt_level = 2;
+	required uint32 player_flags = 3;
+	required .D3.AttributeSerializer.SavedAttributes saved_attributes = 4;
+	required .D3.Hero.DigestUI digest_ui = 5;
+	repeated .D3.Hero.QuestHistoryEntry quest_history = 6;
+	required bool deleted = 7;
+	required sint32 level = 8;
+}
+message FallenHeroReadData_107 {
+	required sint32 alt_level = 1;
+}
+message ReadData_107 {
+	required .D3.AccountMigration.AccountReadData_107 account_data = 1;
+	repeated .D3.AccountMigration.HeroReadData_107 heroes_data = 2;
+	repeated .D3.AccountMigration.FallenHeroReadData_107 fallen_heroes_data = 3;
+}
+message AccountWriteData_108 {
+	required uint32 version = 1;
+	required uint32 flags = 2;
+	repeated .D3.Account.AccountPartition partitions = 3;
+	optional .D3.ItemCrafting.CrafterSavedData deprecated_crafter_normal_data = 4;
+	optional .D3.ItemCrafting.CrafterSavedData deprecated_crafter_hardcore_data = 5;
+	optional .D3.OnlineService.EntityId deprecated_gold_id_normal = 6;
+	optional .D3.OnlineService.EntityId deprecated_gold_id_hardcore = 7;
+	optional uint64 deprecated_accepted_license_bits = 8;
+}
+message HeroWriteData_108 {
+	required .D3.OnlineService.EntityId hero_id = 1;
+	required .D3.Hero.DigestUI digest_ui = 2;
+	repeated .D3.Hero.QuestHistoryEntry quest_history = 3;
+	repeated .D3.Hero.QuestRewardHistoryEntry quest_reward_history = 4;
+}
+message AccountProfileSeason0WriteData_108 {
+	optional uint64 highest_hero_level = 9 [default = 0];
+	optional uint32 normal_alt_level = 10 [default = 0];
+	optional uint32 hardcore_alt_level = 11 [default = 0];
+	optional uint64 normal_alt_exp = 12 [default = 0];
+	optional uint64 hardcore_alt_exp = 13 [default = 0];
+}
+message WriteData_108 {
+	required .D3.AccountMigration.AccountWriteData_108 account_data = 1;
+	repeated .D3.AccountMigration.HeroWriteData_108 heroes_data = 2;
+	required .D3.AccountMigration.AccountProfileSeason0WriteData_108 account_profile_data = 3;
+}
+message AccountReadData_108 {
+	required uint32 version = 1;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes = 2;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes_hardcore = 3;
+	optional bytes deprecated_stash_icons_normal = 4;
+	optional bytes deprecated_stash_icons_hardcore = 5;
+	optional .D3.AttributeSerializer.SavedAttributes partition_0_saved_attributes = 6;
+	optional .D3.AttributeSerializer.SavedAttributes partition_1_saved_attributes = 7;
+}
+message HeroReadData_108 {
+	optional .D3.OnlineService.EntityId hero_id = 1;
+	optional string hero_name = 3;
+	optional sfixed32 gbid_class = 4;
+	optional uint32 level = 5;
+	optional uint32 player_flags = 6;
+	optional .D3.Hero.VisualEquipment visual_equipment = 7;
+}
+message ReadData_108 {
+	required .D3.AccountMigration.AccountReadData_108 account_data = 1;
+	repeated .D3.AccountMigration.HeroReadData_108 heroes_data = 2;
+}
+message AccountWriteData_109 {
+	required uint32 version = 1;
+	optional bytes partition_0_stash_icons = 2;
+	optional bytes partition_1_stash_icons = 3;
+	optional .D3.AttributeSerializer.SavedAttributes partition_0_saved_attributes = 4;
+	optional .D3.AttributeSerializer.SavedAttributes partition_1_saved_attributes = 5;
+	optional bytes deprecated_stash_icons_normal = 6;
+	optional bytes deprecated_stash_icons_hardcore = 7;
+}
+message WriteData_109 {
+	required .D3.AccountMigration.AccountWriteData_109 account_data = 1;
+	repeated .D3.Profile.HeroMiniProfile minis = 2;
+}
+message AccountReadData_109 {
+	required uint32 version = 1;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes = 2;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes_hardcore = 3;
+}
+message ReadData_109 {
+	required .D3.AccountMigration.AccountReadData_109 account_data = 1;
+}
+message AccountWriteData_110 {
+	required uint32 version = 1;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes = 2;
+	optional .D3.AttributeSerializer.SavedAttributes saved_attributes_hardcore = 3;
+}
+message WriteData_110 {
+	required .D3.AccountMigration.AccountWriteData_110 account_data = 1;
+}
+message AccountData_114_115 {
+	required .D3.CS.Snapshot snapshot = 1;
+	required uint64 account_update_time = 2;
+}
+message HeroSettingsData_114_115 {
+	required .D3.OnlineService.EntityId hero_id = 1;
+	required .D3.Client.ToonSettings toon_settings = 2;
+}
+message ReadData_114 {
+	required .D3.AccountMigration.AccountData_114_115 account_data = 1;
+	repeated .D3.AccountMigration.HeroSettingsData_114_115 hero_settings_data = 2;
+}
+message WriteData_115 {
+	required .D3.AccountMigration.AccountData_114_115 account_data = 1;
+	repeated .D3.AccountMigration.HeroSettingsData_114_115 hero_settings_data = 2;
+}

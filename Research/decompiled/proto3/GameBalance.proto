@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package D3.GameBalance;
+
+message Handle {
+	sint32 game_balance_type = 1;
+	sfixed32 gbid = 2;
+}
+message BitPackedGbidArray {
+	repeated sfixed32 elements = 1;
+	bytes bitfield = 2;
+	int32 bitfield_leading_null_bytes = 3;
+}
