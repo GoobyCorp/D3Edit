@@ -16,6 +16,10 @@ class Notebook(ttk.Notebook):
         self.scvalues = {}
         self.hcvalues = {}
         self.active_hero = None
+        self.active_hero_data = {}
+        self.active_hero_frame = tk.Frame(self.hero_tab)
+        self.active_hero_frame.grid(column=0, row=1)
+        self.heroframes = None
         self.configure_account_tab()
         self.configure_hero_tab()
         self.populate_sc_data()
@@ -48,12 +52,38 @@ class Notebook(ttk.Notebook):
             self.hcvalues[idstr] = tk.StringVar(value=currency.count)
             ttk.Entry(self.account_tab, textvariable=self.hcvalues[idstr]).grid(column=2, row=(id + 5), sticky='E')
 
+    def generate_hero_frame(self, event=None):
+        if event:
+            self.active_hero_frame.destroy()
+            self.active_hero_frame = tk.Frame(self.hero_tab)
+            self.active_hero_frame.grid(column=0, row=1)
+        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero, values=self.heroes, state='readonly')
+        c.grid(column=1, row=0)
+        c.bind("<<ComboboxSelected>>", self.generate_hero_frame)
+        active_hid = self.active_hero.get().split(" - ")[1]
+        current_hero_data = self.account.heroes[active_hid]
+        self.active_hero_data['name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
+        self.active_hero_data['level'] = tk.StringVar(value=current_hero_data.digest.level)
+        self.active_hero_data['rift'] = tk.StringVar(value=current_hero_data.digest.highest_solo_rift_completed)
+        hnamelabel = ttk.Label(self.active_hero_frame, text="Name")
+        hnameentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['name'])
+        hlevellabel = ttk.Label(self.active_hero_frame, text="Level")
+        hlevelentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['level'])
+        hriftlabel = ttk.Label(self.active_hero_frame, text="Highest Solo Rift")
+        hriftentry = ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data['rift'])
+        hnamelabel.grid(column=0, row=1, sticky='W')
+        hnameentry.grid(column=1, row=1, sticky='W')
+        hlevellabel.grid(column=0, row=2, sticky='W')
+        hlevelentry.grid(column=1, row=2, sticky='W')
+        hriftlabel.grid(column=0, row=3, sticky='W')
+        hriftentry.grid(column=1, row=3, sticky='W')
+        self.active_hero_frame.grid(column=0, row=0, sticky='NEWS')
+
     def configure_hero_tab(self):
-        heroes = ['{1} - {0}'.format(h, d.digest.hero_name) for h, d in self.account.heroes.items()]
-        for hero in heroes:
+        self.heroes = ['{1} - {0}'.format(h, d.digest.hero_name) for h, d in self.account.heroes.items()]
+        for hero in self.heroes:
             if hero.endswith(self.account.last_played_hero_id):
                 self.active_hero = tk.StringVar(value=hero)
             else:
                 self.active_hero = tk.StringVar(value=hero[0])
-        c = ttk.Combobox(self.hero_tab, textvariable=self.active_hero, values=heroes, state='readonly')
-        c.pack()
+        self.generate_hero_frame()
