@@ -19,7 +19,7 @@ assert isfile(join(ASSET_DIR, AFFIXES_FILE)), "%s doesn't exist" % AFFIXES_FILE
 assert isfile(join(ASSET_DIR, CURRENCY_FILE)), "%s doesn't exist" % CURRENCY_FILE
 # load assets
 with open(join(ASSET_DIR, GBIDS_FILE), "r") as f:
-    GBID_LIST = load(f)
+    gbid_list = load(f)
 with open(join(ASSET_DIR, AFFIXES_FILE), "r") as f:
     AFFIX_LIST = load(f)
 with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:

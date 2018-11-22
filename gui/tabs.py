@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from settings import currency_list
+from settings import gbid_list
 
 
 class Notebook(ttk.Notebook):
@@ -130,7 +131,6 @@ class Notebook(ttk.Notebook):
     def loaditemfromsb(self, itemlist, scrollbar, parent):
         index = scrollbar.listbox.curselection()[0]
         item = scrollbar.indexmap[index]
-        print(item)
         self.load_item_frame(item, parent)
 
     def load_item_frame(self, item, parent):
@@ -157,8 +157,14 @@ class ScrollbarItems(ttk.Frame):
         listing.grid(row=0, column=0, sticky='ns')
         curr_index = 0
         for item in options:
-            sq_index = item.square_index
-            listing.insert(curr_index, sq_index)
+            gbid = str(item.generator.gb_handle.gbid)
+            if gbid in gbid_list:
+                label = gbid_list[gbid]['name']
+                if ':' in label:
+                    label = label.split(':')[1]
+            else:
+                label = item.square_index
+            listing.insert(curr_index, label)
             self.indexmap[curr_index] = item
             curr_index = curr_index + 1
         self.listbox = listing
