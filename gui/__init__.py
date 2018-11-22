@@ -76,9 +76,13 @@ class D3Edit(object):
             amount = getattr(self.tabs.hcvalues[str(currency.id)], 'get')
             currency.count = int(amount())
         scplvl = getattr(self.tabs.scvalues['plvl'], 'get')
+        scplvl = int(scplvl())
         hcplvl = getattr(self.tabs.hcvalues['plvl'], 'get')
-        self.account.asd.partitions[0].alt_level = int(scplvl())
-        self.account.asd.partitions[1].alt_level = int(hcplvl())
+        hcplvl = int(hcplvl())
+        self.account.set_attribute(0, (-4093, scplvl))
+        self.account.set_attribute(1, (-4093, hcplvl))
+        self.account.asd.partitions[0].alt_level = scplvl
+        self.account.asd.partitions[1].alt_level = hcplvl
         self.account.commit_account_changes()
         self.destroy_loaded_view()
         self.draw_welcome("Account data saved.")
