@@ -73,6 +73,18 @@ class SaveData(object):
             print("Currency {0} not found on the account, this normally means you need to play and collect "
                   "some currency first.".format(currency_id))
 
+    def set_attribute(self, partition: int, contents: tuple):
+        attributes = self.asd.partitions[partition].saved_attributes.attributes
+        keyfound = False
+        for attribute in attributes:
+            if attribute.key == contents[0]:
+                keyfound = True
+                attribute.value = contents[1]
+        if not keyfound:
+            added_attribute = attributes.add()
+            added_attribute.key = contents[0]
+            added_attribute.value = contents[1]
+
     def commit_account_changes(self, target_file=None):
         # TODO: perhaps automatically backup account.dat
         # serialize and encrypt account file
