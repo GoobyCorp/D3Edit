@@ -25,12 +25,12 @@ class D3Edit(object):
         self.setupframe()
         self.draw_welcome(message)
 
-    def setupframe(self):
+    def setupframe(self, wcoords=None):
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
         self.main_window.minsize(600, 450)
-        if self.wcoords:
-            self.main_window.geometry("+{0}+{1}".format(self.wcoords[0], self.wcoords[1]))
+        if wcoords:
+            self.main_window.geometry("+{0}+{1}".format(wcoords[0], wcoords[1]))
         self.style = ttk.Style(self.main_window)
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
@@ -46,9 +46,9 @@ class D3Edit(object):
         open_file.place(rely=0.5, relx=0.5, anchor='center')
 
     def destroy_loaded_view(self):
-        self.wcoords = (self.main_window.winfo_x(), self.main_window.winfo_y())
+        wcoords = (self.main_window.winfo_x(), self.main_window.winfo_y())
         self.main_window.destroy()
-        self.setupframe()
+        self.setupframe(wcoords)
 
     def openfile(self):
         selected_file = filedialog.askopenfilename(initialdir=".", title="Select account.dat file")
@@ -65,8 +65,9 @@ class D3Edit(object):
         self.tabs = tabs.Notebook(self.main_window, account=self.account)
         if self.account.heroes:
             self.tabs.configure_hero_tab()
-            ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=1, row=99)
-        ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges).grid(column=1, row=99)
+            ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=0, row=99)
+        s = ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges)
+        s.grid(column=1, row=99)
 
     def savechanges(self):
         for currency in self.account.asd.partitions[0].currency_data.currency:
