@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from save_manager import item_handler
 from settings import currency_list
-from settings import gbid_list
 
 
 class Notebook(ttk.Notebook):
@@ -31,7 +30,6 @@ class Notebook(ttk.Notebook):
         self.item_list_frame = None
         self.item_frame = None
         self.configure_account_tab()
-        self.configure_stash_frame()
         self.populate_sc_data()
         self.populate_hc_data()
 
@@ -101,21 +99,23 @@ class Notebook(ttk.Notebook):
             self.active_stash_frame.destroy()
         self.active_stash_frame = ttk.Frame(self.stash_tab, style="TNotebook", borderwidth=0)
         self.active_stash_frame.grid(column=0, row=0)
-        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=['SC', 'HC'], state='readonly')
+        stashvalues = ['SC', 'HC'] + self.heroes
+        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='NW', columnspan=2)
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         if self.active_stash.get() == 'SC':
             try:
-                self.stash_data = self.account.asd.partitions[0].items.ListFields()[0][1]
+                self.stash_data = self.account.asd.partitions[0].items.items
             except IndexError:
                 self.stash_data = None
         elif self.active_stash.get() == 'HC':
             try:
-                self.stash_data = self.account.asd.partitions[1].items.ListFields()[0][1]
+                self.stash_data = self.account.asd.partitions[1].items.items
             except IndexError:
                 self.stash_data = None
         else:
-            assert "incorrect stash selected, stash has to be either SC or HC."
+            hero_id = self.active_stash.get().split(' - ')[1]
+            self.stash_data = self.account.heroes[hero_id].items.items
         if self.stash_data:
             self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
@@ -125,6 +125,7 @@ class Notebook(ttk.Notebook):
         self.item_list_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_list_frame.grid(column=0, row=1, sticky='NESW')
         ttk.Label(self.item_list_frame, text="Item List:").grid(column=0, row=1, sticky='W')
+        parent.columnconfigure(1, weight=1)
         self.decodeditems = item_handler.decode_itemlist(itemlist)
         scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
         scrollbar.grid(column=0, row=2)

@@ -9,6 +9,7 @@ with open('settings.json') as f:
 ASSET_DIR = settings['directories']['ASSET_DIR']
 HERO_DIR = settings['directories']['HERO_DIR']
 GBIDS_FILE = settings['files']['GBIDS_FILE']
+GBID_CAT_FILE = settings['files']['GBID_CAT_FILE']
 AFFIXES_FILE = settings['files']['AFFIXES_FILE']
 CURRENCY_FILE = settings['files']['CURRENCY_FILE']
 SLOTS_FILE = settings['files']['SLOTS_FILE']
@@ -17,6 +18,9 @@ SLOTS_FILE = settings['files']['SLOTS_FILE']
 assert isfile(join(ASSET_DIR, GBIDS_FILE)), "%s doesn't exist" % GBIDS_FILE
 assert isfile(join(ASSET_DIR, AFFIXES_FILE)), "%s doesn't exist" % AFFIXES_FILE
 assert isfile(join(ASSET_DIR, CURRENCY_FILE)), "%s doesn't exist" % CURRENCY_FILE
+assert isfile(join(ASSET_DIR, SLOTS_FILE)), "%s doesn't exist" % SLOTS_FILE
+assert isfile(join(ASSET_DIR, GBID_CAT_FILE)), "%s doesn't exist" % GBID_CAT_FILE
+
 # load assets
 with open(join(ASSET_DIR, GBIDS_FILE), "r") as f:
     gbid_list = load(f)
@@ -26,3 +30,5 @@ with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:
     SLOT_LIST = load(f)
 with open(join(ASSET_DIR, CURRENCY_FILE), "r") as f:
     currency_list = load(f)
+with open(join(ASSET_DIR, GBID_CAT_FILE, "r")) as f:
+    gbid_cat = load(f)
