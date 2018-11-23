@@ -13,7 +13,7 @@ class Notebook(ttk.Notebook):
         self.stash_tab = ttk.Frame(self.tabs, style="TNotebook", borderwidth=0)
         self.tabs.add(self.account_tab, text="Account")
         self.tabs.add(self.hero_tab, text="Heroes")
-        self.tabs.add(self.stash_tab, text="Stash")
+        self.tabs.add(self.stash_tab, text="Stash and Inventories")
         self.tabs.pack(expan=1, fill="both")
         # dictionary holding textvariables for Entry fields
         self.scvalues = {}
