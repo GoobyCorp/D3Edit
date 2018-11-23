@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from save_manager import item_handler
 from settings import currency_list
 from settings import gbid_list
 
@@ -124,47 +125,45 @@ class Notebook(ttk.Notebook):
         self.item_list_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_list_frame.grid(column=0, row=1, sticky='NESW')
         ttk.Label(self.item_list_frame, text="Item List:").grid(column=0, row=1, sticky='W')
-        scrollbar = ScrollbarItems(itemlist, parent=self.item_list_frame)
+        self.decodeditems = item_handler.decode_itemlist(itemlist)
+        scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
         scrollbar.grid(column=0, row=2)
-        scrollbar.listbox.bind('<Double-1>', lambda x: self.loaditemfromsb(itemlist, scrollbar, self.item_list_frame))
+        scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(scrollbar, self.item_list_frame))
 
-    def loaditemfromsb(self, itemlist, scrollbar, parent):
-        index = scrollbar.listbox.curselection()[0]
-        item = scrollbar.indexmap[index]
-        self.load_item_frame(item, parent)
-
-    def load_item_frame(self, item, parent):
+    def load_item_frame(self, scrollbar, parent):
         if self.item_frame:
             self.item_frame.destroy()
+        index = scrollbar.listbox.curselection()[0]
+        entry = scrollbar.indexmap[index]
         self.item_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_frame.grid(row=2, column=1, sticky='NES')
-        ttk.Label(self.item_frame, text=item).grid(sticky='NES')
+        # INSIDE ABOVE FRAME
+        row = 0
+        ttk.Label(self.item_frame, text=entry['name']).grid(row=row, sticky='NWS')
+        for affix in entry['affixes']:
+            row = row + 1
+            ttk.Label(self.item_frame, text=affix['effect']).grid(row=row, sticky='NES')
 
 
 class ScrollbarItems(ttk.Frame):
-    def __init__(self, options, parent=None):
+    def __init__(self, items, parent=None):
         ttk.Frame.__init__(self, parent)
-        self.indexmap = {}
+        self.indexmap = []
         self.parent = parent
-        self.makewidgets(options)
+        self.makewidgets(items)
 
-    def makewidgets(self, options):
+    def makewidgets(self, items):
         sb = tk.Scrollbar(self)
         listing = tk.Listbox(self, relief='sunken')
         sb.config(command=listing.yview)
         listing.config(yscrollcommand=sb.set, height=35)
         sb.grid(row=0, column=1, sticky='ns')
         listing.grid(row=0, column=0, sticky='ns')
-        curr_index = 0
-        for item in options:
-            gbid = str(item.generator.gb_handle.gbid)
-            if gbid in gbid_list:
-                label = gbid_list[gbid]['name']
-                if ':' in label:
-                    label = label.split(':')[1]
-            else:
-                label = item.square_index
+        for item in items:
+            curr_index = len(self.indexmap)
+            label = item['name']
+            if not isinstance(label, str):
+                label = label['name']
             listing.insert(curr_index, label)
-            self.indexmap[curr_index] = item
-            curr_index = curr_index + 1
+            self.indexmap.append(item)
         self.listbox = listing
