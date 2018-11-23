@@ -8,6 +8,6 @@
     "SLOTS_FILE": "slots.json",
     "AFFIXES_FILE": "affixes.json",
     "CURRENCY_FILE": "currencies.json",
-    "GBID_CAT_FILE": "gbids_categorised.json"
+    "GBID_CAT_FILE": "gbidscategorised.json"
   }
 }
