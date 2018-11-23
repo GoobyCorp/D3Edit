@@ -68,6 +68,7 @@ class D3Edit(object):
             ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=0, row=99)
         s = ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges)
         s.grid(column=1, row=99)
+        self.tabs.configure_stash_frame()
 
     def savechanges(self):
         for currency in self.account.asd.partitions[0].currency_data.currency:
