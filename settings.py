@@ -30,5 +30,5 @@ with open(join(ASSET_DIR, SLOTS_FILE), "r") as f:
     SLOT_LIST = load(f)
 with open(join(ASSET_DIR, CURRENCY_FILE), "r") as f:
     currency_list = load(f)
-with open(join(ASSET_DIR, GBID_CAT_FILE, "r")) as f:
+with open(join(ASSET_DIR, GBID_CAT_FILE), "r") as f:
     gbid_cat = load(f)
