@@ -1,6 +1,5 @@
-import Hero_pb2
 from os.path import isfile, isdir, join
-from settings import HERO_DIR, AFFIX_LIST
+from settings import HERO_DIR
 from sys import getsizeof
 from binascii import hexlify as _hexlify
 

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from save_manager import item_handler
 from settings import currency_list
 
 
@@ -12,7 +13,7 @@ class Notebook(ttk.Notebook):
         self.stash_tab = ttk.Frame(self.tabs, style="TNotebook", borderwidth=0)
         self.tabs.add(self.account_tab, text="Account")
         self.tabs.add(self.hero_tab, text="Heroes")
-        self.tabs.add(self.stash_tab, text="Stash")
+        self.tabs.add(self.stash_tab, text="Stash and Inventories")
         self.tabs.pack(expan=1, fill="both")
         # dictionary holding textvariables for Entry fields
         self.scvalues = {}
@@ -29,7 +30,6 @@ class Notebook(ttk.Notebook):
         self.item_list_frame = None
         self.item_frame = None
         self.configure_account_tab()
-        self.configure_stash_frame()
         self.populate_sc_data()
         self.populate_hc_data()
 
@@ -99,21 +99,23 @@ class Notebook(ttk.Notebook):
             self.active_stash_frame.destroy()
         self.active_stash_frame = ttk.Frame(self.stash_tab, style="TNotebook", borderwidth=0)
         self.active_stash_frame.grid(column=0, row=0)
-        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=['SC', 'HC'], state='readonly')
+        stashvalues = ['SC', 'HC'] + self.heroes
+        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='NW', columnspan=2)
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         if self.active_stash.get() == 'SC':
             try:
-                self.stash_data = self.account.asd.partitions[0].items.ListFields()[0][1]
+                self.stash_data = self.account.asd.partitions[0].items.items
             except IndexError:
                 self.stash_data = None
         elif self.active_stash.get() == 'HC':
             try:
-                self.stash_data = self.account.asd.partitions[1].items.ListFields()[0][1]
+                self.stash_data = self.account.asd.partitions[1].items.items
             except IndexError:
                 self.stash_data = None
         else:
-            assert "incorrect stash selected, stash has to be either SC or HC."
+            hero_id = self.active_stash.get().split(' - ')[1]
+            self.stash_data = self.account.heroes[hero_id].items.items
         if self.stash_data:
             self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
@@ -123,42 +125,46 @@ class Notebook(ttk.Notebook):
         self.item_list_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_list_frame.grid(column=0, row=1, sticky='NESW')
         ttk.Label(self.item_list_frame, text="Item List:").grid(column=0, row=1, sticky='W')
-        scrollbar = ScrollbarItems(itemlist, parent=self.item_list_frame)
+        parent.columnconfigure(1, weight=1)
+        self.decodeditems = item_handler.decode_itemlist(itemlist)
+        scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
         scrollbar.grid(column=0, row=2)
-        scrollbar.listbox.bind('<Double-1>', lambda x: self.loaditemfromsb(itemlist, scrollbar, self.item_list_frame))
+        scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(scrollbar, self.item_list_frame))
 
-    def loaditemfromsb(self, itemlist, scrollbar, parent):
-        index = scrollbar.listbox.curselection()[0]
-        item = scrollbar.indexmap[index]
-        print(item)
-        self.load_item_frame(item, parent)
-
-    def load_item_frame(self, item, parent):
+    def load_item_frame(self, scrollbar, parent):
         if self.item_frame:
             self.item_frame.destroy()
+        index = scrollbar.listbox.curselection()[0]
+        entry = scrollbar.indexmap[index]
         self.item_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_frame.grid(row=2, column=1, sticky='NES')
-        ttk.Label(self.item_frame, text=item).grid(sticky='NES')
+        # INSIDE ABOVE FRAME
+        row = 0
+        ttk.Label(self.item_frame, text=entry['name']).grid(row=row, sticky='NWS')
+        for affix in entry['affixes']:
+            row = row + 1
+            ttk.Label(self.item_frame, text=affix['effect']).grid(row=row, sticky='NES')
 
 
 class ScrollbarItems(ttk.Frame):
-    def __init__(self, options, parent=None):
+    def __init__(self, items, parent=None):
         ttk.Frame.__init__(self, parent)
-        self.indexmap = {}
+        self.indexmap = []
         self.parent = parent
-        self.makewidgets(options)
+        self.makewidgets(items)
 
-    def makewidgets(self, options):
+    def makewidgets(self, items):
         sb = tk.Scrollbar(self)
         listing = tk.Listbox(self, relief='sunken')
         sb.config(command=listing.yview)
         listing.config(yscrollcommand=sb.set, height=35)
         sb.grid(row=0, column=1, sticky='ns')
         listing.grid(row=0, column=0, sticky='ns')
-        curr_index = 0
-        for item in options:
-            sq_index = item.square_index
-            listing.insert(curr_index, sq_index)
-            self.indexmap[curr_index] = item
-            curr_index = curr_index + 1
+        for item in items:
+            curr_index = len(self.indexmap)
+            label = item['name']
+            if not isinstance(label, str):
+                label = label['name']
+            listing.insert(curr_index, label)
+            self.indexmap.append(item)
         self.listbox = listing
