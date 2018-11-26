@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-import gui
 import platform
-import save_manager
 from os import getcwd
 from argparse import ArgumentParser
 from settings import currency_list
 
 
 def main():
+    import gui
+    import save_manager
     # parse arguments
     parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")
     parser.add_argument("-i", "--in-file", type=str, help="The save file you want to work with")
@@ -54,9 +54,14 @@ def main():
 
 if __name__ == "__main__":
     venv_platforms = ['Linux', 'Darwin']
+    running_os = platform.system()
     # activate Linux/Darwin venvs:
-    if any(p in platform.system() for p in venv_platforms):
+    if any(p in running_os for p in venv_platforms):
         print("activated linux venv")
         activate_this_file = "{}/venv/bin/activate_this.py".format(getcwd())
+        exec(open(activate_this_file).read(), dict(__file__=activate_this_file))
+    elif running_os == 'Windows':
+        print("Activating Windows venv")
+        activate_this_file = "{}\\winvenv\\Scripts\\activate_this.py".format(getcwd())
         exec(open(activate_this_file).read(), dict(__file__=activate_this_file))
     main()
