@@ -8,7 +8,7 @@ def gbid_to_str(gbid):
     try:
         gbid_return = gbid_list[str(gbid)]
     except KeyError:
-        gbid_return = 'Unknown Item'
+        gbid_return = 'Unknown Item - {}'.format(gbid)
     return gbid_return
 
 
@@ -19,7 +19,7 @@ def affix_to_str(affix):
         if wc and affix_return['effectiveness']:
             affix_return['effect'] = affix_return['effect'].replace(wc.group(0), affix_return['effectiveness'])
     except KeyError:
-        affix_return = {'effect': 'Unknown Affix'}
+        affix_return = {'effect': 'Unknown Affix {}'.format(affix)}
     return affix_return
 
 
