@@ -120,4 +120,5 @@ modifications:
 
 Credits:
 > https://github.com/fry -> Diablo III Protobin Decompiler
+
 > https://github.com/VisualStudio-zz -> Original creator of the python CLI tool.
