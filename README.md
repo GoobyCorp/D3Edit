@@ -1,11 +1,43 @@
-### A script to encrypt/decrypt and modify Diablo III saves
+### A program to encrypt/decrypt and modify Diablo III saves
+Windows Instructions:
+- Run D3Edit.bat
 
+Linux/MacOS instructions:
+- Make sure Python3 is installed.
+- Run D3Edit.py with python3.
+
+`python3 D3Edit.py`
+
+Currently supported:
+
+- Currency edition.
+- Hero and account edition: Hero level, Paragon level, Highest GR completed...
+- Stash and Hero inventory viewing.
+
+In development:
+----
+
+- Item edition.
+- Item generation.
+- Seasonal character creation
+
+Help needed:
+----
+Help needed identifying the missing items and affixes.
+If you find a missing item please report back.
+
+No access to seasonal saves. A save with a seasonal character would help us reverse engineer how seasonal characters 
+are defined. We already have a pretty good idea but don't want to waste time changing things that may not work.
+
+CLI Options:
+----
 This script is a WIP for modifying Xbox One, PS4, and Switch saves for Diablo III
 
+The -c option will have it run on CLI mode instead of GUI (limited functionality).
 
-An example of how to mod gold would work like this (this is the only thing implemented ATM):
+An example of how to mod gold would work like this:
 
-`python D3Edit.py -i account.dat -o account_mod.dat -s 0 --gold 999999999`
+`python D3Edit.py -c -i account.dat -o account_mod.dat -s 0 --gold 999999999`
 
 ```
 usage: D3Edit.py [-h] -i IN_FILE [-o OUT_FILE] [-s SLOT]
