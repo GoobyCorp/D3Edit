@@ -3,6 +3,7 @@ from pb2_resources import Hero_pb2, Account_pb2
 import glob
 from os.path import dirname, basename
 from save_manager import save_handler
+from save_manager import item_handler
 from settings import currency_list
 from struct import pack
 
@@ -19,7 +20,7 @@ class SaveData(object):
         self.account_dec = save_handler.decrypt_save(self.account_enc)
         # load saved definition
         self.asd = Account_pb2.SavedDefinition()
-        # parse decrypted save definitions TODO: Should this be done here?
+        # parse decrypted save definitions
         self.asd.ParseFromString(self.account_dec)
         # load currency information
         self.currency_names = self.load_currencies()
@@ -99,7 +100,7 @@ class SaveData(object):
         if hid.startswith('modded_'):
             target_file = "{0}/heroes/{1}.dat".format(self.save_folder, hid)
         else:
-            target_file = "{0}/heroes/modded_{1}.dat".format(self.save_folder, hid)
+            target_file = "{0}/heroes/{1}.dat".format(self.save_folder, hid)
         hero_mod_dec = self.heroes[hid].SerializeToString()
         hero_mod_enc = save_handler.encrypt_save(hero_mod_dec)
         save_handler.commit_to_file(hero_mod_enc, target_file)
