@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
-import save_manager
 import gui
+import platform
+import save_manager
+from os import getcwd
 from argparse import ArgumentParser
 from settings import currency_list
 
 
-if __name__ == "__main__":
+def main():
     # parse arguments
     parser = ArgumentParser(description="A script to encrypt/decrypt and modify Diablo III saves")
     parser.add_argument("-i", "--in-file", type=str, help="The save file you want to work with")
@@ -46,7 +48,15 @@ if __name__ == "__main__":
                 pass
             if amount:
                 account.set_currency(id, amount)
-
-
     # This should be the only write we do, a final commit_all_changes().
     account.commit_account_changes()
+
+
+if __name__ == "__main__":
+    venv_platforms = ['Linux', 'Darwin']
+    # activate Linux/Darwin venvs:
+    if any(p in platform.system() for p in venv_platforms):
+        print("activated linux venv")
+        activate_this_file = "{}/venv/bin/activate_this.py".format(getcwd())
+        exec(open(activate_this_file).read(), dict(__file__=activate_this_file))
+    main()
