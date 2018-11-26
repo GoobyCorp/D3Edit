@@ -5,6 +5,9 @@ from os.path import isfile, join
 with open('settings.json') as f:
     settings = load(f)
 
+# define affix regexes to insert effect values.
+affix_regexes = '(?P<wc>X-X|^X | X$)'
+
 # apply settings
 ASSET_DIR = settings['directories']['ASSET_DIR']
 HERO_DIR = settings['directories']['HERO_DIR']

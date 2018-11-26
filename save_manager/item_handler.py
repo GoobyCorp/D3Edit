@@ -1,5 +1,7 @@
+import re
 from settings import gbid_list
 from settings import affixes_list
+from settings import affix_regexes
 
 
 def gbid_to_str(gbid):
@@ -13,6 +15,9 @@ def gbid_to_str(gbid):
 def affix_to_str(affix):
     try:
         affix_return = affixes_list[str(affix)]
+        wc = re.search(affix_regexes, affix_return['effect'])
+        if wc and affix_return['effectiveness']:
+            affix_return['effect'] = affix_return['effect'].replace(wc.group(0), affix_return['effectiveness'])
     except KeyError:
         affix_return = {'effect': 'Unknown Affix'}
     return affix_return
