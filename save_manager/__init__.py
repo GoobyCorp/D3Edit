@@ -1,5 +1,4 @@
-import Account_pb2
-import Hero_pb2
+from pb2_resources import Hero_pb2, Account_pb2
 
 import glob
 from os.path import dirname, basename

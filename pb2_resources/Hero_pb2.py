@@ -11,15 +11,9 @@ from google.protobuf import symbol_database as _symbol_database
 
 _sym_db = _symbol_database.Default()
 
-
-import AttributeSerializer_pb2 as AttributeSerializer__pb2
-import Hireling_pb2 as Hireling__pb2
-import Items_pb2 as Items__pb2
-import OnlineService_pb2 as OnlineService__pb2
-import HeroCommon_pb2 as HeroCommon__pb2
-import Profile_pb2 as Profile__pb2
-import GameBalance_pb2 as GameBalance__pb2
-
+from pb2_resources import AttributeSerializer_pb2 as AttributeSerializer__pb2, HeroCommon_pb2 as HeroCommon__pb2, \
+    GameBalance_pb2 as GameBalance__pb2, OnlineService_pb2 as OnlineService__pb2, Profile_pb2 as Profile__pb2, \
+    Items_pb2 as Items__pb2, Hireling_pb2 as Hireling__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='Hero.proto',

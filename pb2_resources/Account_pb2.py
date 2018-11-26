@@ -11,16 +11,10 @@ from google.protobuf import symbol_database as _symbol_database
 
 _sym_db = _symbol_database.Default()
 
-
-import AttributeSerializer_pb2 as AttributeSerializer__pb2
-import Achievements_pb2 as Achievements__pb2
-import Items_pb2 as Items__pb2
-import OnlineService_pb2 as OnlineService__pb2
-import ItemCrafting_pb2 as ItemCrafting__pb2
-import CosmeticItems_pb2 as CosmeticItems__pb2
-import GameBalance_pb2 as GameBalance__pb2
-import ChallengeRifts_pb2 as ChallengeRifts__pb2
-
+from pb2_resources import AttributeSerializer_pb2 as AttributeSerializer__pb2, GameBalance_pb2 as GameBalance__pb2, \
+    OnlineService_pb2 as OnlineService__pb2, ItemCrafting_pb2 as ItemCrafting__pb2, Items_pb2 as Items__pb2, \
+    ChallengeRifts_pb2 as ChallengeRifts__pb2, CosmeticItems_pb2 as CosmeticItems__pb2, \
+    Achievements_pb2 as Achievements__pb2
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='Account.proto',
