@@ -9,6 +9,7 @@ class Notebook(ttk.Notebook):
         self.account = account
         self.tabs = ttk.Notebook(parent)
         self.account_tab = ttk.Frame(self.tabs, style="TNotebook", borderwidth=0)
+        self.account_frame = ttk.Frame(self.account_tab, style="TNotebook", borderwidth=0)
         self.hero_tab = ttk.Frame(self.tabs, style="TNotebook", borderwidth=0)
         self.stash_tab = ttk.Frame(self.tabs, style="TNotebook", borderwidth=0)
         self.tabs.add(self.account_tab, text="Account")
@@ -16,8 +17,7 @@ class Notebook(ttk.Notebook):
         self.tabs.add(self.stash_tab, text="Stash and Inventories")
         self.tabs.pack(expan=1, fill="both")
         # dictionary holding textvariables for Entry fields
-        self.scvalues = {}
-        self.hcvalues = {}
+        self.part_textvars = {}
         self.heroes = None
         self.active_hid = None
         self.active_hero_name = "No - Hero"
@@ -29,36 +29,53 @@ class Notebook(ttk.Notebook):
         self.stash_data = None
         self.item_list_frame = None
         self.item_frame = None
+        self.active_partition = tk.StringVar(value="Non Season")
         self.configure_account_tab()
-        self.populate_sc_data()
-        self.populate_hc_data()
 
     def configure_account_tab(self):
-        ttk.Label(self.account_tab, text="Softcore").grid(column=1, row=0, sticky='E', padx=128)
-        ttk.Label(self.account_tab, text="Hardcore").grid(column=2, row=0, sticky='W')
-        ttk.Label(self.account_tab, text="Paragon Level").grid(column=0, row=1, sticky='W')
-        for id, currency in currency_list.items():
-            ttk.Label(self.account_tab, text=currency).grid(column=0, row=(int(id) + 5), sticky='W')
+        for partition in self.account.asd.partitions:
+            self.get_partition_data(partition)
+        copt = ['Non Season', 'Season']
+        c = ttk.Combobox(self.account_tab, textvariable=self.active_partition,
+                         values=copt, state='readonly')
+        c.grid(column=1, row=0)
+        c.bind("<<ComboboxSelected>>", self.populate_account_frame)
+        self.populate_account_frame()
 
-    def populate_sc_data(self):
-        self.scvalues['plvl'] = tk.StringVar(value=self.account.asd.partitions[0].alt_level)
-        ttk.Entry(self.account_tab, textvariable=self.scvalues['plvl']).grid(column=1, row=1, sticky='E')
-        sccurrency = self.account.asd.partitions[0].currency_data.currency
-        for currency in sccurrency:
-            id = currency.id
-            idstr = str(currency.id)
-            self.scvalues[idstr] = tk.StringVar(value=currency.count)
-            ttk.Entry(self.account_tab, textvariable=self.scvalues[idstr]).grid(column=1, row=(id + 5), sticky='E')
+    def populate_account_frame(self, event=None):
+        if event:
+            self.account_frame.destroy()
+            self.account_frame = ttk.Frame(self.account_tab, style="TNotebook", borderwidth=0)
+        self.account_frame.grid(column=1, row=1)
+        ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1, sticky='E', padx=128)
+        ttk.Label(self.account_frame, text="Hardcore").grid(column=2, row=1, sticky='W')
+        ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=1, sticky='W')
+        for ids, currency in currency_list.items():
+            ttk.Label(self.account_frame, text=currency).grid(column=0, row=(int(ids) + 5), sticky='W')
+        offset = 0
+        if self.active_partition.get() == "Season":
+            offset = 2
+        for m in (0, 1):
+            coffset = str(offset + m)
+            column = (1 + m)
+            cp = self.part_textvars[coffset]
+            ttk.Entry(self.account_frame, textvariable=cp['plvl']).grid(column=column, row=1, sticky='E')
+            cc = cp['currencies']
+            for ids in cc.keys():
+                idi = int(ids)
+                ttk.Entry(self.account_frame, textvariable=cc[ids]).grid(column=column, row=(idi + 5), sticky='E')
 
-    def populate_hc_data(self):
-        self.hcvalues['plvl'] = tk.StringVar(value=self.account.asd.partitions[1].alt_level)
-        ttk.Entry(self.account_tab, textvariable=self.hcvalues['plvl']).grid(column=2, row=1, sticky='E')
-        hccurrency = self.account.asd.partitions[1].currency_data.currency
-        for currency in hccurrency:
-            id = currency.id
-            idstr = str(currency.id)
-            self.hcvalues[idstr] = tk.StringVar(value=currency.count)
-            ttk.Entry(self.account_tab, textvariable=self.hcvalues[idstr]).grid(column=2, row=(id + 5), sticky='E')
+    def get_partition_data(self, partition):
+        partition_id = str(partition.partition_id)
+        self.part_textvars[partition_id] = {}
+        current_partition = self.part_textvars[partition_id]
+        current_partition['plvl'] = tk.StringVar(value=partition.alt_level)
+        current_clist = current_partition['currencies'] = {}
+        pcurrency_list = partition.currency_data.currency
+        for currency in pcurrency_list:
+            ids = currency.id
+            idstr = str(ids)
+            current_clist[idstr] = tk.StringVar(value=currency.count)
 
     def load_hero_frame(self, event=None):
         if event:

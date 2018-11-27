@@ -66,26 +66,24 @@ class D3Edit(object):
         if self.account.heroes:
             self.tabs.configure_hero_tab()
             ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=0, row=99)
-        s = ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.savechanges)
+        s = ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.save_account)
         s.grid(column=1, row=99)
         self.tabs.configure_stash_frame()
 
-    def savechanges(self):
-        for currency in self.account.asd.partitions[0].currency_data.currency:
-            amount = getattr(self.tabs.scvalues[str(currency.id)], 'get')
-            currency.count = int(amount())
-        for currency in self.account.asd.partitions[1].currency_data.currency:
-            amount = getattr(self.tabs.hcvalues[str(currency.id)], 'get')
-            currency.count = int(amount())
-        scplvl = getattr(self.tabs.scvalues['plvl'], 'get')
-        scplvl = int(scplvl())
-        hcplvl = getattr(self.tabs.hcvalues['plvl'], 'get')
-        hcplvl = int(hcplvl())
-        self.account.set_attribute(0, (-4093, scplvl))
-        self.account.set_attribute(1, (-4093, hcplvl))
-        self.account.asd.partitions[0].alt_level = scplvl
-        self.account.asd.partitions[1].alt_level = hcplvl
+    def save_account(self):
+        for partition, data in self.tabs.part_textvars.items():
+            partition = int(partition)
+            plvl = getattr(data['plvl'], 'get')
+            plvl = int(plvl())
+            plvl_touple = (plvl, -4093)
+            self.account.set_attribute(partition, plvl_touple)
+            self.account.asd.partitions[partition].alt_level = plvl
+            pcurrencies = self.account.asd.partitions[partition].currency_data.currency
+            for currency in pcurrencies:
+                amount = int(getattr(data['currencies'][str(currency.id)], 'get')())
+                currency.count = amount
         self.account.commit_account_changes()
+        # TODO: change this to just a toast confirming saved changes.
         self.destroy_loaded_view()
         self.draw_welcome("Account data saved.")
 
