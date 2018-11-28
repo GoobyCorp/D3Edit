@@ -95,6 +95,16 @@ class D3Edit(object):
         self.account.heroes[hid].digest.hero_name = name()
         self.account.heroes[hid].digest.level = int(level())
         self.account.heroes[hid].digest.highest_solo_rift_completed = int(rift())
+        attrs = self.account.heroes[hid].saved_attributes.attributes
+        at_found = False
+        for at in attrs:
+            if at.key == -4016:
+                at.value = int(level())
+                at_found = True
+        if not at_found:
+            newat = attrs.add()
+            newat.key = -4016
+            newat.value = int(level())
         saved = self.account.commit_hero_changes(hid)
         self.tabs.hero_tab_message("Hero saved as: {}".format(saved.split('/')[-1]))
 
