@@ -75,13 +75,23 @@ class D3Edit(object):
             partition = int(partition)
             plvl = getattr(data['plvl'], 'get')
             plvl = int(plvl())
-            plvl_touple = (plvl, -4093)
+            plvl_touple = (-4093, plvl)
+
+            # Saving corrupted saves...
+            attrlist = {}
+            for attr in self.account.asd.partitions[partition].saved_attributes.attributes:
+                if not attr.value == -4093:
+                    attrlist[str(attr.key)] = attr.value
+            self.account.asd.partitions[partition].saved_attributes.Clear()
+            for attr, value in attrlist.items():
+                self.account.set_attribute(partition, (int(attr), int(value)))
             self.account.set_attribute(partition, plvl_touple)
             self.account.asd.partitions[partition].alt_level = plvl
             pcurrencies = self.account.asd.partitions[partition].currency_data.currency
             for currency in pcurrencies:
                 amount = int(getattr(data['currencies'][str(currency.id)], 'get')())
                 currency.count = amount
+
         self.account.commit_account_changes()
         # TODO: change this to just a toast confirming saved changes.
         self.destroy_loaded_view()
