@@ -1,12 +1,7 @@
 ### A program to encrypt/decrypt and modify Diablo III saves
-Windows Instructions:
-- Run D3Edit.bat
-
-Linux/MacOS instructions:
+Instructions:
 - Make sure Python3 is installed.
 - Run D3Edit.py with python3.
-
-`python3 D3Edit.py`
 
 Currently supported:
 
