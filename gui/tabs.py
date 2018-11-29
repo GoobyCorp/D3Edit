@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from save_manager import item_handler
-from settings import currency_list
+from save_manager import item_handler, save_handler
+from settings import currency_list, affix_simple
 
 
 class Notebook(ttk.Notebook):
@@ -25,7 +25,7 @@ class Notebook(ttk.Notebook):
         self.active_hero_frame = ttk.Frame(self.hero_tab, style="TNotebook", borderwidth=0)
         self.heroframes = None
         self.active_stash_frame = None
-        self.active_stash = tk.StringVar(value='SC')
+        self.active_stash = tk.StringVar(value='SC - Non Season')
         self.stash_data = None
         self.item_list_frame = None
         self.item_frame = None
@@ -116,18 +116,29 @@ class Notebook(ttk.Notebook):
             self.active_stash_frame.destroy()
         self.active_stash_frame = ttk.Frame(self.stash_tab, style="TNotebook", borderwidth=0)
         self.active_stash_frame.grid(column=0, row=0)
-        stashvalues = ['SC', 'HC'] + self.heroes
+        stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='NW', columnspan=2)
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
-        if self.active_stash.get() == 'SC':
+        active_stash = self.active_stash.get()
+        if active_stash == 'SC - Non Season':
             try:
                 self.stash_data = self.account.asd.partitions[0].items.items
             except IndexError:
                 self.stash_data = None
-        elif self.active_stash.get() == 'HC':
+        elif active_stash == 'HC - Non Season':
             try:
                 self.stash_data = self.account.asd.partitions[1].items.items
+            except IndexError:
+                self.stash_data = None
+        elif active_stash == 'SC - Season':
+            try:
+                self.stash_data = self.account.asd.partitions[2].items.items
+            except IndexError:
+                self.stash_data = None
+        elif active_stash == 'HC - Season':
+            try:
+                self.stash_data = self.account.asd.partitions[3].items.items
             except IndexError:
                 self.stash_data = None
         else:
@@ -151,16 +162,70 @@ class Notebook(ttk.Notebook):
     def load_item_frame(self, scrollbar, parent):
         if self.item_frame:
             self.item_frame.destroy()
-        index = scrollbar.listbox.curselection()[0]
-        entry = scrollbar.indexmap[index]
+        self.index = scrollbar.listbox.curselection()[0]
+        self.entry = scrollbar.indexmap[self.index]
         self.item_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
         self.item_frame.grid(row=2, column=1, sticky='NES')
         # INSIDE ABOVE FRAME
         row = 0
-        ttk.Label(self.item_frame, text=entry['name']).grid(row=row, sticky='NWS')
-        for affix in entry['affixes']:
+        ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
+        valid_values = affix_simple
+
+        try:
+            enchanted = self.entry['enchanted']
+        except KeyError:
+            enchanted = False
+        for affix, description in self.entry['affixes']:
             row = row + 1
-            ttk.Label(self.item_frame, text=affix['effect']).grid(row=row, sticky='NES')
+            if enchanted:
+                try:
+                    del valid_values[enchanted[0][0]]
+                except:
+                    pass
+                if affix == enchanted[0][0]:
+                    ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=row, sticky='NES')
+                    affix = enchanted[0][1]
+                    description = enchanted[1]
+            c = ttk.Combobox(self.item_frame, textvariable=description, values=list(valid_values.values()), state='readonly')
+            c.grid(row=row)
+            c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x))
+        sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
+        sb.grid(column=0, row=99)
+
+    def set_item_affixes(self, event):
+        affix_changing = int(event.widget.grid_info()['row']) - 1
+        prev_affix = self.entry['affixes'][affix_changing][0]
+        try:
+            rerolled_affix = self.entry['enchanted'][0][0]
+            rerolled_into = self.entry['enchanted'][0][1]
+        except KeyError:
+            rerolled_affix = False
+        enchanted_affix = False
+        if prev_affix == rerolled_affix:
+            enchanted_affix = True
+            new_val = self.entry['enchanted'][1].get()
+        else:
+            new_val = self.entry['affixes'][affix_changing][1].get()
+        new_id = affix_simple.inverse[new_val]
+        if isinstance(new_id, list):
+            new_id = new_id[0]
+        new_id = int(new_id)
+        if enchanted_affix:
+            self.entry['item'].generator.enchanted_affix_new = new_id
+        else:
+            self.entry['item'].generator.base_affixes[affix_changing] = new_id
+
+    def saveitem(self):
+        self.stash_data[self.index].CopyFrom(self.entry['item'])
+        active_stash = self.active_stash.get()
+        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
+        if active_stash in account_stash:
+            self.account.commit_account_changes()
+        else:
+            hero_id = self.active_stash.get().split(' - ')[1]
+            self.account.commit_hero_changes(hero_id)
+        message_label = ttk.Label(self.item_frame, text="Item Saved!", style="TLabel")
+        message_label.grid(column=0, row=98, sticky='NEW')
 
 
 class ScrollbarItems(ttk.Frame):
@@ -182,6 +247,8 @@ class ScrollbarItems(ttk.Frame):
             label = item['name']
             if not isinstance(label, str):
                 label = label['name']
+            if ": " in label:
+                label = label.split(": ")[1]
             listing.insert(curr_index, label)
             self.indexmap.append(item)
         self.listbox = listing
