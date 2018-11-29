@@ -35,6 +35,7 @@ class D3Edit(object):
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
         self.style.configure("TNotebook", background="white")
+        self.style.configure('TCombobox', postoffset=(0,0,400,0))
 
     def draw_welcome(self, message=None):
         if not message:

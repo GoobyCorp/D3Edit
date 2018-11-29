@@ -2,6 +2,7 @@ import re
 from settings import gbid_list
 from settings import affixes_list
 from settings import affix_regexes
+import tkinter as tk
 
 
 def gbid_to_str(gbid):
@@ -24,6 +25,7 @@ def affix_to_str(affix):
 
 
 def decode_single_item(item):
+    enchanted = False
     decoded_item = {}
     gbid = str(item.generator.gb_handle.gbid)
     decoded_gbid = gbid_to_str(gbid)
@@ -33,8 +35,24 @@ def decode_single_item(item):
     else:
         decoded_item['name'] = decoded_gbid
         decoded_item['category'] = 'Unknown Category'
-    decoded_item['affixes'] = [affix_to_str(affix) for affix in item.generator.base_affixes]
+    decoded_item['affixes'] = []
+
+    try:
+        enchanted = (int(item.generator.enchanted_affix_old), int(item.generator.enchanted_affix_new))
+        if enchanted[0] == -1:
+            enchanted = False
+    except AttributeError:
+        pass
+
+    for affix in item.generator.base_affixes:
+        desc = tk.StringVar(value=affix_to_str(affix)['effect'])
+        decoded_item['affixes'].append((affix, desc))
+
     decoded_item['item'] = item
+    if enchanted:
+        decoded_item['enchanted'] = []
+        decoded_item['enchanted'].append(enchanted)
+        decoded_item['enchanted'].append(tk.StringVar(value=affix_to_str(enchanted[1])['effect']))
     return decoded_item
 
 
@@ -42,5 +60,5 @@ def decode_itemlist(itemlist):
     item_out = []
     for item in itemlist:
         item_out.append(decode_single_item(item))
-
     return item_out
+
