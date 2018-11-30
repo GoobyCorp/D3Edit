@@ -67,3 +67,8 @@ def get_affix_from_effect(effect_simple):
 def get_affix_all():
     query = "SELECT * FROM affixes"
     return instance_and_run(query)
+
+
+def get_currency_list():
+    query = "SELECT * FROM currencies"
+    return instance_and_run(query)

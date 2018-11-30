@@ -1,11 +1,14 @@
 from pb2_resources import Hero_pb2, Account_pb2
 
+import db
 import glob
 from os.path import dirname, basename
 from save_manager import save_handler
 from save_manager import item_handler
-from settings import currency_list
 from struct import pack
+
+
+currency_list = {str(k): v for (k, v) in db.get_currency_list()}
 
 
 class SaveData(object):

@@ -1,9 +1,10 @@
+import db
 import tkinter as tk
 from tkinter import ttk
-from save_manager import item_handler, save_handler
-from settings import currency_list, affix_simple
+from save_manager import item_handler
 
 
+# noinspection PyAttributeOutsideInit
 class Notebook(ttk.Notebook):
     def __init__(self, parent, account):
         self.account = account
@@ -50,7 +51,8 @@ class Notebook(ttk.Notebook):
         ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1, sticky='E', padx=128)
         ttk.Label(self.account_frame, text="Hardcore").grid(column=2, row=1, sticky='W')
         ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=1, sticky='W')
-        for ids, currency in currency_list.items():
+        currency_list = db.get_currency_list()
+        for ids, currency in currency_list:
             ttk.Label(self.account_frame, text=currency).grid(column=0, row=(int(ids) + 5), sticky='W')
         offset = 0
         if self.active_partition.get() == "Season":
@@ -86,6 +88,7 @@ class Notebook(ttk.Notebook):
                          values=self.heroes, state='readonly')
         c.grid(column=1, row=0)
         c.bind("<<ComboboxSelected>>", self.load_hero_frame)
+        # noinspection PyUnresolvedReferences
         self.active_hid = self.active_hero_name.get().split(" - ")[1]
         current_hero_data = self.account.heroes[self.active_hid]
         self.active_hero_data['Name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
@@ -111,6 +114,7 @@ class Notebook(ttk.Notebook):
     def hero_tab_message(self, message):
         ttk.Label(self.active_hero_frame, text=message).grid(column=1, row=98)
 
+    # noinspection PyUnusedLocal
     def configure_stash_frame(self, event=None):
         if self.active_stash_frame:
             self.active_stash_frame.destroy()
@@ -169,7 +173,8 @@ class Notebook(ttk.Notebook):
         # INSIDE ABOVE FRAME
         row = 0
         ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
-        valid_values = affix_simple
+        # TODO: affix list sanitization
+        valid_values = [x[3] for x in db.get_affix_all()]
 
         try:
             enchanted = self.entry['enchanted']
@@ -178,15 +183,14 @@ class Notebook(ttk.Notebook):
         for affix, description in self.entry['affixes']:
             row = row + 1
             if enchanted:
-                try:
-                    del valid_values[enchanted[0][0]]
-                except:
-                    pass
+                # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
                     ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=row, sticky='NES')
-                    affix = enchanted[0][1]
+                    # noinspection PyUnresolvedReferences
+                    # affix = enchanted[0][1]
+                    # noinspection PyUnresolvedReferences
                     description = enchanted[1]
-            c = ttk.Combobox(self.item_frame, textvariable=description, values=list(valid_values.values()), state='readonly')
+            c = ttk.Combobox(self.item_frame, textvariable=description, values=valid_values, state='readonly')
             c.grid(row=row)
             c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x))
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
@@ -197,7 +201,7 @@ class Notebook(ttk.Notebook):
         prev_affix = self.entry['affixes'][affix_changing][0]
         try:
             rerolled_affix = self.entry['enchanted'][0][0]
-            rerolled_into = self.entry['enchanted'][0][1]
+            # rerolled_into = self.entry['enchanted'][0][1]
         except KeyError:
             rerolled_affix = False
         enchanted_affix = False
@@ -206,10 +210,8 @@ class Notebook(ttk.Notebook):
             new_val = self.entry['enchanted'][1].get()
         else:
             new_val = self.entry['affixes'][affix_changing][1].get()
-        new_id = affix_simple.inverse[new_val]
-        if isinstance(new_id, list):
-            new_id = new_id[0]
-        new_id = int(new_id)
+        new_val_ids = [x[0] for x in db.get_affix_from_effect(new_val)]
+        new_id = new_val_ids[0]
         if enchanted_affix:
             self.entry['item'].generator.enchanted_affix_new = new_id
         else:
@@ -228,6 +230,7 @@ class Notebook(ttk.Notebook):
         message_label.grid(column=0, row=98, sticky='NEW')
 
 
+# noinspection PyAttributeOutsideInit
 class ScrollbarItems(ttk.Frame):
     def __init__(self, items, parent=None):
         ttk.Frame.__init__(self, parent)
