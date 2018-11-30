@@ -1,10 +1,10 @@
 from os.path import isfile, isdir, join
-from settings import HERO_DIR
 from sys import getsizeof
 from binascii import hexlify as _hexlify
 
 XOR_KEY = 0x305F92D82EC9A01B
 BYTE_MAX_VALUE = 255
+HERO_DIR = 'heroes'
 
 
 def truncate(num: int, boundary: int, signed: bool, endian: str = "little") -> int:

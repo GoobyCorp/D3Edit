@@ -1,12 +1,11 @@
 import db
-from settings import gbid_list
 import tkinter as tk
 
 
-def gbid_to_str(gbid):
+def gbid_get(gbid):
     try:
-        gbid_return = gbid_list[str(gbid)]
-    except KeyError:
+        gbid_return = db.get_item_from_gbid(gbid)[0]
+    except IndexError:
         gbid_return = 'Unknown Item - {}'.format(gbid)
     return gbid_return
 
@@ -23,10 +22,11 @@ def decode_single_item(item):
     enchanted = False
     decoded_item = {}
     gbid = str(item.generator.gb_handle.gbid)
-    decoded_gbid = gbid_to_str(gbid)
-    if isinstance(decoded_gbid, dict):
-        decoded_item['name'] = decoded_gbid['name']
-        decoded_item['category'] = decoded_gbid['category']
+    decoded_gbid = gbid_get(gbid)
+    if isinstance(decoded_gbid, tuple):
+        decoded_item['name'] = decoded_gbid[1]
+        decoded_item['category'] = decoded_gbid[2]
+        decoded_item['stackable'] = decoded_gbid[3]
     else:
         decoded_item['name'] = decoded_gbid
         decoded_item['category'] = 'Unknown Category'

@@ -1,5 +1,5 @@
 import sqlite3
-from settings import dbfile
+dbfile = 'db/local.db'
 
 
 class Database(object):
@@ -71,4 +71,9 @@ def get_affix_all():
 
 def get_currency_list():
     query = "SELECT * FROM currencies"
+    return instance_and_run(query)
+
+
+def get_item_from_gbid(gbid):
+    query = "SELECT * FROM items where gbid = '{}'".format(gbid)
     return instance_and_run(query)
