@@ -1,7 +1,5 @@
-import re
+import db
 from settings import gbid_list
-from settings import affixes_list
-from settings import affix_regexes
 import tkinter as tk
 
 
@@ -15,12 +13,9 @@ def gbid_to_str(gbid):
 
 def affix_to_str(affix):
     try:
-        affix_return = affixes_list[str(affix)]
-        wc = re.search(affix_regexes, affix_return['effect'])
-        if wc and affix_return['effectiveness']:
-            affix_return['effect'] = affix_return['effect'].replace(wc.group(0), affix_return['effectiveness'])
-    except KeyError:
-        affix_return = {'effect': 'Unknown Affix {}'.format(affix)}
+        affix_return = db.get_affix_from_id(affix)[0][3]
+    except IndexError:
+        affix_return = 'Unknown Affix {}'.format(affix)
     return affix_return
 
 
@@ -45,14 +40,14 @@ def decode_single_item(item):
         pass
 
     for affix in item.generator.base_affixes:
-        desc = tk.StringVar(value=affix_to_str(affix)['effect'])
+        desc = tk.StringVar(value=affix_to_str(affix))
         decoded_item['affixes'].append((affix, desc))
 
     decoded_item['item'] = item
     if enchanted:
         decoded_item['enchanted'] = []
         decoded_item['enchanted'].append(enchanted)
-        decoded_item['enchanted'].append(tk.StringVar(value=affix_to_str(enchanted[1])['effect']))
+        decoded_item['enchanted'].append(tk.StringVar(value=affix_to_str(enchanted[1])))
     return decoded_item
 
 
