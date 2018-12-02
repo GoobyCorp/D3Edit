@@ -175,7 +175,12 @@ class Notebook(ttk.Notebook):
         ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
         # TODO: affix list sanitization
         valid_values = [x[3] for x in db.get_affix_all()]
-
+        category = self.entry['category']
+        quality = self.entry['item'].generator.item_quality_level
+        if (category == 'Gems') and (quality == 9):
+            row = row + 1
+            ttk.Label(self.item_frame, text="Legendary Gem Level: ").grid(column=0, row=row)
+            ttk.Entry(self.item_frame, textvariable=self.entry['jewel_rank']).grid(column=1, row=row)
         try:
             enchanted = self.entry['enchanted']
         except KeyError:
@@ -190,7 +195,7 @@ class Notebook(ttk.Notebook):
                     # affix = enchanted[0][1]
                     # noinspection PyUnresolvedReferences
                     description = enchanted[1]
-            c = ttk.Combobox(self.item_frame, textvariable=description, values=valid_values, state='readonly')
+            c = ttk.Combobox(self.item_frame, textvariable=description, width=40, values=valid_values, state='readonly')
             c.grid(row=row)
             c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x))
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
@@ -218,6 +223,8 @@ class Notebook(ttk.Notebook):
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
 
     def saveitem(self):
+        if self.entry['jewel_rank'] != 0:
+            self.entry['item'].generator.jewel_rank = int(self.entry['jewel_rank'].get())
         self.stash_data[self.index].CopyFrom(self.entry['item'])
         active_stash = self.active_stash.get()
         account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']

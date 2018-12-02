@@ -44,6 +44,7 @@ def decode_single_item(item):
         decoded_item['affixes'].append((affix, desc))
 
     decoded_item['item'] = item
+    decoded_item['jewel_rank'] = tk.StringVar(value=item.generator.jewel_rank)
     if enchanted:
         decoded_item['enchanted'] = []
         decoded_item['enchanted'].append(enchanted)
