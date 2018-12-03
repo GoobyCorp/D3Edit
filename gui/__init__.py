@@ -77,7 +77,9 @@ class D3Edit(object):
             plvl = getattr(data['plvl'], 'get')
             plvl = int(plvl())
             plvl_touple = (-4093, plvl)
-
+            rift = getattr(data['rift'], 'get')
+            rift = int(rift())
+            rift_touple = (-4077, rift)
             # Saving corrupted saves...
             attrlist = {}
             for attr in self.account.asd.partitions[partition].saved_attributes.attributes:
@@ -87,6 +89,7 @@ class D3Edit(object):
             for attr, value in attrlist.items():
                 self.account.set_attribute(partition, (int(attr), int(value)))
             self.account.set_attribute(partition, plvl_touple)
+            self.account.set_attribute(partition, rift_touple)
             self.account.asd.partitions[partition].alt_level = plvl
             pcurrencies = self.account.asd.partitions[partition].currency_data.currency
             for currency in pcurrencies:
