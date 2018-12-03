@@ -51,6 +51,7 @@ class Notebook(ttk.Notebook):
         ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1, sticky='E', padx=128)
         ttk.Label(self.account_frame, text="Hardcore").grid(column=2, row=1, sticky='W')
         ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=1, sticky='W')
+        ttk.Label(self.account_frame, text="Rift Level").grid(column=0, row=2, sticky='W')
         currency_list = db.get_currency_list()
         for ids, currency in currency_list:
             ttk.Label(self.account_frame, text=currency).grid(column=0, row=(int(ids) + 5), sticky='W')
@@ -62,6 +63,7 @@ class Notebook(ttk.Notebook):
             column = (1 + m)
             cp = self.part_textvars[coffset]
             ttk.Entry(self.account_frame, textvariable=cp['plvl']).grid(column=column, row=1, sticky='E')
+            ttk.Entry(self.account_frame, textvariable=cp['rift']).grid(column=column, row=2, sticky='E')
             cc = cp['currencies']
             for ids in cc.keys():
                 idi = int(ids)
@@ -72,6 +74,10 @@ class Notebook(ttk.Notebook):
         self.part_textvars[partition_id] = {}
         current_partition = self.part_textvars[partition_id]
         current_partition['plvl'] = tk.StringVar(value=partition.alt_level)
+        current_partition['rift'] = 0
+        for attr in partition.saved_attributes.attributes:
+            if attr.key == -4077:
+                current_partition['rift'] = tk.StringVar(value=attr.value)
         current_clist = current_partition['currencies'] = {}
         pcurrency_list = partition.currency_data.currency
         for currency in pcurrency_list:
@@ -93,8 +99,6 @@ class Notebook(ttk.Notebook):
         current_hero_data = self.account.heroes[self.active_hid]
         self.active_hero_data['Name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
         self.active_hero_data['Level'] = tk.StringVar(value=current_hero_data.digest.level)
-        self.active_hero_data['Highest Solo Rift'] = tk.StringVar(
-            value=current_hero_data.digest.highest_solo_rift_completed)
         row = 1
         for key, value in self.active_hero_data.items():
             ttk.Label(self.active_hero_frame, text=key).grid(column=0, row=row, sticky='W')
