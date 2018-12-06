@@ -181,10 +181,16 @@ class Notebook(ttk.Notebook):
         valid_values = [x[3] for x in db.get_affix_all()]
         category = self.entry['category']
         quality = self.entry['item'].generator.item_quality_level
+        row = row + 1
+        ttk.Label(self.item_frame, text=self.entry['slot']).grid(column=0, row=row)
         if (category == 'Gems') and (quality == 9):
             row = row + 1
             ttk.Label(self.item_frame, text="Legendary Gem Level: ").grid(column=0, row=row)
             ttk.Entry(self.item_frame, textvariable=self.entry['jewel_rank']).grid(column=1, row=row)
+        elif self.entry['stackable']:
+            row = row + 1
+            ttk.Label(self.item_frame, text="Stack Size: ").grid(column=0, row=row)
+            ttk.Entry(self.item_frame, textvariable=self.entry['stack_size']).grid(column=1, row=row)
         try:
             enchanted = self.entry['enchanted']
         except KeyError:
@@ -229,6 +235,8 @@ class Notebook(ttk.Notebook):
     def saveitem(self):
         if self.entry['jewel_rank'] != 0:
             self.entry['item'].generator.jewel_rank = int(self.entry['jewel_rank'].get())
+        if self.entry['stackable']:
+            self.entry['item'].generator.stack_size = int(self.entry['stack_size'].get())
         self.stash_data[self.index].CopyFrom(self.entry['item'])
         active_stash = self.active_stash.get()
         account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']

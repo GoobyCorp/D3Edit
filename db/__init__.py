@@ -77,3 +77,8 @@ def get_currency_list():
 def get_item_from_gbid(gbid):
     query = "SELECT * FROM items where gbid = '{}'".format(gbid)
     return instance_and_run(query)
+
+
+def get_slot(slot_id):
+    query = "SELECT * FROM slots where id = '{}'".format(slot_id)
+    return instance_and_run(query)

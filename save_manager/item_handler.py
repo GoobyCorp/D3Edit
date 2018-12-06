@@ -7,6 +7,8 @@ def gbid_get(gbid):
         gbid_return = db.get_item_from_gbid(gbid)[0]
     except IndexError:
         gbid_return = 'Unknown Item - {}'.format(gbid)
+        query = "insert into unknown(id, type) values({}, 'item')".format(gbid)
+        db.instance_and_run(query)
     return gbid_return
 
 
@@ -15,6 +17,8 @@ def affix_to_str(affix):
         affix_return = db.get_affix_from_id(affix)[0][3]
     except IndexError:
         affix_return = 'Unknown Affix {}'.format(affix)
+        query = "insert into unknown(id, type) values({}, 'affix')".format(affix)
+        db.instance_and_run(query)
     return affix_return
 
 
@@ -27,9 +31,14 @@ def decode_single_item(item):
         decoded_item['name'] = decoded_gbid[1]
         decoded_item['category'] = decoded_gbid[2]
         decoded_item['stackable'] = decoded_gbid[3]
+        if decoded_item['stackable'] == 'True':
+            decoded_item['stackable'] = True
+        else:
+            decoded_item['stackable'] = False
     else:
         decoded_item['name'] = decoded_gbid
         decoded_item['category'] = 'Unknown Category'
+        decoded_item['stackable'] = False
     decoded_item['affixes'] = []
 
     try:
@@ -45,6 +54,8 @@ def decode_single_item(item):
 
     decoded_item['item'] = item
     decoded_item['jewel_rank'] = tk.StringVar(value=item.generator.jewel_rank)
+    decoded_item['slot'] = db.get_slot(int(item.item_slot))[0][1]
+    decoded_item['stack_size'] = tk.StringVar(value=item.generator.stack_size)
     if enchanted:
         decoded_item['enchanted'] = []
         decoded_item['enchanted'].append(enchanted)
