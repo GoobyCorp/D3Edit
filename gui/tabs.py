@@ -74,7 +74,7 @@ class Notebook(ttk.Notebook):
         self.part_textvars[partition_id] = {}
         current_partition = self.part_textvars[partition_id]
         current_partition['plvl'] = tk.StringVar(value=partition.alt_level)
-        current_partition['rift'] = 0
+        current_partition['rift'] = tk.StringVar(value=0)
         for attr in partition.saved_attributes.attributes:
             if attr.key == -4077:
                 current_partition['rift'] = tk.StringVar(value=attr.value)
