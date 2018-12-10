@@ -164,8 +164,42 @@ class Notebook(ttk.Notebook):
         parent.columnconfigure(1, weight=1)
         self.decodeditems = item_handler.decode_itemlist(itemlist)
         scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
-        scrollbar.grid(column=0, row=2)
+        scrollbar.grid(column=0, row=3)
         scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(scrollbar, self.item_list_frame))
+
+    def additem(self, ids, affixnum, amount=1):
+        print("Adding item id: {}".format(ids))
+        newitem = item_handler.generate_item(ids, affixnum)
+        active_stash = self.active_stash.get()
+        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
+        if active_stash in account_stash:
+            p = account_stash.index(active_stash)
+            available_slots = [i for i in range(0, 20)]
+            saved_attr = self.account.asd.partitions[p].saved_attributes.attributes
+            for attribute in saved_attr:
+                if attribute.key == -4096:
+                    available_slots = [i for i in range(0, attribute.value)]
+            for i in self.stash_data:
+                available_slots.remove(i.square_index)
+            if available_slots:
+                newitem.square_index = available_slots[-1]
+                newitem.item_slot = 544
+                it = self.stash_data.add()
+                it.CopyFrom(newitem)
+            self.account.commit_account_changes()
+        else:
+            hero_id = self.active_stash.get().split(' - ')[1]
+            available_slots = [i for i in range(0, 60)]
+            for i in self.stash_data:
+                if i.item_slot == 272:
+                    available_slots.remove(i.square_index)
+            if available_slots:
+                newitem.square_index = available_slots[-1]
+                newitem.item_slot = 272
+                it = self.stash_data.add()
+                it.CopyFrom(newitem)
+            self.account.commit_hero_changes(hero_id)
+        self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
     def load_item_frame(self, scrollbar, parent):
         if self.item_frame:
@@ -173,8 +207,22 @@ class Notebook(ttk.Notebook):
         self.index = scrollbar.listbox.curselection()[0]
         self.entry = scrollbar.indexmap[self.index]
         self.item_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
-        self.item_frame.grid(row=2, column=1, sticky='NES')
+        self.item_frame.grid(row=3, column=1, sticky='NES')
         # INSIDE ABOVE FRAME
+        if self.entry == 'No Item':
+            addid = tk.StringVar(value='0')
+            affixnum = tk.StringVar(value='0')
+            lab = ttk.Label(self.item_frame, text="Add item with ID:")
+            lab.grid(column=0, row=6)
+            ent = ttk.Entry(self.item_frame, textvariable=addid)
+            ent.grid(column=1, row=6)
+            lab = ttk.Label(self.item_frame, text="Number of Affixes:")
+            lab.grid(column=0, row=7)
+            ent2 = ttk.Entry(self.item_frame, textvariable=affixnum)
+            ent2.grid(column=1, row=7)
+            sb = ttk.Button(self.item_frame, text="Add Item", command=lambda: self.additem(addid.get(), affixnum.get()))
+            sb.grid(column=0, row=8)
+            return
         row = 0
         ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
         # TODO: affix list sanitization
@@ -264,6 +312,8 @@ class ScrollbarItems(ttk.Frame):
         listing.config(yscrollcommand=sb.set, height=35)
         sb.grid(row=0, column=1, sticky='ns')
         listing.grid(row=0, column=0, sticky='ns')
+        listing.insert(0, ' ++ Add Item ++ ')
+        self.indexmap.append('No Item')
         for item in items:
             curr_index = len(self.indexmap)
             label = item['name']

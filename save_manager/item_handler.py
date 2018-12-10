@@ -1,5 +1,7 @@
 import db
+import random
 import tkinter as tk
+from pb2_resources import Items_pb2
 
 
 def gbid_get(gbid):
@@ -69,3 +71,25 @@ def decode_itemlist(itemlist):
         item_out.append(decode_single_item(item))
     return item_out
 
+
+def generate_item(ids, affixnum):
+    ids = int(ids)
+    affixnum = int(affixnum)
+    seed = random.randint(3000000, 2147483646)
+    idlow = random.randint(2014000000, 2029999999)
+    item = Items_pb2.SavedItem()
+    item.hireling_class = 0
+    item.used_socket_count = 0
+    item.id.id_high = 1
+    item.id.id_low = idlow
+    item.generator.seed = seed
+    item.generator.gb_handle.game_balance_type = 2
+    item.generator.gb_handle.gbid = ids
+    item.generator.flags = 43273
+    item.generator.item_binding_level = 2
+    item.generator.stack_size = 1
+    item.generator.season_created = 0
+    item.generator.durability = 444
+    for i in range(0, affixnum):
+        item.generator.base_affixes.append(0)
+    return item
