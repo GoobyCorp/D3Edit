@@ -105,7 +105,7 @@ class D3Edit(object):
         hid = self.tabs.active_hid
         name = getattr(self.tabs.active_hero_data['Name'], 'get')
         level = getattr(self.tabs.active_hero_data['Level'], 'get')
-        rift = getattr(self.tabs.active_hero_data['Highest Solo Rift'], 'get')
+#        rift = getattr(self.tabs.active_hero_data['Highest Solo Rift'], 'get')
         self.account.heroes[hid].digest.hero_name = name()
         self.account.heroes[hid].digest.level = int(level())
         self.account.heroes[hid].digest.highest_solo_rift_completed = int(rift())
