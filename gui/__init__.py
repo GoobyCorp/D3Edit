@@ -28,14 +28,14 @@ class D3Edit(object):
     def setupframe(self, wcoords=None):
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
-        self.main_window.minsize(600, 450)
+        self.main_window.minsize(0, 450)
         if wcoords:
             self.main_window.geometry("+{0}+{1}".format(wcoords[0], wcoords[1]))
         self.style = ttk.Style(self.main_window)
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
         self.style.configure("TNotebook", background="white")
-        self.style.configure('TCombobox', postoffset=(0,0,400,0))
+        self.style.configure('TCombobox', postoffset=(0, 0, 400, 0))
 
     def draw_welcome(self, message=None):
         if not message:

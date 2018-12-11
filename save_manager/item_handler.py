@@ -9,7 +9,7 @@ def gbid_get(gbid):
         gbid_return = db.get_item_from_gbid(gbid)[0]
     except IndexError:
         gbid_return = 'Unknown Item - {}'.format(gbid)
-        query = "insert into unknown(id, type) values({}, 'item')".format(gbid)
+        query = "insert or ignore into unknown(id, type) values({0}, 'item')".format(gbid)
         db.instance_and_run(query)
     return gbid_return
 
@@ -19,7 +19,7 @@ def affix_to_str(affix):
         affix_return = db.get_affix_from_id(affix)[0][3]
     except IndexError:
         affix_return = 'Unknown Affix {}'.format(affix)
-        query = "insert into unknown(id, type) values({}, 'affix')".format(affix)
+        query = "insert or ignore into unknown(id, type) values({0}, 'affix')".format(affix)
         db.instance_and_run(query)
     return affix_return
 

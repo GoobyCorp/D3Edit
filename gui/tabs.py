@@ -122,11 +122,11 @@ class Notebook(ttk.Notebook):
     def configure_stash_frame(self, event=None):
         if self.active_stash_frame:
             self.active_stash_frame.destroy()
-        self.active_stash_frame = ttk.Frame(self.stash_tab, style="TNotebook", borderwidth=0)
+        self.active_stash_frame = tk.Frame(self.stash_tab)
         self.active_stash_frame.grid(column=0, row=0)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
-        c.grid(column=0, row=0, sticky='NW', columnspan=2)
+        c.grid(column=0, row=0, sticky='NW')
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         active_stash = self.active_stash.get()
         if active_stash == 'SC - Non Season':
@@ -206,7 +206,7 @@ class Notebook(ttk.Notebook):
             self.item_frame.destroy()
         self.index = scrollbar.listbox.curselection()[0]
         self.entry = scrollbar.indexmap[self.index]
-        self.item_frame = ttk.Frame(parent, style="TNotebook", borderwidth=0)
+        self.item_frame = tk.Frame(parent)
         self.item_frame.grid(row=3, column=1, sticky='NES')
         # INSIDE ABOVE FRAME
         if self.entry == 'No Item':
@@ -243,36 +243,37 @@ class Notebook(ttk.Notebook):
             enchanted = self.entry['enchanted']
         except KeyError:
             enchanted = False
+        crow = row
         for affix, description in self.entry['affixes']:
-            row = row + 1
+            crow = crow + 1
             if enchanted:
                 # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
-                    ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=row, sticky='NES')
-                    # noinspection PyUnresolvedReferences
-                    # affix = enchanted[0][1]
-                    # noinspection PyUnresolvedReferences
+                    ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=crow, sticky='NES')
                     description = enchanted[1]
-            c = ttk.Combobox(self.item_frame, textvariable=description, width=40, values=valid_values, state='readonly')
-            c.grid(row=row)
-            c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x))
+            cbl = len(description.get())
+            c = ttk.Combobox(self.item_frame, textvariable=description, width=cbl, values=valid_values, state='readonly')
+            c.grid(row=crow, sticky='W')
+            c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=99)
 
-    def set_item_affixes(self, event):
-        affix_changing = int(event.widget.grid_info()['row']) - 1
+    def set_item_affixes(self, event, row):
+        wg = event.widget
+        affix_changing = int(wg.grid_info()['row']) - (row + 1)
         prev_affix = self.entry['affixes'][affix_changing][0]
         try:
             rerolled_affix = self.entry['enchanted'][0][0]
-            # rerolled_into = self.entry['enchanted'][0][1]
         except KeyError:
             rerolled_affix = False
         enchanted_affix = False
-        if prev_affix == rerolled_affix:
+        if prev_affix == rerolled_affix and prev_affix != 0:
             enchanted_affix = True
             new_val = self.entry['enchanted'][1].get()
+            wg.config(width=len(new_val))
         else:
             new_val = self.entry['affixes'][affix_changing][1].get()
+            wg.config(width=len(new_val))
         new_val_ids = [x[0] for x in db.get_affix_from_effect(new_val)]
         new_id = new_val_ids[0]
         if enchanted_affix:
