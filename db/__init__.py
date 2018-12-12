@@ -82,3 +82,8 @@ def get_item_from_gbid(gbid):
 def get_slot(slot_id):
     query = "SELECT * FROM slots where id = '{}'".format(slot_id)
     return instance_and_run(query)
+
+
+def get_legal_affixes(category):
+    query = "SELECT affix_list FROM affix_groups where item_types like '%{}%'".format(category)
+    return instance_and_run(query)

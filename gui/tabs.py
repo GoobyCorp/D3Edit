@@ -27,6 +27,7 @@ class Notebook(ttk.Notebook):
         self.heroframes = None
         self.active_stash_frame = None
         self.active_stash = tk.StringVar(value='SC - Non Season')
+        self.safemode = tk.IntVar(value=1)
         self.stash_data = None
         self.item_list_frame = None
         self.item_frame = None
@@ -124,6 +125,13 @@ class Notebook(ttk.Notebook):
             self.active_stash_frame.destroy()
         self.active_stash_frame = tk.Frame(self.stash_tab)
         self.active_stash_frame.grid(column=0, row=0)
+        seframe = tk.Frame(self.active_stash_frame)
+        cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
+                            command=self.safemode_toggle)
+        cb.grid(column=0, row=0, sticky='W')
+        tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
+        tl.grid(column=1, row=0, sticky='E')
+        seframe.grid(column=1, row=0)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='NW')
@@ -155,6 +163,19 @@ class Notebook(ttk.Notebook):
         if self.stash_data:
             self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
+    def safemode_toggle(self):
+        if self.item_frame:
+            if self.safemode.get() == 1:
+                try:
+                    self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
+                except KeyError:
+                    self.valid_values = [x[3] for x in db.get_affix_all()]
+                print("Safemode ON!")
+            else:
+                self.valid_values = [x[3] for x in db.get_affix_all()]
+                print("Safemode OFF!")
+            self.load_item_frame(self.item_list_frame)
+
     def load_item_list_frame(self, itemlist, parent):
         if self.item_list_frame:
             self.item_list_frame.destroy()
@@ -163,9 +184,9 @@ class Notebook(ttk.Notebook):
         ttk.Label(self.item_list_frame, text="Item List:").grid(column=0, row=1, sticky='W')
         parent.columnconfigure(1, weight=1)
         self.decodeditems = item_handler.decode_itemlist(itemlist)
-        scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
-        scrollbar.grid(column=0, row=3)
-        scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(scrollbar, self.item_list_frame))
+        self.item_scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
+        self.item_scrollbar.grid(column=0, row=3)
+        self.item_scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(self.item_list_frame))
 
     def additem(self, ids, affixnum, amount=1):
         print("Adding item id: {}".format(ids))
@@ -201,11 +222,11 @@ class Notebook(ttk.Notebook):
             self.account.commit_hero_changes(hero_id)
         self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
-    def load_item_frame(self, scrollbar, parent):
+    def load_item_frame(self, parent):
         if self.item_frame:
             self.item_frame.destroy()
-        self.index = scrollbar.listbox.curselection()[0]
-        self.entry = scrollbar.indexmap[self.index]
+        self.index = self.item_scrollbar.listbox.curselection()[0]
+        self.entry = self.item_scrollbar.indexmap[self.index]
         self.item_frame = tk.Frame(parent)
         self.item_frame.grid(row=3, column=1, sticky='NES')
         # INSIDE ABOVE FRAME
@@ -225,8 +246,13 @@ class Notebook(ttk.Notebook):
             return
         row = 0
         ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
-        # TODO: affix list sanitization
-        valid_values = [x[3] for x in db.get_affix_all()]
+        if self.safemode.get() == 1:
+            try:
+                self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
+            except KeyError:
+                self.valid_values = [x[3] for x in db.get_affix_all()]
+        else:
+            self.valid_values = [x[3] for x in db.get_affix_all()]
         category = self.entry['category']
         quality = self.entry['item'].generator.item_quality_level
         row = row + 1
@@ -252,9 +278,10 @@ class Notebook(ttk.Notebook):
                     ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=crow, sticky='NES')
                     description = enchanted[1]
             cbl = len(description.get())
-            c = ttk.Combobox(self.item_frame, textvariable=description, width=cbl, values=valid_values, state='readonly')
-            c.grid(row=crow, sticky='W')
-            c.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
+            cb = ttk.Combobox(self.item_frame, textvariable=description, width=cbl, values=self.valid_values,
+                                         state='readonly')
+            cb.grid(row=crow, sticky='W')
+            cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=99)
 
@@ -286,7 +313,8 @@ class Notebook(ttk.Notebook):
             self.entry['item'].generator.jewel_rank = int(self.entry['jewel_rank'].get())
         if self.entry['stackable']:
             self.entry['item'].generator.stack_size = int(self.entry['stack_size'].get())
-        self.stash_data[self.index].CopyFrom(self.entry['item'])
+        target = self.index - 1  # This is an index relative to the itemlist
+        self.stash_data[target].CopyFrom(self.entry['item'])
         active_stash = self.active_stash.get()
         account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
         if active_stash in account_stash:

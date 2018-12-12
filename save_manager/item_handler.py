@@ -1,4 +1,5 @@
 import db
+import json
 import random
 import tkinter as tk
 from pb2_resources import Items_pb2
@@ -37,6 +38,13 @@ def decode_single_item(item):
             decoded_item['stackable'] = True
         else:
             decoded_item['stackable'] = False
+        legal_affix_list = db.get_legal_affixes(decoded_item['category'])
+        decoded_item['legal_affixes'] = []
+        if legal_affix_list:
+            for line in legal_affix_list:
+                if line[0]:
+                    add = json.loads(line[0].replace("'", ''))
+                    decoded_item['legal_affixes'].extend(add)
     else:
         decoded_item['name'] = decoded_gbid
         decoded_item['category'] = 'Unknown Category'
