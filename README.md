@@ -8,13 +8,13 @@ Currently supported:
 - Currency edition.
 - Hero and account edition: Hero level, Paragon level, Highest GR completed...
 - Stash and Hero inventory viewing.
+- Item edition.
+- Item generation (By ID).
+
 
 In development:
 ----
-
-- Item edition.
-- Item generation.
-- Seasonal character creation
+- Item Edition safe mode (easier to make legal items).
 
 Help needed:
 ----
