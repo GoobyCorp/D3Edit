@@ -283,7 +283,9 @@ class Notebook(ttk.Notebook):
             cb.grid(row=crow, sticky='W')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
-        sb.grid(column=0, row=99)
+        sb.grid(column=0, row=98)
+        delb = ttk.Button(self.item_frame, text="Delete Item", command=self.deleteitem)
+        delb.grid(column=0, row=99)
 
     def set_item_affixes(self, event, row):
         wg = event.widget
@@ -324,6 +326,25 @@ class Notebook(ttk.Notebook):
             self.account.commit_hero_changes(hero_id)
         message_label = ttk.Label(self.item_frame, text="Item Saved!", style="TLabel")
         message_label.grid(column=0, row=98, sticky='NEW')
+
+    def deleteitem(self):
+        iname = self.entry['name']
+        target = self.index - 1
+        active_stash = self.active_stash.get()
+        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
+        if self.safemode.get() == 0:
+            print("Deleting item : {}".format(iname))
+            del self.stash_data[target]
+            if active_stash in account_stash:
+                self.account.commit_account_changes()
+            else:
+                hero_id = self.active_stash.get().split(' - ')[1]
+                self.account.commit_hero_changes(hero_id)
+            self.item_frame.destroy()
+            self.load_item_list_frame(self.stash_data, self.active_stash_frame)
+        else:
+            message_label = ttk.Label(self.item_frame, text="Disable safe mode first!", style="TLabel")
+            message_label.grid(column=0, row=97, sticky='NEW')
 
 
 # noinspection PyAttributeOutsideInit
