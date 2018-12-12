@@ -277,6 +277,12 @@ class Notebook(ttk.Notebook):
         except KeyError:
             enchanted = False
         crow = row
+        self.cbl = 30
+        for affix, description in self.entry['affixes']:
+            ccbl = len(description.get()) * 0.85
+            if ccbl > self.cbl:
+                self.cbl = int(ccbl)
+
         for affix, description in self.entry['affixes']:
             crow = crow + 1
             if enchanted:
@@ -284,8 +290,7 @@ class Notebook(ttk.Notebook):
                 if affix == enchanted[0][0]:
                     ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=crow, sticky='NES')
                     description = enchanted[1]
-            cbl = len(description.get())
-            cb = ttk.Combobox(self.item_frame, textvariable=description, width=cbl, values=self.valid_values,
+            cb = ttk.Combobox(self.item_frame, textvariable=description, width=self.cbl, values=self.valid_values,
                                          state='readonly')
             cb.grid(row=crow, sticky='W')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
@@ -306,10 +311,13 @@ class Notebook(ttk.Notebook):
         if prev_affix == rerolled_affix and prev_affix != 0:
             enchanted_affix = True
             new_val = self.entry['enchanted'][1].get()
-            wg.config(width=len(new_val))
         else:
             new_val = self.entry['affixes'][affix_changing][1].get()
-            wg.config(width=len(new_val))
+        affix_length = int(len(new_val) * 0.85)
+        if affix_length > self.cbl:
+            wg.config(width=affix_length)
+        else:
+            wg.config(width=self.cbl)
         new_val_ids = [x[0] for x in db.get_affix_from_effect(new_val)]
         new_id = new_val_ids[0]
         if enchanted_affix:
