@@ -124,14 +124,7 @@ class Notebook(ttk.Notebook):
         if self.active_stash_frame:
             self.active_stash_frame.destroy()
         self.active_stash_frame = tk.Frame(self.stash_tab)
-        self.active_stash_frame.grid(column=0, row=0)
-        seframe = tk.Frame(self.active_stash_frame)
-        cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
-                            command=self.safemode_toggle)
-        cb.grid(column=0, row=0, sticky='W')
-        tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
-        tl.grid(column=1, row=0, sticky='E')
-        seframe.grid(column=1, row=0)
+        self.active_stash_frame.grid(column=0, row=1)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='NW')
@@ -227,8 +220,17 @@ class Notebook(ttk.Notebook):
             self.item_frame.destroy()
         self.index = self.item_scrollbar.listbox.curselection()[0]
         self.entry = self.item_scrollbar.indexmap[self.index]
-        self.item_frame = tk.Frame(parent)
-        self.item_frame.grid(row=3, column=1, sticky='NES')
+        self.item_main_frame = tk.Frame(parent)
+        self.item_main_frame.grid(row=0, column=1, sticky='WN', rowspan=10)
+        seframe = tk.Frame(self.item_main_frame)
+        cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
+                            command=self.safemode_toggle)
+        cb.grid(column=0, row=0, sticky='W')
+        tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
+        tl.grid(column=1, row=0, sticky='W')
+        seframe.grid(column=0, row=0, columnspan=2, sticky='WN')
+        self.item_frame = tk.Frame(self.item_main_frame)
+        self.item_frame.grid(row=1, column=0, sticky='WN')
         # INSIDE ABOVE FRAME
         if self.entry == 'No Item':
             addid = tk.StringVar(value='0')
@@ -245,7 +247,12 @@ class Notebook(ttk.Notebook):
             sb.grid(column=0, row=8)
             return
         row = 0
-        ttk.Label(self.item_frame, text=self.entry['name']).grid(row=row, sticky='NWS')
+        v = tk.StringVar()
+        v.set(self.entry['name'])
+        l = int(len(self.entry['name'])*0.9)
+        e = tk.Entry(self.item_frame, readonlybackground='white', fg='black', textvariable=v, bd=0, width=l,
+                     state='readonly', highlightthickness=0)
+        e.grid(row=row, sticky='W', columnspan=2)
         if self.safemode.get() == 1:
             try:
                 self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
@@ -256,7 +263,7 @@ class Notebook(ttk.Notebook):
         category = self.entry['category']
         quality = self.entry['item'].generator.item_quality_level
         row = row + 1
-        ttk.Label(self.item_frame, text=self.entry['slot']).grid(column=0, row=row)
+        ttk.Label(self.item_frame, text=self.entry['slot']).grid(column=0, row=row, sticky='W')
         if (category == 'Gems') and (quality == 9):
             row = row + 1
             ttk.Label(self.item_frame, text="Legendary Gem Level: ").grid(column=0, row=row)
