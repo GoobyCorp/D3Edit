@@ -366,11 +366,11 @@ class ScrollbarItems(ttk.Frame):
         sb = tk.Scrollbar(self)
         listing = tk.Listbox(self, relief='sunken')
         sb.config(command=listing.yview)
-        listing.config(yscrollcommand=sb.set, height=35)
         sb.grid(row=0, column=1, sticky='ns')
         listing.grid(row=0, column=0, sticky='ns')
         listing.insert(0, ' ++ Add Item ++ ')
         self.indexmap.append('No Item')
+        lswid = 30
         for item in items:
             curr_index = len(self.indexmap)
             label = item['name']
@@ -381,5 +381,8 @@ class ScrollbarItems(ttk.Frame):
             if ": " in label:
                 label = label.split(": ")[1]
             listing.insert(curr_index, label)
+            if (len(label)*0.75) > lswid:
+                lswid = int((len(label)*0.75))
             self.indexmap.append(item)
+        listing.config(yscrollcommand=sb.set, height=35, width=lswid)
         self.listbox = listing
