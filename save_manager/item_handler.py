@@ -9,7 +9,7 @@ def gbid_get(gbid):
     try:
         gbid_return = db.get_item_from_gbid(gbid)[0]
     except IndexError:
-        gbid_return = 'Unknown Item :ID: {}'.format(gbid)
+        gbid_return = 'Unknown Item ID: {}'.format(gbid)
         query = "insert or ignore into unknown(id, type) values({0}, 'item')".format(gbid)
         db.instance_and_run(query)
     return gbid_return
@@ -31,7 +31,7 @@ def decode_single_item(item):
     gbid = str(item.generator.gb_handle.gbid)
     decoded_gbid = gbid_get(gbid)
     if isinstance(decoded_gbid, tuple):
-        decoded_item['name'] = "{0} :ID: {1}".format(decoded_gbid[1], gbid)
+        decoded_item['name'] = "{0} ID: {1}".format(decoded_gbid[1], gbid)
         decoded_item['category'] = decoded_gbid[2]
         decoded_item['stackable'] = decoded_gbid[3]
         if decoded_item['stackable'] == 'True':

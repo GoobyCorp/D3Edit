@@ -376,6 +376,8 @@ class ScrollbarItems(ttk.Frame):
             label = item['name']
             if not isinstance(label, str):
                 label = label['name']
+            if "ID: " in label:
+                label = label.split("ID: ")[0]
             if ": " in label:
                 label = label.split(": ")[1]
             listing.insert(curr_index, label)
