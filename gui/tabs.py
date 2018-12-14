@@ -277,12 +277,7 @@ class Notebook(ttk.Notebook):
         except KeyError:
             enchanted = False
         crow = row
-        self.cbl = 30
-        for affix, description in self.entry['affixes']:
-            ccbl = len(description.get()) * 0.85
-            if ccbl > self.cbl:
-                self.cbl = int(ccbl)
-
+        self.cbs = []
         for affix, description in self.entry['affixes']:
             crow = crow + 1
             if enchanted:
@@ -290,17 +285,25 @@ class Notebook(ttk.Notebook):
                 if affix == enchanted[0][0]:
                     ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=crow, sticky='NES')
                     description = enchanted[1]
-            cb = ttk.Combobox(self.item_frame, textvariable=description, width=self.cbl, values=self.valid_values,
-                                         state='readonly')
+            cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly')
             cb.grid(row=crow, sticky='W')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
+            self.cbs.append(cb)
+            self.size_affix_combobox()
         sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=98)
         delb = ttk.Button(self.item_frame, text="Delete Item", command=self.deleteitem)
         delb.grid(column=0, row=99)
 
+    def size_affix_combobox(self):
+        lenlist = [len(a[1].get()) for a in self.entry['affixes']]
+        self.cbl = max(lenlist)
+        for cb in self.cbs:
+            cb.config(width=self.cbl)
+
     def set_item_affixes(self, event, row):
         wg = event.widget
+        # this is a pretty crappy way of doing it, TODO: rewrite
         affix_changing = int(wg.grid_info()['row']) - (row + 1)
         prev_affix = self.entry['affixes'][affix_changing][0]
         try:
@@ -313,17 +316,13 @@ class Notebook(ttk.Notebook):
             new_val = self.entry['enchanted'][1].get()
         else:
             new_val = self.entry['affixes'][affix_changing][1].get()
-        affix_length = int(len(new_val) * 0.85)
-        if affix_length > self.cbl:
-            wg.config(width=affix_length)
-        else:
-            wg.config(width=self.cbl)
         new_val_ids = [x[0] for x in db.get_affix_from_effect(new_val)]
         new_id = new_val_ids[0]
         if enchanted_affix:
             self.entry['item'].generator.enchanted_affix_new = new_id
         else:
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
+        self.size_affix_combobox()
 
     def saveitem(self):
         if self.entry['jewel_rank'] != 0:
