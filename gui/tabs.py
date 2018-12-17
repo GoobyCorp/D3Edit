@@ -27,6 +27,7 @@ class Notebook(ttk.Notebook):
         self.heroframes = None
         self.active_stash_frame = None
         self.active_stash = tk.StringVar(value='SC - Non Season')
+        self.affixfilter = tk.StringVar()
         self.safemode = tk.IntVar(value=1)
         self.stash_data = None
         self.item_list_frame = None
@@ -216,8 +217,8 @@ class Notebook(ttk.Notebook):
         row = 0
         v = tk.StringVar()
         v.set(self.entry['name'])
-        l = int(len(self.entry['name'])*0.9)
-        e = tk.Entry(self.item_frame, readonlybackground='white', fg='black', textvariable=v, bd=0, width=l,
+        le = int(len(self.entry['name'])*0.9)
+        e = tk.Entry(self.item_frame, readonlybackground='white', fg='black', textvariable=v, bd=0, width=le,
                      state='readonly', highlightthickness=0)
         e.grid(row=row, sticky='W', columnspan=2)
         if self.safemode.get() == 1:
@@ -257,8 +258,15 @@ class Notebook(ttk.Notebook):
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
             self.size_affix_combobox()
-        button_frame = ttk.Frame(self.item_frame)
-        button_frame.grid(column=0, row=99)
+        if self.affixfilter.get():
+            self.update_affixes()
+        button_frame = tk.Frame(self.item_frame, background='white')
+        button_frame.grid(column=0, row=99, sticky='NW')
+        search = ttk.Entry(button_frame, textvariable=self.affixfilter)
+        search.grid(column=1, row=0)
+        search.bind("<KeyRelease>", self.update_affixes)
+        search.bind("<space>", self.update_affixes)
+        ttk.Label(button_frame, text="Affix Filter:").grid(column=0, row=0)
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=97)
         cb = ttk.Button(button_frame, text="Duplicate Item",
@@ -269,6 +277,16 @@ class Notebook(ttk.Notebook):
         ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98)
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
         delb.grid(column=0, row=99)
+
+    def update_affixes(self, event=None):
+        fil = self.affixfilter.get()
+        for cb in self.cbs:
+            valid_values = []
+            for value in self.valid_values:
+                if fil.lower() in value.lower():
+                    valid_values.append(value)
+            valid_values = set(valid_values)
+            cb.config(values=list(valid_values))
 
     def size_affix_combobox(self):
         lenlist = [len(a[1].get()) for a in self.entry['affixes']]
