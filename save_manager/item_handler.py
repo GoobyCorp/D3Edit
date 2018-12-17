@@ -80,10 +80,21 @@ def decode_itemlist(itemlist):
     return item_out
 
 
+def gen_seed():
+    seed = random.randint(3000000, 2147483646)
+    return seed
+
+
+def reroll_item(item):
+    seed = gen_seed()
+    item.generator.seed = seed
+    return item
+
+
 def generate_item(ids, affixnum):
     ids = int(ids)
     affixnum = int(affixnum)
-    seed = random.randint(3000000, 2147483646)
+    seed = gen_seed()
     idlow = random.randint(2014000000, 2029999999)
     item = Items_pb2.SavedItem()
     item.hireling_class = 0

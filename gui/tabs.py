@@ -123,7 +123,7 @@ class Notebook(ttk.Notebook):
     def configure_stash_frame(self, event=None):
         if self.active_stash_frame:
             self.active_stash_frame.destroy()
-        self.active_stash_frame = tk.Frame(self.stash_tab)
+        self.active_stash_frame = tk.Frame(self.stash_tab, bg='white')
         self.active_stash_frame.grid(column=0, row=1)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
@@ -181,55 +181,21 @@ class Notebook(ttk.Notebook):
         self.item_scrollbar.grid(column=0, row=3)
         self.item_scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(self.item_list_frame))
 
-    def additem(self, ids, affixnum, amount=1):
-        print("Adding item id: {}".format(ids))
-        newitem = item_handler.generate_item(ids, affixnum)
-        active_stash = self.active_stash.get()
-        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
-        if active_stash in account_stash:
-            p = account_stash.index(active_stash)
-            available_slots = [i for i in range(0, 20)]
-            saved_attr = self.account.asd.partitions[p].saved_attributes.attributes
-            for attribute in saved_attr:
-                if attribute.key == -4096:
-                    available_slots = [i for i in range(0, attribute.value)]
-            for i in self.stash_data:
-                available_slots.remove(i.square_index)
-            if available_slots:
-                newitem.square_index = available_slots[-1]
-                newitem.item_slot = 544
-                it = self.stash_data.add()
-                it.CopyFrom(newitem)
-            self.account.commit_account_changes()
-        else:
-            hero_id = self.active_stash.get().split(' - ')[1]
-            available_slots = [i for i in range(0, 60)]
-            for i in self.stash_data:
-                if i.item_slot == 272:
-                    available_slots.remove(i.square_index)
-            if available_slots:
-                newitem.square_index = available_slots[-1]
-                newitem.item_slot = 272
-                it = self.stash_data.add()
-                it.CopyFrom(newitem)
-            self.account.commit_hero_changes(hero_id)
-        self.load_item_list_frame(self.stash_data, self.active_stash_frame)
-
     def load_item_frame(self, parent):
         if self.item_frame:
             self.item_frame.destroy()
         self.index = self.item_scrollbar.listbox.curselection()[0]
         self.entry = self.item_scrollbar.indexmap[self.index]
-        self.item_main_frame = tk.Frame(parent)
+        self.item_main_frame = tk.Frame(parent, bg='white')
         self.item_main_frame.grid(row=0, column=1, sticky='WN', rowspan=10)
-        seframe = tk.Frame(self.item_main_frame)
+        seframe = tk.Frame(self.item_main_frame, bg='white')
         cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
                             command=self.safemode_toggle)
         cb.grid(column=0, row=0, sticky='W')
         tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
         tl.grid(column=1, row=0, sticky='W')
         seframe.grid(column=0, row=0, columnspan=2, sticky='WN')
-        self.item_frame = tk.Frame(self.item_main_frame)
+        self.item_frame = tk.Frame(self.item_main_frame, bg='white')
         self.item_frame.grid(row=1, column=0, sticky='WN')
         # INSIDE ABOVE FRAME
         if self.entry == 'No Item':
@@ -243,8 +209,9 @@ class Notebook(ttk.Notebook):
             lab.grid(column=0, row=7)
             ent2 = ttk.Entry(self.item_frame, textvariable=affixnum)
             ent2.grid(column=1, row=7)
+            ttk.Label(self.item_frame, text="Note: If there's no space in the inventory no item will be added").grid(column=0, row=8, columnspan=2)
             sb = ttk.Button(self.item_frame, text="Add Item", command=lambda: self.additem(addid.get(), affixnum.get()))
-            sb.grid(column=0, row=8)
+            sb.grid(column=0, row=9)
             return
         row = 0
         v = tk.StringVar()
@@ -290,9 +257,17 @@ class Notebook(ttk.Notebook):
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
             self.size_affix_combobox()
-        sb = ttk.Button(self.item_frame, text="Save Item", command=self.saveitem)
-        sb.grid(column=0, row=98)
-        delb = ttk.Button(self.item_frame, text="Delete Item", command=self.deleteitem)
+        button_frame = ttk.Frame(self.item_frame)
+        button_frame.grid(column=0, row=99)
+        sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
+        sb.grid(column=0, row=97)
+        cb = ttk.Button(button_frame, text="Duplicate Item",
+                        command=lambda: self.additem(affixnum=0, ids=0, item=self.entry['item']))
+        cb.grid(column=1, row=97)
+        rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
+        rb.grid(column=0, row=98)
+        ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98)
+        delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
         delb.grid(column=0, row=99)
 
     def size_affix_combobox(self):
@@ -323,6 +298,57 @@ class Notebook(ttk.Notebook):
         else:
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
         self.size_affix_combobox()
+
+    def additem(self, ids, affixnum, amount=1, item=None):
+        if not item:
+            newitem = item_handler.generate_item(ids, affixnum)
+        else:
+            newitem = item
+        active_stash = self.active_stash.get()
+        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
+        if active_stash in account_stash:
+            p = account_stash.index(active_stash)
+            available_slots = [i for i in range(0, 20)]
+            saved_attr = self.account.asd.partitions[p].saved_attributes.attributes
+            for attribute in saved_attr:
+                if attribute.key == -4096:
+                    available_slots = [i for i in range(0, attribute.value)]
+            for i in self.stash_data:
+                try:
+                    available_slots.remove(i.square_index)
+                except ValueError:
+                    print("Item collition detected, two items in the same inventory slot!")
+                    print("{0}, {1}".format(i.square_index, i.generator.seed))
+            if available_slots:
+                newitem.item_slot = 544
+                it = self.stash_data.add()
+                it.CopyFrom(newitem)
+                it.square_index = available_slots[-1]
+            else:
+                print("Inventory is full!")
+            self.account.commit_account_changes()
+        else:
+            hero_id = self.active_stash.get().split(' - ')[1]
+            available_slots = [i for i in range(0, 60)]
+            for i in self.stash_data:
+                if i.item_slot == 272:
+                    try:
+                        available_slots.remove(i.square_index)
+                    except ValueError:
+                        print("Item collition detected, two items in the same inventory slot!")
+                        print("{0}, {1}".format(i.square_index, i.generator.seed))
+            if available_slots:
+                newitem.item_slot = 272
+                it = self.stash_data.add()
+                it.CopyFrom(newitem)
+                it.square_index = available_slots[-1]
+            self.account.commit_hero_changes(hero_id)
+        self.load_item_list_frame(self.stash_data, self.active_stash_frame)
+
+    def reroll_item(self):
+        print("Seed before: {}".format(self.entry['item'].generator.seed))
+        self.entry['item'] = item_handler.reroll_item(self.entry['item'])
+        print("Seed after: {}".format(self.entry['item'].generator.seed))
 
     def saveitem(self):
         if self.entry['jewel_rank'] != 0:
