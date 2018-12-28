@@ -200,6 +200,7 @@ class Notebook(ttk.Notebook):
         self.item_frame.grid(row=1, column=0, sticky='WN')
         # INSIDE ABOVE FRAME
         if self.entry == 'No Item':
+            qual = tk.StringVar()
             addid = tk.StringVar(value='0')
             affixnum = tk.StringVar(value='0')
             lab = ttk.Label(self.item_frame, text="Add item with ID:")
@@ -210,9 +211,17 @@ class Notebook(ttk.Notebook):
             lab.grid(column=0, row=7)
             ent2 = ttk.Entry(self.item_frame, textvariable=affixnum)
             ent2.grid(column=1, row=7)
-            ttk.Label(self.item_frame, text="Note: If there's no space in the inventory no item will be added").grid(column=0, row=8, columnspan=2)
-            sb = ttk.Button(self.item_frame, text="Add Item", command=lambda: self.additem(addid.get(), affixnum.get()))
-            sb.grid(column=0, row=9)
+            lab = ttk.Label(self.item_frame, text="Quality:")
+            lab.grid(column=0, row=8)
+            cb = ttk.Combobox(self.item_frame, textvariable=qual, values=[x[1] for x in db.get_quality_levels()],
+                              state='readonly')
+            cb.grid(column=1, row=8, sticky='W')
+            qual.set("Legendary/Set")
+            ttk.Label(self.item_frame, text="Note: If there's no space in the inventory no item will be added")\
+                .grid(column=0, row=20, columnspan=2)
+            sb = ttk.Button(self.item_frame, text="Add Item", command=lambda: self.additem(addid.get(), affixnum.get(),
+                                                                                           quality=qual.get()))
+            sb.grid(column=0, row=21)
             return
         row = 0
         v = tk.StringVar()
@@ -229,10 +238,9 @@ class Notebook(ttk.Notebook):
         else:
             self.valid_values = [x[3] for x in db.get_affix_all()]
         category = self.entry['category']
-        quality = self.entry['item'].generator.item_quality_level
         row = row + 1
         ttk.Label(self.item_frame, text=self.entry['slot']).grid(column=0, row=row, sticky='W')
-        if (category == 'Gems') and (quality == 9):
+        if category == 'Legendary Gems':
             row = row + 1
             ttk.Label(self.item_frame, text="Legendary Gem Level: ").grid(column=0, row=row)
             ttk.Entry(self.item_frame, textvariable=self.entry['jewel_rank']).grid(column=1, row=row)
@@ -262,11 +270,12 @@ class Notebook(ttk.Notebook):
             self.update_affixes()
         button_frame = tk.Frame(self.item_frame, background='white')
         button_frame.grid(column=0, row=99, sticky='NW')
-        search = ttk.Entry(button_frame, textvariable=self.affixfilter)
-        search.grid(column=1, row=0)
-        search.bind("<KeyRelease>", self.update_affixes)
-        search.bind("<space>", self.update_affixes)
-        ttk.Label(button_frame, text="Affix Filter:").grid(column=0, row=0)
+        if self.cbs:
+            search = ttk.Entry(button_frame, textvariable=self.affixfilter)
+            search.grid(column=1, row=0)
+            search.bind("<KeyRelease>", self.update_affixes)
+            search.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text="Affix Filter:").grid(column=0, row=0)
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=97)
         cb = ttk.Button(button_frame, text="Duplicate Item",
@@ -317,9 +326,13 @@ class Notebook(ttk.Notebook):
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
         self.size_affix_combobox()
 
-    def additem(self, ids, affixnum, amount=1, item=None):
+    def additem(self, ids, affixnum, amount=1, item=None, quality=None):
         if not item:
             newitem = item_handler.generate_item(ids, affixnum)
+            if quality:
+                newqual = db.get_quality_level(quality)
+                if newqual:
+                    newitem.generator.item_quality_level = int(newqual)
         else:
             newitem = item
         active_stash = self.active_stash.get()
