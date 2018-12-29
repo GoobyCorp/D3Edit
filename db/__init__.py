@@ -87,3 +87,13 @@ def get_slot(slot_id):
 def get_legal_affixes(category):
     query = "SELECT affix_list FROM affix_groups where item_types like '%{}%'".format(category)
     return instance_and_run(query)
+
+
+def get_quality_levels():
+    query = "SELECT * FROM itemquality"
+    return instance_and_run(query)
+
+
+def get_quality_level(quality):
+    query = "SELECT 1 FROM itemquality WHERE quality = '{0}'".format(quality)
+    return instance_and_run(query)[0][0]
