@@ -97,3 +97,13 @@ def get_quality_levels():
 def get_quality_level(quality):
     query = "SELECT 1 FROM itemquality WHERE quality = '{0}'".format(quality)
     return instance_and_run(query)[0][0]
+
+
+def get_categories():
+    query = "SELECT category FROM items"
+    return instance_and_run(query)
+
+
+def get_items_from_category(category):
+    query = "SELECT name, gbid FROM items WHERE category = '{0}'".format(category)
+    return instance_and_run(query)

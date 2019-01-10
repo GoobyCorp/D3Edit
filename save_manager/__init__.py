@@ -1,5 +1,4 @@
 from pb2_resources import Hero_pb2, Account_pb2
-
 import db
 import glob
 from os.path import dirname, basename
@@ -107,5 +106,79 @@ class SaveData(object):
         hero_mod_dec = self.heroes[hid].SerializeToString()
         hero_mod_enc = save_handler.encrypt_save(hero_mod_dec)
         save_handler.commit_to_file(hero_mod_enc, target_file)
-
         return target_file
+
+    def additem(self, affixnum=0, target_stash=None, ids=None, item=None, quality=None):
+        assert target_stash, "Need a target stash to add the item to!"
+        assert any([ids, item]), "Need either item or id to add"
+        saved_attr = None
+        if not item:
+            newitem = item_handler.generate_item(ids, affixnum)
+        else:
+            newitem = item
+        if quality:
+            newqual = db.get_quality_level(quality)
+            newitem.generator.item_quality_level = int(newqual)
+        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
+        if target_stash == 'SC - Non Season':
+            try:
+                stash_data = self.asd.partitions[0].items.items
+                saved_attr = self.asd.partitions[0].saved_attributes.attributes
+            except IndexError:
+                stash_data = None
+        elif target_stash == 'HC - Non Season':
+            try:
+                stash_data = self.asd.partitions[1].items.items
+                saved_attr = self.asd.partitions[1].saved_attributes.attributes
+            except IndexError:
+                stash_data = None
+        elif target_stash == 'SC - Season':
+            try:
+                stash_data = self.asd.partitions[2].items.items
+                saved_attr = self.asd.partitions[2].saved_attributes.attributes
+            except IndexError:
+                stash_data = None
+        elif target_stash == 'HC - Season':
+            try:
+                stash_data = self.asd.partitions[3].items.items
+                saved_attr = self.asd.partitions[3].saved_attributes.attributes
+            except IndexError:
+                stash_data = None
+        else:
+            hero_id = target_stash.split(' - ')[1]
+            stash_data = self.heroes[hero_id].items.items
+        assert stash_data, "Could not identify target stash!"
+        if target_stash in account_stash:
+            available_slots = [i for i in range(0, 20)]
+            for attribute in saved_attr:
+                if attribute.key == -4096:
+                    available_slots = [i for i in range(0, attribute.value)]
+            for i in stash_data:
+                try:
+                    available_slots.remove(i.square_index)
+                except ValueError:
+                    print("Item collition detected, two items in the same inventory slot!")
+                    print("{0}, {1}".format(i.square_index, i.generator.seed))
+            if available_slots:
+                newitem.item_slot = 544
+                it = stash_data.add()
+                it.CopyFrom(newitem)
+                it.square_index = available_slots[-1]
+            else:
+                print("Inventory is full!")
+            self.commit_account_changes()
+        else:
+            available_slots = [i for i in range(0, 60)]
+            for i in stash_data:
+                if i.item_slot == 272:
+                    try:
+                        available_slots.remove(i.square_index)
+                    except ValueError:
+                        print("Item collition detected, two items in the same inventory slot!")
+                        print("{0}, {1}".format(i.square_index, i.generator.seed))
+            if available_slots:
+                newitem.item_slot = 272
+                it = stash_data.add()
+                it.CopyFrom(newitem)
+                it.square_index = available_slots[-1]
+            self.commit_hero_changes(hero_id)

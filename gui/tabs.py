@@ -200,28 +200,9 @@ class Notebook(ttk.Notebook):
         self.item_frame.grid(row=1, column=0, sticky='WN')
         # INSIDE ABOVE FRAME
         if self.entry == 'No Item':
-            qual = tk.StringVar()
-            addid = tk.StringVar(value='0')
-            affixnum = tk.StringVar(value='0')
-            lab = ttk.Label(self.item_frame, text="Add item with ID:")
-            lab.grid(column=0, row=6)
-            ent = ttk.Entry(self.item_frame, textvariable=addid)
-            ent.grid(column=1, row=6)
-            lab = ttk.Label(self.item_frame, text="Number of Affixes:")
-            lab.grid(column=0, row=7)
-            ent2 = ttk.Entry(self.item_frame, textvariable=affixnum)
-            ent2.grid(column=1, row=7)
-            lab = ttk.Label(self.item_frame, text="Quality:")
-            lab.grid(column=0, row=8)
-            cb = ttk.Combobox(self.item_frame, textvariable=qual, values=[x[1] for x in db.get_quality_levels()],
-                              state='readonly')
-            cb.grid(column=1, row=8, sticky='W')
-            qual.set("Legendary/Set")
-            ttk.Label(self.item_frame, text="Note: If there's no space in the inventory no item will be added")\
-                .grid(column=0, row=20, columnspan=2)
-            sb = ttk.Button(self.item_frame, text="Add Item", command=lambda: self.additem(addid.get(), affixnum.get(),
-                                                                                           quality=qual.get()))
-            sb.grid(column=0, row=21)
+            self.item_frame = AddItemFrame(
+                account=self.account, parent=self.item_main_frame, bg='white', stash=self.active_stash.get(), nb=self)
+            self.item_frame.grid(column=0, row=1, sticky='WN')
             return
         row = 0
         v = tk.StringVar()
@@ -279,7 +260,8 @@ class Notebook(ttk.Notebook):
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=97)
         cb = ttk.Button(button_frame, text="Duplicate Item",
-                        command=lambda: self.additem(affixnum=0, ids=0, item=self.entry['item']))
+                        command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
+                                                     item=self.entry['item']))
         cb.grid(column=1, row=97)
         rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
         rb.grid(column=0, row=98)
@@ -326,54 +308,8 @@ class Notebook(ttk.Notebook):
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
         self.size_affix_combobox()
 
-    def additem(self, ids, affixnum, amount=1, item=None, quality=None):
-        if not item:
-            newitem = item_handler.generate_item(ids, affixnum)
-            if quality:
-                newqual = db.get_quality_level(quality)
-                if newqual:
-                    newitem.generator.item_quality_level = int(newqual)
-        else:
-            newitem = item
-        active_stash = self.active_stash.get()
-        account_stash = ['SC - Non Season', 'HC - Non Season', 'HC - Season', 'SC - Season']
-        if active_stash in account_stash:
-            p = account_stash.index(active_stash)
-            available_slots = [i for i in range(0, 20)]
-            saved_attr = self.account.asd.partitions[p].saved_attributes.attributes
-            for attribute in saved_attr:
-                if attribute.key == -4096:
-                    available_slots = [i for i in range(0, attribute.value)]
-            for i in self.stash_data:
-                try:
-                    available_slots.remove(i.square_index)
-                except ValueError:
-                    print("Item collition detected, two items in the same inventory slot!")
-                    print("{0}, {1}".format(i.square_index, i.generator.seed))
-            if available_slots:
-                newitem.item_slot = 544
-                it = self.stash_data.add()
-                it.CopyFrom(newitem)
-                it.square_index = available_slots[-1]
-            else:
-                print("Inventory is full!")
-            self.account.commit_account_changes()
-        else:
-            hero_id = self.active_stash.get().split(' - ')[1]
-            available_slots = [i for i in range(0, 60)]
-            for i in self.stash_data:
-                if i.item_slot == 272:
-                    try:
-                        available_slots.remove(i.square_index)
-                    except ValueError:
-                        print("Item collition detected, two items in the same inventory slot!")
-                        print("{0}, {1}".format(i.square_index, i.generator.seed))
-            if available_slots:
-                newitem.item_slot = 272
-                it = self.stash_data.add()
-                it.CopyFrom(newitem)
-                it.square_index = available_slots[-1]
-            self.account.commit_hero_changes(hero_id)
+    def additem(self, **kwargs):
+        self.account.additem(**kwargs)
         self.load_item_list_frame(self.stash_data, self.active_stash_frame)
 
     def reroll_item(self):
@@ -450,3 +386,68 @@ class ScrollbarItems(ttk.Frame):
             self.indexmap.append(item)
         listing.config(yscrollcommand=sb.set, height=35, width=lswid)
         self.listbox = listing
+
+
+class AddItemFrame(tk.Frame):
+    def __init__(self, account, stash, parent=None, nb=None, **kwargs):
+        tk.Frame.__init__(self, master=parent, **kwargs)
+        self.nb = nb
+        self.stash = stash
+        self.account = account
+        self.parent = parent
+        self.qual = tk.StringVar()
+        self.cat = tk.StringVar()
+        self.addid = tk.StringVar(value='0')
+        self.affixnum = tk.StringVar(value='0')
+        self.chosenitem = tk.StringVar(value="Please choose a category")
+        self.itemcb = None
+        self.draw_gui()
+
+    def draw_gui(self):
+        lab = ttk.Label(self, text="Add item with ID:")
+        lab.grid(column=0, row=6)
+        ent = ttk.Entry(self, textvariable=self.addid)
+        ent.grid(column=1, row=6)
+        lab = ttk.Label(self, text="Add item from Category:")
+        lab.grid(column=2, row=6)
+        cb = ttk.Combobox(self, textvariable=self.cat, values=[x[0] for x in list(set(db.get_categories()))],
+                          state='readonly')
+        cb.grid(column=3, row=6, sticky='W')
+        cb.bind("<<ComboboxSelected>>", self.update_item_options)
+        lab = ttk.Label(self, text="Number of Affixes:")
+        lab.grid(column=0, row=7)
+        ent2 = ttk.Entry(self, textvariable=self.affixnum)
+        ent2.grid(column=1, row=7)
+        lab = ttk.Label(self, text="Specific Item:")
+        lab.grid(column=2, row=7)
+        self.itemcb = ttk.Combobox(self, textvariable=self.chosenitem, values=[], state='readonly')
+        self.itemcb.grid(column=3, row=7)
+        self.itemcb.bind("<<ComboboxSelected>>", self.update_item_id)
+        lab = ttk.Label(self, text="Quality:")
+        lab.grid(column=0, row=8)
+        cb = ttk.Combobox(self, textvariable=self.qual, values=[x[1] for x in db.get_quality_levels()],
+                          state='readonly')
+        cb.grid(column=1, row=8, sticky='W')
+        self.qual.set("Legendary/Set")
+        ttk.Label(self, text="Note: If there's no space in the inventory no item will be added") \
+            .grid(column=0, row=20, columnspan=2)
+        sb = ttk.Button(self, text="Add Item", command=lambda: self.additem())
+        sb.grid(column=0, row=21)
+
+    def update_item_options(self, event=None):
+        items = db.get_items_from_category(self.cat.get())
+        itemcbvalues = [x[0] for x in items]
+        self.itemcbgbids = [x[1] for x in items]
+        self.itemcb.config(values=itemcbvalues)
+        self.chosenitem.set(itemcbvalues[0])
+
+    def update_item_id(self, event=None):
+        index = self.itemcb.current()
+        gbid = self.itemcbgbids[index]
+        self.addid.set(gbid)
+
+    def additem(self):
+        self.account.additem(ids=self.addid.get(), affixnum=self.affixnum.get(),
+                             target_stash=self.stash, quality=self.qual.get())
+        if self.nb:
+            self.nb.load_item_list_frame(self.nb.stash_data, self.nb.active_stash_frame)
