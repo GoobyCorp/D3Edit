@@ -24,6 +24,12 @@ def affix_to_str(affix):
         db.instance_and_run(query)
     return affix_return
 
+def affix_checked(affix):
+    try:
+        affix_is_checked = db.get_affix_from_id(affix)[0][5]
+    except IndexError:
+        affix_is_checked = "Not Sure"
+    return affix_is_checked
 
 def decode_single_item(item):
     enchanted = False
@@ -60,7 +66,8 @@ def decode_single_item(item):
 
     for affix in item.generator.base_affixes:
         desc = tk.StringVar(value=affix_to_str(affix))
-        decoded_item['affixes'].append((affix, desc))
+        checked = affix_checked(affix)
+        decoded_item['affixes'].append((affix, desc, checked))
 
     decoded_item['item'] = item
     decoded_item['jewel_rank'] = tk.StringVar(value=item.generator.jewel_rank)
@@ -70,7 +77,12 @@ def decode_single_item(item):
         decoded_item['enchanted'] = []
         decoded_item['enchanted'].append(enchanted)
         decoded_item['enchanted'].append(tk.StringVar(value=affix_to_str(enchanted[1])))
+        decoded_item['enchanted'].append(affix_checked(enchanted[1]))
+
+    decoded_item['primal'] = item.generator.flags == 59657
+    decoded_item['ancient'] = item.generator.flags == 44297
     return decoded_item
+
 
 
 def decode_itemlist(itemlist):
@@ -90,6 +102,9 @@ def reroll_item(item):
     item.generator.seed = seed
     return item
 
+def set_flag(item):
+    item.generator.flags = 59657
+    return item
 
 def generate_item(ids, affixnum):
     ids = int(ids)

@@ -3,7 +3,6 @@ import tkinter as tk
 from tkinter import ttk
 from save_manager import item_handler
 
-
 # noinspection PyAttributeOutsideInit
 class Notebook(ttk.Notebook):
     def __init__(self, parent, account):
@@ -51,7 +50,7 @@ class Notebook(ttk.Notebook):
             self.account_frame = ttk.Frame(self.account_tab, style="TNotebook", borderwidth=0)
         self.account_frame.grid(column=1, row=1)
         ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1, sticky='E', padx=128)
-        ttk.Label(self.account_frame, text="Hardcore").grid(column=2, row=1, sticky='W')
+        ttk.Label(self.account_frame, text="Hardcore").grid(column=4, row=1, sticky='W')
         ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=1, sticky='W')
         ttk.Label(self.account_frame, text="Rift Level").grid(column=0, row=2, sticky='W')
         currency_list = db.get_currency_list()
@@ -91,9 +90,8 @@ class Notebook(ttk.Notebook):
         if event:
             self.active_hero_frame.destroy()
             self.active_hero_frame = ttk.Frame(self.hero_tab, style="TNotebook", borderwidth=0)
-            self.active_hero_frame.grid(column=0, row=1)
-        c = ttk.Combobox(self.active_hero_frame, textvariable=self.active_hero_name,
-                         values=self.heroes, state='readonly')
+            self.active_hero_frame.grid(column=0, row=1, sticky="we")
+        c = ttk.Combobox(self.active_hero_frame, width = 50, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
         c.grid(column=1, row=0)
         c.bind("<<ComboboxSelected>>", self.load_hero_frame)
         # noinspection PyUnresolvedReferences
@@ -127,8 +125,8 @@ class Notebook(ttk.Notebook):
         self.active_stash_frame = tk.Frame(self.stash_tab, bg='white')
         self.active_stash_frame.grid(column=0, row=1)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
-        c = ttk.Combobox(self.active_stash_frame, textvariable=self.active_stash, values=stashvalues, state='readonly')
-        c.grid(column=0, row=0, sticky='NW')
+        c = ttk.Combobox(self.active_stash_frame, width=50, textvariable=self.active_stash, values=stashvalues, state='readonly')
+        c.grid(column=0, row=0)
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         active_stash = self.active_stash.get()
         if active_stash == 'SC - Non Season':
@@ -181,6 +179,7 @@ class Notebook(ttk.Notebook):
         self.item_scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
         self.item_scrollbar.grid(column=0, row=3)
         self.item_scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(self.item_list_frame))
+        self.item_scrollbar.listbox.config(width=50)
 
     def load_item_frame(self, parent):
         if self.item_frame:
@@ -220,7 +219,9 @@ class Notebook(ttk.Notebook):
             self.valid_values = [x[3] for x in db.get_affix_all()]
         category = self.entry['category']
         row = row + 1
+        #Slot
         ttk.Label(self.item_frame, text=self.entry['slot']).grid(column=0, row=row, sticky='W')
+        slotrow=row
         if category == 'Legendary Gems':
             row = row + 1
             ttk.Label(self.item_frame, text="Legendary Gem Level: ").grid(column=0, row=row)
@@ -235,18 +236,31 @@ class Notebook(ttk.Notebook):
             enchanted = False
         crow = row
         self.cbs = []
-        for affix, description in self.entry['affixes']:
+        #Label: Affix | Checked
+        if self.entry['affixes']:
+            ttk.Label(self.item_frame, text="Affix").grid(column=3,row=slotrow)
+            ttk.Label(self.item_frame, text=" | ").grid(column=4,row=slotrow)
+            ttk.Label(self.item_frame, text="Checked").grid(column=5, row=slotrow)
+        for affix, description, checked in self.entry['affixes']:
             crow = crow + 1
+            labelAffix = affix
+            labelChecked = checked
             if enchanted:
                 # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
                     ttk.Label(self.item_frame, text="Enchanted").grid(column=1, row=crow, sticky='NES')
                     description = enchanted[1]
-            cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly')
+                    labelAffix = enchanted[0][1]
+                    labelChecked = enchanted[2]
+            cb = ttk.Combobox(self.item_frame, width=50, textvariable=description, values=self.valid_values, state='readonly')
             cb.grid(row=crow, sticky='W')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
             self.size_affix_combobox()
+            #Show Affix
+            s_labelAffix = ttk.Label(self.item_frame, text=labelAffix).grid(column=3, row=crow)
+            s_labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=4,row=crow)
+            s_labelChecked = ttk.Label(self.item_frame, text=labelChecked).grid(column=5, row=crow, sticky='E')
         if self.affixfilter.get():
             self.update_affixes()
         button_frame = tk.Frame(self.item_frame, background='white')
@@ -268,6 +282,13 @@ class Notebook(ttk.Notebook):
         ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98)
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
         delb.grid(column=0, row=99)
+        #Set to Primal
+        xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
+        xb.grid(column=1, row=99)
+
+        #Add to show some stats
+        
+        #s_labelFlag = ttk.Label(button_frame, text=self.entry['item'].generator.flags).grid(column=1, row=100)
 
     def update_affixes(self, event=None):
         fil = self.affixfilter.get()
@@ -316,6 +337,11 @@ class Notebook(ttk.Notebook):
         print("Seed before: {}".format(self.entry['item'].generator.seed))
         self.entry['item'] = item_handler.reroll_item(self.entry['item'])
         print("Seed after: {}".format(self.entry['item'].generator.seed))
+
+    def set_flag(self):
+        self.entry['item'] = item_handler.set_flag(self.entry['item'])
+        message_label = ttk.Label(self.item_frame, text="Item set to Primal, don't forget to save item.", style="TLabel")
+        message_label.grid(column=0, row=98, sticky='NEW')
 
     def saveitem(self):
         if self.entry['jewel_rank'] != 0:
@@ -380,6 +406,10 @@ class ScrollbarItems(ttk.Frame):
                 label = label.split("ID: ")[0]
             if ": " in label:
                 label = label.split(": ")[1]
+            if item['primal']:
+                label = '(***Primal***)' + label
+            if item['ancient']:
+                label = '(**Ancient**)' + label
             listing.insert(curr_index, label)
             if (len(label)*0.75) > lswid:
                 lswid = int((len(label)*0.75))
@@ -410,7 +440,7 @@ class AddItemFrame(tk.Frame):
         ent.grid(column=1, row=6)
         lab = ttk.Label(self, text="Add item from Category:")
         lab.grid(column=2, row=6)
-        cb = ttk.Combobox(self, textvariable=self.cat, values=[x[0] for x in list(set(db.get_categories()))],
+        cb = ttk.Combobox(self, textvariable=self.cat, width=50, values=[x[0] for x in list(set(db.get_categories()))],
                           state='readonly')
         cb.grid(column=3, row=6, sticky='W')
         cb.bind("<<ComboboxSelected>>", self.update_item_options)
@@ -420,12 +450,12 @@ class AddItemFrame(tk.Frame):
         ent2.grid(column=1, row=7)
         lab = ttk.Label(self, text="Specific Item:")
         lab.grid(column=2, row=7)
-        self.itemcb = ttk.Combobox(self, textvariable=self.chosenitem, values=[], state='readonly')
+        self.itemcb = ttk.Combobox(self, width=50, textvariable=self.chosenitem, values=[], state='readonly')
         self.itemcb.grid(column=3, row=7)
         self.itemcb.bind("<<ComboboxSelected>>", self.update_item_id)
         lab = ttk.Label(self, text="Quality:")
         lab.grid(column=0, row=8)
-        cb = ttk.Combobox(self, textvariable=self.qual, values=[x[1] for x in db.get_quality_levels()],
+        cb = ttk.Combobox(self, width=50, textvariable=self.qual, values=[x[1] for x in db.get_quality_levels()],
                           state='readonly')
         cb.grid(column=1, row=8, sticky='W')
         self.qual.set("Legendary/Set")
