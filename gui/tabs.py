@@ -69,6 +69,7 @@ class Notebook(ttk.Notebook):
             for ids in cc.keys():
                 idi = int(ids)
                 ttk.Entry(self.account_frame, textvariable=cc[ids]).grid(column=column, row=(idi + 6), sticky='E')
+        ttk.Label(self.account_frame, text="==========================================================").grid(column=0, row=98, columnspan=4, sticky='W')
 
     def get_partition_data(self, partition):
         partition_id = str(partition.partition_id)
@@ -91,19 +92,21 @@ class Notebook(ttk.Notebook):
             self.active_hero_frame.destroy()
             self.active_hero_frame = ttk.Frame(self.hero_tab, style="TNotebook", borderwidth=0)
             self.active_hero_frame.grid(column=0, row=1, sticky='WE')
-        c = ttk.Combobox(self.active_hero_frame, width = 50, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
-        c.grid(column=0, row=0, sticky='W')
+        c = ttk.Combobox(self.active_hero_frame, width = 30, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
+        c.grid(column=0, row=0, columnspan=2, sticky='W')
         c.bind("<<ComboboxSelected>>", self.load_hero_frame)
+        ttk.Label(self.active_hero_frame, text=" ").grid(column=1, row=1)
         # noinspection PyUnresolvedReferences
         self.active_hid = self.active_hero_name.get().split(" - ")[1]
         current_hero_data = self.account.heroes[self.active_hid]
         self.active_hero_data['Name'] = tk.StringVar(value=current_hero_data.digest.hero_name)
         self.active_hero_data['Level'] = tk.StringVar(value=current_hero_data.digest.level)
-        row = 1
+        row = 2
         for key, value in self.active_hero_data.items():
-            ttk.Label(self.active_hero_frame, text=key).grid(column=0, row=row, sticky='W')
+            ttk.Label(self.active_hero_frame, text=key).grid(column=0, row=row, sticky='E')
             ttk.Entry(self.active_hero_frame, textvariable=self.active_hero_data[key]).grid(column=1, row=row)
             row = row + 1
+        ttk.Label(self.active_hero_frame, text="==========================================").grid(column=0,row=row, columnspan=4, sticky='W')
         self.active_hero_frame.grid(column=0, row=0)
 
     def configure_hero_tab(self):
@@ -116,7 +119,7 @@ class Notebook(ttk.Notebook):
         self.load_hero_frame()
 
     def hero_tab_message(self, message):
-        ttk.Label(self.active_hero_frame, text=message).grid(column=1, row=98)
+        ttk.Label(self.active_hero_frame, text=message).grid(column=0, columnspan=2, row=1)
 
     # noinspection PyUnusedLocal
     def configure_stash_frame(self, event=None):
@@ -125,7 +128,7 @@ class Notebook(ttk.Notebook):
         self.active_stash_frame = tk.Frame(self.stash_tab, bg='white')
         self.active_stash_frame.grid(column=0, row=1)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
-        c = ttk.Combobox(self.active_stash_frame, width=50, textvariable=self.active_stash, values=stashvalues, state='readonly')
+        c = ttk.Combobox(self.active_stash_frame, width=30, textvariable=self.active_stash, values=stashvalues, state='readonly')
         c.grid(column=0, row=0, sticky='W')
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         active_stash = self.active_stash.get()
@@ -206,10 +209,11 @@ class Notebook(ttk.Notebook):
         row = 0
         v = tk.StringVar()
         v.set(self.entry['name'])
-        le = int(len(self.entry['name'])*0.9)
-        e = tk.Entry(self.item_frame, readonlybackground='white', fg='black', textvariable=v, bd=0, width=le,
+        itemIDframe = tk.Frame(self.item_frame, bg='white')
+        e = tk.Entry(itemIDframe, readonlybackground='white', fg='black', textvariable=v, bd=0,
                      state='readonly', highlightthickness=0)
-        e.grid(row=row, sticky='W', columnspan=2)
+        e.grid(column=0, row=0, sticky='W')
+        itemIDframe.grid(column=0, row=0, columnspan=100, sticky='W')
         if self.safemode.get() == 1:
             try:
                 self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
@@ -286,6 +290,7 @@ class Notebook(ttk.Notebook):
         xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
         xb.grid(column=1, row=99)
 
+        e.grid(column=0, row=0, sticky='W', columnspan=10)
         #Add to show some stats
 
         #s_labelFlag = ttk.Label(button_frame, text=self.entry['item'].generator.flags).grid(column=1, row=100)
@@ -407,9 +412,9 @@ class ScrollbarItems(ttk.Frame):
             if ": " in label:
                 label = label.split(": ")[1]
             if item['primal']:
-                label = '(***Primal***)' + label
+                label = label + '   **Primal**'
             if item['ancient']:
-                label = '(**Ancient**)' + label
+                label = label + '   *Ancient*'
             listing.insert(curr_index, label)
             if (len(label)*0.75) > lswid:
                 lswid = int((len(label)*0.75))
