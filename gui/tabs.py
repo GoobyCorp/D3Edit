@@ -38,9 +38,9 @@ class Notebook(ttk.Notebook):
         for partition in self.account.asd.partitions:
             self.get_partition_data(partition)
         copt = ['Non Season', 'Season']
-        c = ttk.Combobox(self.account_tab, textvariable=self.active_partition,
+        c = ttk.Combobox(self.account_tab, width=30, textvariable=self.active_partition,
                          values=copt, state='readonly')
-        c.grid(column=1, row=0)
+        c.grid(column=0, row=0, sticky='W')
         c.bind("<<ComboboxSelected>>", self.populate_account_frame)
         self.populate_account_frame()
 
@@ -48,14 +48,14 @@ class Notebook(ttk.Notebook):
         if event:
             self.account_frame.destroy()
             self.account_frame = ttk.Frame(self.account_tab, style="TNotebook", borderwidth=0)
-        self.account_frame.grid(column=1, row=1)
-        ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1, sticky='E', padx=128)
-        ttk.Label(self.account_frame, text="Hardcore").grid(column=4, row=1, sticky='W')
-        ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=1, sticky='W')
-        ttk.Label(self.account_frame, text="Rift Level").grid(column=0, row=2, sticky='W')
+        self.account_frame.grid(column=0, row=2)
+        ttk.Label(self.account_frame, text="Softcore").grid(column=1, row=1)
+        ttk.Label(self.account_frame, text="Hardcore").grid(column=2, row=1)
+        ttk.Label(self.account_frame, text="Paragon Level").grid(column=0, row=2, sticky='E')
+        ttk.Label(self.account_frame, text="Rift Level").grid(column=0, row=3, sticky='E')
         currency_list = db.get_currency_list()
         for ids, currency in currency_list:
-            ttk.Label(self.account_frame, text=currency).grid(column=0, row=(int(ids) + 5), sticky='W')
+            ttk.Label(self.account_frame, text=currency).grid(column=0, row=(int(ids) + 6), sticky='E')
         offset = 0
         if self.active_partition.get() == "Season":
             offset = 2
@@ -63,12 +63,12 @@ class Notebook(ttk.Notebook):
             coffset = str(offset + m)
             column = (1 + m)
             cp = self.part_textvars[coffset]
-            ttk.Entry(self.account_frame, textvariable=cp['plvl']).grid(column=column, row=1, sticky='E')
-            ttk.Entry(self.account_frame, textvariable=cp['rift']).grid(column=column, row=2, sticky='E')
+            ttk.Entry(self.account_frame, textvariable=cp['plvl']).grid(column=column, row=2, sticky='E')
+            ttk.Entry(self.account_frame, textvariable=cp['rift']).grid(column=column, row=3, sticky='E')
             cc = cp['currencies']
             for ids in cc.keys():
                 idi = int(ids)
-                ttk.Entry(self.account_frame, textvariable=cc[ids]).grid(column=column, row=(idi + 5), sticky='E')
+                ttk.Entry(self.account_frame, textvariable=cc[ids]).grid(column=column, row=(idi + 6), sticky='E')
 
     def get_partition_data(self, partition):
         partition_id = str(partition.partition_id)
@@ -90,9 +90,9 @@ class Notebook(ttk.Notebook):
         if event:
             self.active_hero_frame.destroy()
             self.active_hero_frame = ttk.Frame(self.hero_tab, style="TNotebook", borderwidth=0)
-            self.active_hero_frame.grid(column=0, row=1, sticky="we")
+            self.active_hero_frame.grid(column=0, row=1, sticky='WE')
         c = ttk.Combobox(self.active_hero_frame, width = 50, textvariable=self.active_hero_name, values=self.heroes, state='readonly')
-        c.grid(column=1, row=0)
+        c.grid(column=0, row=0, sticky='W')
         c.bind("<<ComboboxSelected>>", self.load_hero_frame)
         # noinspection PyUnresolvedReferences
         self.active_hid = self.active_hero_name.get().split(" - ")[1]
@@ -126,7 +126,7 @@ class Notebook(ttk.Notebook):
         self.active_stash_frame.grid(column=0, row=1)
         stashvalues = ['SC - Non Season', 'HC - Non Season', 'SC - Season', 'HC - Season'] + self.heroes
         c = ttk.Combobox(self.active_stash_frame, width=50, textvariable=self.active_stash, values=stashvalues, state='readonly')
-        c.grid(column=0, row=0)
+        c.grid(column=0, row=0, sticky='W')
         c.bind("<<ComboboxSelected>>", self.configure_stash_frame)
         active_stash = self.active_stash.get()
         if active_stash == 'SC - Non Season':
@@ -287,7 +287,7 @@ class Notebook(ttk.Notebook):
         xb.grid(column=1, row=99)
 
         #Add to show some stats
-        
+
         #s_labelFlag = ttk.Label(button_frame, text=self.entry['item'].generator.flags).grid(column=1, row=100)
 
     def update_affixes(self, event=None):

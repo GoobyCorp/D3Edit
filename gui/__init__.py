@@ -42,8 +42,8 @@ class D3Edit(object):
             message = "Account not loaded, please load an account file to begin."
         message_label = ttk.Label(self.main_window, text=message, style="TLabel")
         message_label.grid(column=0, row=0, sticky='NEW')
-        message_label.configure(anchor='center')     
-        open_file = ttk.Button(self.main_window, text="\n     Open File     \n", command=self.openfile)
+        message_label.configure(anchor='center')
+        open_file = ttk.Button(self.main_window, text="\n\n\n          Open File          \n\n\n", command=self.openfile)
         open_file.place(rely=0.5, relx=0.5, anchor='center')
 
     def destroy_loaded_view(self):
