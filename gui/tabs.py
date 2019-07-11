@@ -381,9 +381,7 @@ class Notebook(ttk.Notebook):
             self.item_frame.destroy()
             self.load_item_list_frame(self.stash_data, self.active_stash_frame)
         else:
-            message_label = ttk.Label(self.item_frame, text="Disable safe mode first!", style="TLabel")
-            message_label.grid(column=0, row=97, sticky='NEW')
-
+            self.LabelMessage.config(text="Disable Safe Edit Mode first!")
 
 # noinspection PyAttributeOutsideInit
 class ScrollbarItems(ttk.Frame):
@@ -412,9 +410,9 @@ class ScrollbarItems(ttk.Frame):
             if ": " in label:
                 label = label.split(": ")[1]
             if item['primal']:
-                label = label + '   **Primal**'
+                label = label + '    **Primal**'
             if item['ancient']:
-                label = label + '   *Ancient*'
+                label = label + '    *Ancient*'
             listing.insert(curr_index, label)
             if (len(label)*0.75) > lswid:
                 lswid = int((len(label)*0.75))
@@ -439,35 +437,37 @@ class AddItemFrame(tk.Frame):
         self.draw_gui()
 
     def draw_gui(self):
-        lab = ttk.Label(self, text="Add item with ID:")
-        lab.grid(column=0, row=6)
+        lab = ttk.Label(self, text="Add item with ID:  ")
+        lab.grid(column=0, row=6, sticky='E')
         ent = ttk.Entry(self, textvariable=self.addid)
-        ent.grid(column=1, row=6)
-        lab = ttk.Label(self, text="Add item from Category:")
-        lab.grid(column=2, row=6)
+        ent.grid(column=1, row=6, sticky='WE')
+        lab = ttk.Label(self, text="Add item from Category:  ")
+        lab.grid(column=2, row=6, sticky='E')
         cb = ttk.Combobox(self, textvariable=self.cat, values=[x[0] for x in list(set(db.get_categories()))],
                           state='readonly', width=50)
         cb.grid(column=3, row=6, sticky='WE')
         cb.bind("<<ComboboxSelected>>", self.update_item_options)
-        lab = ttk.Label(self, text="Number of Affixes:")
-        lab.grid(column=0, row=7)
+        lab = ttk.Label(self, text="Number of Affixes:  ")
+        lab.grid(column=0, row=7, sticky='E')
         ent2 = ttk.Entry(self, textvariable=self.affixnum)
-        ent2.grid(column=1, row=7)
-        lab = ttk.Label(self, text="Specific Item:")
-        lab.grid(column=2, row=7)
+        ent2.grid(column=1, row=7, sticky='WE')
+        lab = ttk.Label(self, text="Specific Item:  ")
+        lab.grid(column=2, row=7, sticky='E')
         self.itemcb = ttk.Combobox(self, textvariable=self.chosenitem, values=[], state='readonly', width=50)
-        self.itemcb.grid(column=3, row=7)
+        self.itemcb.grid(column=3, row=7, sticky='WE')
         self.itemcb.bind("<<ComboboxSelected>>", self.update_item_id)
-        lab = ttk.Label(self, text="Quality:")
-        lab.grid(column=0, row=8)
+        lab = ttk.Label(self, text="Quality:  ")
+        lab.grid(column=0, row=8, sticky='E')
         cb = ttk.Combobox(self, textvariable=self.qual, values=[x[1] for x in db.get_quality_levels()],
                           state='readonly')
         cb.grid(column=1, row=8, sticky='WE')
         self.qual.set("Legendary/Set")
-        ttk.Label(self, text="Note: If there's no space in the inventory no item will be added") \
-            .grid(column=0, row=20, columnspan=2)
         sb = ttk.Button(self, text="Add Item", command=lambda: self.additem())
         sb.grid(column=0, row=21)
+        #ShowMessage
+        LabelMessageSP = ttk.Label(self, text="=======================================================================================").grid(column=0, row=100, columnspan=6, sticky='WE')
+        self.LabelMessage = ttk.Label(self, text="Note: If there's no space in the inventory no item will be added")
+        self.LabelMessage.grid(column=0, row=101, columnspan=6, sticky='W')
 
     def update_item_options(self, event=None):
         items = db.get_items_from_category(self.cat.get())
