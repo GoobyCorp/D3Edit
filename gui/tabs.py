@@ -238,31 +238,31 @@ class Notebook(ttk.Notebook):
             enchanted = False
         crow = row
         self.cbs = []
-        #Label: Affix | Enchanted | Remark
+        #Label: AffixID | Enchanted | Remark
         if self.entry['affixes']:
-            ttk.Label(self.item_frame, text="Affix").grid(column=1,row=slotrow, sticky='E')
+            ttk.Label(self.item_frame, text="AffixID").grid(column=1,row=slotrow, sticky='E')
             ttk.Label(self.item_frame, text=" | ").grid(column=2,row=slotrow)
             ttk.Label(self.item_frame, text="Enchanted").grid(column=3, row=slotrow)
             ttk.Label(self.item_frame, text=" | ").grid(column=4,row=slotrow)
             ttk.Label(self.item_frame, text="Remark").grid(column=5, row=slotrow)
         for affix, description, remark in self.entry['affixes']:
             crow = crow + 1
-            labelAffix_text = affix
+            labelAffixID_text = affix
             labelRemark_text = remark
             if enchanted:
                 # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
-                    ttk.Label(self.item_frame, text="Yes").grid(column=3, row=crow)
+                    ttk.Label(self.item_frame, text="@").grid(column=3, row=crow)
                     description = enchanted[1]
-                    labelAffix_text = enchanted[0][1]
+                    labelAffixID_text = enchanted[0][1]
                     labelRemark_text = enchanted[2]
-            cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly')
+            cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly', width=80)
             cb.grid(row=crow, sticky='WE')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
-            self.size_affix_combobox()
-            #Show Affix
-            labelAffix = ttk.Label(self.item_frame, text=labelAffix_text).grid(column=1, row=crow, sticky='E')
+            #self.size_affix_combobox() use fixed width
+            #Show AffixID
+            labelAffixID = ttk.Label(self.item_frame, text=labelAffixID_text).grid(column=1, row=crow, sticky='E')
             labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=2,row=crow)
             labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=4,row=crow)
             labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=5, row=crow)
@@ -291,6 +291,9 @@ class Notebook(ttk.Notebook):
         xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
         xb.grid(column=1, row=99)
         #Add to show some stats
+        LabelMessageSP = ttk.Label(self.item_frame, text="=======================================================================================").grid(column=0, row=100, columnspan=6, sticky='WE')
+        self.LabelMessage = ttk.Label(self.item_frame, text=" ")
+        self.LabelMessage.grid(column=0, row=101, sticky='W')
 
         #s_labelFlag = ttk.Label(button_frame, text=self.entry['item'].generator.flags).grid(column=1, row=100)
 
@@ -331,7 +334,7 @@ class Notebook(ttk.Notebook):
             self.entry['item'].generator.enchanted_affix_new = new_id
         else:
             self.entry['item'].generator.base_affixes[affix_changing] = new_id
-        self.size_affix_combobox()
+        #self.size_affix_combobox() -use fixed width
 
     def additem(self, **kwargs):
         self.account.additem(**kwargs)
@@ -344,8 +347,7 @@ class Notebook(ttk.Notebook):
 
     def set_flag(self):
         self.entry['item'] = item_handler.set_flag(self.entry['item'])
-        message_label = ttk.Label(self.item_frame, text="Item set to Primal, don't forget to save item.", style="TLabel")
-        message_label.grid(column=0, row=98, sticky='NEW')
+        self.LabelMessage.config(text="Item set to Primal, don't forget to save item.")
 
     def saveitem(self):
         if self.entry['jewel_rank'] != 0:
@@ -361,8 +363,7 @@ class Notebook(ttk.Notebook):
         else:
             hero_id = self.active_stash.get().split(' - ')[1]
             self.account.commit_hero_changes(hero_id)
-        message_label = ttk.Label(self.item_frame, text="Item Saved!", style="TLabel")
-        message_label.grid(column=0, row=98, sticky='NEW')
+        self.LabelMessage.config(text="Item Saved!")
 
     def deleteitem(self):
         iname = self.entry['name']

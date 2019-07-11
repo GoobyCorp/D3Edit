@@ -28,7 +28,7 @@ class D3Edit(object):
     def setupframe(self, wcoords=None):
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
-        self.main_window.minsize(1000, 850)
+        self.main_window.minsize(1200, 850)
         if wcoords:
             self.main_window.geometry("+{0}+{1}".format(wcoords[0], wcoords[1]))
         self.style = ttk.Style(self.main_window)
