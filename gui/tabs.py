@@ -182,7 +182,7 @@ class Notebook(ttk.Notebook):
         self.item_scrollbar = ScrollbarItems(self.decodeditems, parent=self.item_list_frame)
         self.item_scrollbar.grid(column=0, row=3)
         self.item_scrollbar.listbox.bind('<Double-1>', lambda x: self.load_item_frame(self.item_list_frame))
-        self.item_scrollbar.listbox.config(width=50)
+        self.item_scrollbar.listbox.config(width=75)
 
     def load_item_frame(self, parent):
         if self.item_frame:
@@ -393,11 +393,11 @@ class ScrollbarItems(ttk.Frame):
 
     def makewidgets(self, items):
         sb = tk.Scrollbar(self)
-        listing = tk.Listbox(self, relief='sunken')
+        listing = tk.Listbox(self, relief='sunken', font=('Courier',9))
         sb.config(command=listing.yview)
         sb.grid(row=0, column=1, sticky='ns')
         listing.grid(row=0, column=0, sticky='ns')
-        listing.insert(0, ' ++ Add Item ++ ')
+        listing.insert(0, ' ++ Add Item ++ ' + " "*36 + "<Flag> | <Slot>")
         self.indexmap.append('No Item')
         lswid = 30
         for item in items:
@@ -410,16 +410,20 @@ class ScrollbarItems(ttk.Frame):
             if ": " in label:
                 label = label.split(": ")[1]
             if item['primal']:
-                label = label + '    **Primal**'
+                if len(label)<45:
+                    label = label + " "*(50-len(label)) + " *Primal"
             if item['ancient']:
-                label = label + '    *Ancient*'
+                if len(label)<45:
+                    label = label + " "*(50-len(label)) + " Ancient"
+            else:
+                label = label + " "*(58-len(label))
+            label = label + " | " + item['slot']
             listing.insert(curr_index, label)
             if (len(label)*0.75) > lswid:
                 lswid = int((len(label)*0.75))
             self.indexmap.append(item)
-        listing.config(yscrollcommand=sb.set, height=35, width=lswid)
+        listing.config(yscrollcommand=sb.set, height=45, width=lswid)
         self.listbox = listing
-
 
 class AddItemFrame(tk.Frame):
     def __init__(self, account, stash, parent=None, nb=None, **kwargs):
