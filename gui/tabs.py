@@ -190,13 +190,13 @@ class Notebook(ttk.Notebook):
         self.index = self.item_scrollbar.listbox.curselection()[0]
         self.entry = self.item_scrollbar.indexmap[self.index]
         self.item_main_frame = tk.Frame(parent, bg='white')
-        self.item_main_frame.grid(column=1, row=0, sticky='WN', rowspan=10)
+        self.item_main_frame.grid(column=1, row=0, sticky='WN', rowspan=10, padx=5)
         seframe = tk.Frame(self.item_main_frame, bg='white')
         cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
                             command=self.safemode_toggle)
-        cb.grid(column=0, row=0, sticky='W')
+        cb.grid(column=0, row=0, sticky='WNS')
         tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
-        tl.grid(column=1, row=0, sticky='W')
+        tl.grid(column=1, row=0, sticky='WNS')
         seframe.grid(column=0, row=0, sticky='W')
         self.item_frame = tk.Frame(self.item_main_frame, bg='white')
         self.item_frame.grid(column=0, row=2, sticky='WN')
@@ -272,24 +272,24 @@ class Notebook(ttk.Notebook):
         button_frame.grid(column=0, row=99, sticky='NW')
         if self.cbs:
             search = ttk.Entry(button_frame, textvariable=self.affixfilter)
-            search.grid(column=1, row=0)
+            search.grid(column=1, row=0, columnspan=2, sticky='W')
             search.bind("<KeyRelease>", self.update_affixes)
             search.bind("<space>", self.update_affixes)
-            ttk.Label(button_frame, text="Affix Filter:").grid(column=0, row=0)
+            ttk.Label(button_frame, text="Affix Filter:  ").grid(column=0, row=0, sticky='E',pady=5)
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
-        sb.grid(column=0, row=97)
+        sb.grid(column=0, row=97, sticky='WE', pady=2)
         cb = ttk.Button(button_frame, text="Duplicate Item",
                         command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
                                                      item=self.entry['item']))
-        cb.grid(column=1, row=97)
+        cb.grid(column=3, row=97, sticky='WE', pady=2)
         rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
-        rb.grid(column=0, row=98)
-        ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98)
+        rb.grid(column=0, row=98, sticky='WE', pady=2)
+        ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98, sticky='W')
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
-        delb.grid(column=0, row=99)
+        delb.grid(column=0, row=99, sticky='WE', pady=2)
         #Set to Primal
         xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
-        xb.grid(column=1, row=99)
+        xb.grid(column=3, row=99, sticky='WE', pady=2)
         #Add to show some stats
         LabelMessageSP = ttk.Label(self.item_frame, text="=======================================================================================").grid(column=0, row=100, columnspan=6, sticky='WE')
         self.LabelMessage = ttk.Label(self.item_frame, text=" ")
