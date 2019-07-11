@@ -4,8 +4,8 @@
 - Tag for Ancient and Primal items
 - Added some missing affix to the database
 
-WIP
-
+WIP:
+Multi language Support
 
 
 Original README:
