@@ -9,7 +9,7 @@ WIP
 
 
 Original README:
-
+==================================================================================
 ### A program to encrypt/decrypt and modify Diablo III saves
 Instructions:
 - Make sure Python3 is installed.
