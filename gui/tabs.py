@@ -230,7 +230,7 @@ class Notebook(ttk.Notebook):
             ttk.Entry(self.item_frame, textvariable=self.entry['jewel_rank']).grid(column=1, row=row)
         elif self.entry['stackable']:
             row = row + 1
-            ttk.Label(self.item_frame, text="Stack Size: ").grid(column=0, row=row)
+            ttk.Label(self.item_frame, text="Stack Size: ").grid(column=0, row=row, sticky='E')
             ttk.Entry(self.item_frame, textvariable=self.entry['stack_size']).grid(column=1, row=row)
         try:
             enchanted = self.entry['enchanted']
@@ -240,11 +240,12 @@ class Notebook(ttk.Notebook):
         self.cbs = []
         #Label: AffixID | Enchanted | Remark
         if self.entry['affixes']:
-            ttk.Label(self.item_frame, text="AffixID").grid(column=1,row=slotrow, sticky='E')
-            ttk.Label(self.item_frame, text=" | ").grid(column=2,row=slotrow)
-            ttk.Label(self.item_frame, text="Enchanted").grid(column=3, row=slotrow)
-            ttk.Label(self.item_frame, text=" | ").grid(column=4,row=slotrow)
-            ttk.Label(self.item_frame, text="Remark").grid(column=5, row=slotrow)
+            #ttk.Label(self.item_frame, text=" | ").grid(column=10, row=slotrow, sticky='WE')
+            ttk.Label(self.item_frame, text="AffixID").grid(column=11, row=slotrow, sticky='E')
+            ttk.Label(self.item_frame, text=" | ").grid(column=12, row=slotrow)
+            ttk.Label(self.item_frame, text="Enchanted").grid(column=13, row=slotrow)
+            ttk.Label(self.item_frame, text=" | ").grid(column=14, row=slotrow)
+            ttk.Label(self.item_frame, text="Remark").grid(column=15, row=slotrow)
         for affix, description, remark in self.entry['affixes']:
             crow = crow + 1
             labelAffixID_text = affix
@@ -252,46 +253,51 @@ class Notebook(ttk.Notebook):
             if enchanted:
                 # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
-                    ttk.Label(self.item_frame, text="@").grid(column=3, row=crow)
+                    ttk.Label(self.item_frame, text="@").grid(column=13, row=crow)
                     description = enchanted[1]
                     labelAffixID_text = enchanted[0][1]
                     labelRemark_text = enchanted[2]
             cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly', width=80)
-            cb.grid(row=crow, sticky='WE')
+            cb.grid(column=0, columnspan=10, row=crow, sticky='WE')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
             #self.size_affix_combobox() use fixed width
             #Show AffixID
-            labelAffixID = ttk.Label(self.item_frame, text=labelAffixID_text).grid(column=1, row=crow, sticky='E')
-            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=2,row=crow)
-            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=4,row=crow)
-            labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=5, row=crow)
+            #labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=10, row=crow, sticky='WE')
+            labelAffixID = ttk.Label(self.item_frame, text=labelAffixID_text).grid(column=11, row=crow, sticky='E')
+            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=12,row=crow)
+            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=14,row=crow)
+            labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=15, row=crow)
         if self.affixfilter.get():
             self.update_affixes()
         button_frame = tk.Frame(self.item_frame, background='white')
         button_frame.grid(column=0, row=99, sticky='NW')
         if self.cbs:
             search = ttk.Entry(button_frame, textvariable=self.affixfilter)
-            search.grid(column=1, row=0, columnspan=2, sticky='W')
+            search.grid(column=1, row=0, columnspan=3, sticky='W')
             search.bind("<KeyRelease>", self.update_affixes)
             search.bind("<space>", self.update_affixes)
             ttk.Label(button_frame, text="Affix Filter:  ").grid(column=0, row=0, sticky='E',pady=5)
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=97, sticky='WE', pady=2)
-        cb = ttk.Button(button_frame, text="Duplicate Item",
-                        command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
-                                                     item=self.entry['item']))
-        cb.grid(column=3, row=97, sticky='WE', pady=2)
-        rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
-        rb.grid(column=0, row=98, sticky='WE', pady=2)
-        ttk.Label(button_frame, text="(generate new random seed)").grid(column=1, row=98, sticky='W')
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
-        delb.grid(column=0, row=99, sticky='WE', pady=2)
-        #Set to Primal
-        xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
-        xb.grid(column=3, row=99, sticky='WE', pady=2)
+        delb.grid(column=0, row=98, sticky='WE', pady=2)
+        if self.entry['affixes']:
+            rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
+            rb.grid(column=4, row=97, sticky='W', padx=12, pady=2)
+            LabelRerollNotes = ttk.Label(button_frame, text="(Reroll only change value, not the Affix; Set to Primal make all possible values to MAX.)")
+            LabelRerollNotes.grid(column=4, row=98, columnspan=20, sticky='WE', padx=12, pady=2)
+            self.LabelSeed = ttk.Label(button_frame, text="Current Seed: " + str(self.entry['item'].generator.seed))
+            self.LabelSeed.grid(column=5, row=97, columnspan=10, sticky='WE', pady=2)
+            cb = ttk.Button(button_frame, text="Duplicate Item",
+                            command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
+                                                         item=self.entry['item']))
+            cb.grid(column=3, row=97, sticky='WE', pady=2)
+            #Set to Primal
+            xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
+            xb.grid(column=3, row=98, sticky='WE', pady=2)
         #Add to show some stats
-        LabelMessageSP = ttk.Label(self.item_frame, text="=======================================================================================").grid(column=0, row=100, columnspan=6, sticky='WE')
+        LabelMessageSP = ttk.Label(self.item_frame, text="=========================================================================================").grid(column=0, row=100, columnspan=20, sticky='WE')
         self.LabelMessage = ttk.Label(self.item_frame, text=" ")
         self.LabelMessage.grid(column=0, row=101, sticky='W')
 
@@ -344,6 +350,7 @@ class Notebook(ttk.Notebook):
         print("Seed before: {}".format(self.entry['item'].generator.seed))
         self.entry['item'] = item_handler.reroll_item(self.entry['item'])
         print("Seed after: {}".format(self.entry['item'].generator.seed))
+        self.LabelSeed['text'] = "Current Seed: " + str(self.entry['item'].generator.seed)
 
     def set_flag(self):
         self.entry['item'] = item_handler.set_flag(self.entry['item'])

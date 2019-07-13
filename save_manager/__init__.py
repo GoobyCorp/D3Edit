@@ -5,6 +5,7 @@ from os.path import dirname, basename
 from save_manager import save_handler
 from save_manager import item_handler
 from struct import pack
+import random
 
 
 currency_list = {str(k): v for (k, v) in db.get_currency_list()}
@@ -116,6 +117,7 @@ class SaveData(object):
             newitem = item_handler.generate_item(ids, affixnum)
         else:
             newitem = item
+            newitem.generator.seed = random.randint(3000000, 2147483646)
         if quality:
             newqual = db.get_quality_level(quality)
             newitem.generator.item_quality_level = int(newqual)
