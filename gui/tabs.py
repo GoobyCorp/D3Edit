@@ -33,6 +33,8 @@ class Notebook(ttk.Notebook):
         self.item_frame = None
         self.active_partition = tk.StringVar(value="Non Season")
         self.configure_account_tab()
+        self.remarkfilter = tk.StringVar()
+        self.listboxSelected = tk.IntVar()
 
     def configure_account_tab(self):
         for partition in self.account.asd.partitions:
@@ -162,12 +164,21 @@ class Notebook(ttk.Notebook):
         if self.item_frame:
             if self.safemode.get() == 1:
                 try:
-                    self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
+                    self.valid_values = [[db.get_affix_from_id(x)[0][3],db.get_affix_from_id(x)[0][5]] for x in self.entry['legal_affixes']]
+                    for i in range(len(self.valid_values)):
+                        if self.valid_values[i][1] is None:
+                            self.valid_values[i][1] = "Not Set"
                 except KeyError:
-                    self.valid_values = [x[3] for x in db.get_affix_all()]
+                    self.valid_values = [[x[3],x[5]] for x in db.get_affix_all()]
+                    for i in range(len(self.valid_values)):
+                        if self.valid_values[i][1] is None:
+                            self.valid_values[i][1] = "Not Set"
                 print("Safemode ON!")
             else:
-                self.valid_values = [x[3] for x in db.get_affix_all()]
+                self.valid_values = [[x[3],x[5]] for x in db.get_affix_all()]
+                for i in range(len(self.valid_values)):
+                    if self.valid_values[i][1] is None:
+                        self.valid_values[i][1] = "Not Set"
                 print("Safemode OFF!")
             self.load_item_frame(self.item_list_frame)
 
@@ -187,8 +198,14 @@ class Notebook(ttk.Notebook):
     def load_item_frame(self, parent):
         if self.item_frame:
             self.item_frame.destroy()
-        self.index = self.item_scrollbar.listbox.curselection()[0]
+        try:
+            self.index = self.item_scrollbar.listbox.curselection()[0]
+            self.listboxSelected = self.index
+        except:
+            self.index = self.listboxSelected
         self.entry = self.item_scrollbar.indexmap[self.index]
+        self.affixfilter = tk.StringVar(value="")
+        self.remarkfilter = tk.StringVar(value="")
         self.item_main_frame = tk.Frame(parent, bg='white')
         self.item_main_frame.grid(column=1, row=0, sticky='WN', rowspan=10, padx=5)
         seframe = tk.Frame(self.item_main_frame, bg='white')
@@ -209,11 +226,22 @@ class Notebook(ttk.Notebook):
         row = 0
         if self.safemode.get() == 1:
             try:
-                self.valid_values = [db.get_affix_from_id(x)[0][3] for x in self.entry['legal_affixes']]
+                self.valid_values = [[db.get_affix_from_id(x)[0][3],db.get_affix_from_id(x)[0][5]] for x in self.entry['legal_affixes']]
+                for i in range(len(self.valid_values)):
+                    if self.valid_values[i][1] is None:
+                        self.valid_values[i][1] = "Not Set"
             except KeyError:
-                self.valid_values = [x[3] for x in db.get_affix_all()]
+                self.valid_values = [[x[3],x[5]] for x in db.get_affix_all()]
+                for i in range(len(self.valid_values)):
+                    if self.valid_values[i][1] is None:
+                        self.valid_values[i][1] = "Not Set"
+            print("Safemode ON!")
         else:
-            self.valid_values = [x[3] for x in db.get_affix_all()]
+            self.valid_values = [[x[3],x[5]] for x in db.get_affix_all()]
+            for i in range(len(self.valid_values)):
+                if self.valid_values[i][1] is None:
+                    self.valid_values[i][1] = "Not Set"
+            print("Safemode OFF!")
         category = self.entry['category']
         v = tk.StringVar()
         v.set(self.entry['name'])
@@ -241,11 +269,11 @@ class Notebook(ttk.Notebook):
         #Label: AffixID | Enchanted | Remark
         if self.entry['affixes']:
             #ttk.Label(self.item_frame, text=" | ").grid(column=10, row=slotrow, sticky='WE')
-            ttk.Label(self.item_frame, text="AffixID").grid(column=11, row=slotrow, sticky='E')
-            ttk.Label(self.item_frame, text=" | ").grid(column=12, row=slotrow)
-            ttk.Label(self.item_frame, text="Enchanted").grid(column=13, row=slotrow)
-            ttk.Label(self.item_frame, text=" | ").grid(column=14, row=slotrow)
-            ttk.Label(self.item_frame, text="Remark").grid(column=15, row=slotrow)
+            ttk.Label(self.item_frame, text="AffixID").grid(column=5, row=slotrow, sticky='E')
+            ttk.Label(self.item_frame, text=" | ").grid(column=6, row=slotrow)
+            ttk.Label(self.item_frame, text="Enchanted").grid(column=7, row=slotrow)
+            ttk.Label(self.item_frame, text=" | ").grid(column=8, row=slotrow)
+            ttk.Label(self.item_frame, text="Remark").grid(column=9, row=slotrow, sticky='W')
         for affix, description, remark in self.entry['affixes']:
             crow = crow + 1
             labelAffixID_text = affix
@@ -253,51 +281,57 @@ class Notebook(ttk.Notebook):
             if enchanted:
                 # noinspection PyUnresolvedReferences
                 if affix == enchanted[0][0]:
-                    ttk.Label(self.item_frame, text="@").grid(column=13, row=crow)
+                    ttk.Label(self.item_frame, text="@").grid(column=7, row=crow)
                     description = enchanted[1]
                     labelAffixID_text = enchanted[0][1]
                     labelRemark_text = enchanted[2]
-            cb = ttk.Combobox(self.item_frame, textvariable=description, values=self.valid_values, state='readonly', width=80)
-            cb.grid(column=0, columnspan=10, row=crow, sticky='WE')
+            cb = ttk.Combobox(self.item_frame, textvariable=description, values=[row[0] for row in self.valid_values], state='readonly', width=80)
+            cb.grid(column=0, columnspan=5, row=crow, sticky='W')
             cb.bind("<<ComboboxSelected>>", lambda x: self.set_item_affixes(x, row))
             self.cbs.append(cb)
             #self.size_affix_combobox() use fixed width
             #Show AffixID
             #labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=10, row=crow, sticky='WE')
-            labelAffixID = ttk.Label(self.item_frame, text=labelAffixID_text).grid(column=11, row=crow, sticky='E')
-            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=12,row=crow)
-            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=14,row=crow)
-            labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=15, row=crow)
-        if self.affixfilter.get():
+            labelAffixID = ttk.Label(self.item_frame, text=labelAffixID_text).grid(column=5, row=crow, sticky='E')
+            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=6,row=crow)
+            labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=8,row=crow)
+            labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=9, row=crow, sticky='W')
+        if self.affixfilter.get() or self.remarkfilter.get():
             self.update_affixes()
         button_frame = tk.Frame(self.item_frame, background='white')
-        button_frame.grid(column=0, row=99, sticky='NW')
+        button_frame.grid(column=0, row=99, columnspan=20, sticky='NW')
         if self.cbs:
             search = ttk.Entry(button_frame, textvariable=self.affixfilter)
             search.grid(column=1, row=0, columnspan=3, sticky='W')
             search.bind("<KeyRelease>", self.update_affixes)
             search.bind("<space>", self.update_affixes)
-            ttk.Label(button_frame, text="Affix Filter:  ").grid(column=0, row=0, sticky='E',pady=5)
+            ttk.Label(button_frame, text="Affix Filter:  ").grid(column=0, row=0, sticky='E', pady=5)
+            #search Remark
+            EntrySearchRemark = ttk.Entry(button_frame, textvariable=self.remarkfilter, width=40)
+            EntrySearchRemark.grid(column=8, row=0, columnspan=5, sticky='W')
+            EntrySearchRemark.bind("<KeyRelease>", self.update_affixes)
+            EntrySearchRemark.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text="Remark Filter: ").grid(column=7, row=0, sticky='E', pady=5)
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
-        sb.grid(column=0, row=97, sticky='WE', pady=2)
+        sb.grid(column=0, row=1, sticky='WE', pady=2)
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
-        delb.grid(column=0, row=98, sticky='WE', pady=2)
+        delb.grid(column=0, row=2, sticky='WE', pady=2)
         if self.entry['affixes']:
             rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
-            rb.grid(column=4, row=97, sticky='W', padx=12, pady=2)
+            rb.grid(column=4, row=1, sticky='W', padx=12, pady=2)
             LabelRerollNotes = ttk.Label(button_frame, text="(Reroll only change value, not the Affix; Set to Primal make all possible values to MAX.)")
-            LabelRerollNotes.grid(column=4, row=98, columnspan=20, sticky='WE', padx=12, pady=2)
+            LabelRerollNotes.grid(column=4, row=2, columnspan=10, sticky='WE', padx=12, pady=2)
             self.LabelSeed = ttk.Label(button_frame, text="Current Seed: " + str(self.entry['item'].generator.seed))
-            self.LabelSeed.grid(column=5, row=97, columnspan=10, sticky='WE', pady=2)
+            self.LabelSeed.grid(column=5, row=1, columnspan=10, sticky='WE', pady=2)
             cb = ttk.Button(button_frame, text="Duplicate Item",
                             command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
                                                          item=self.entry['item']))
-            cb.grid(column=3, row=97, sticky='WE', pady=2)
+            cb.grid(column=3, row=1, sticky='WE', pady=2)
             #Set to Primal
             xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
-            xb.grid(column=3, row=98, sticky='WE', pady=2)
+            xb.grid(column=3, row=2, sticky='WE', pady=2)
         #Add to show some stats
-        LabelMessageSP = ttk.Label(self.item_frame, text="=========================================================================================").grid(column=0, row=100, columnspan=20, sticky='WE')
+        LabelMessageSP = ttk.Label(self.item_frame, text="=======================================================================================================").grid(column=0, row=100, columnspan=20, sticky='WE')
         self.LabelMessage = ttk.Label(self.item_frame, text=" ")
         self.LabelMessage.grid(column=0, row=101, sticky='W')
 
@@ -305,11 +339,12 @@ class Notebook(ttk.Notebook):
 
     def update_affixes(self, event=None):
         fil = self.affixfilter.get()
+        filRemark = self.remarkfilter.get()
         for cb in self.cbs:
             valid_values = []
-            for value in self.valid_values:
-                if fil.lower() in value.lower():
-                    valid_values.append(value)
+            for i in range(len(self.valid_values)):
+                if fil.lower() in self.valid_values[i][0].lower() and filRemark.lower() in self.valid_values[i][1].lower():
+                    valid_values.append(self.valid_values[i][0])
             valid_values = set(valid_values)
             cb.config(values=list(valid_values))
 
