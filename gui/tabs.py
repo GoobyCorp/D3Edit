@@ -235,13 +235,11 @@ class Notebook(ttk.Notebook):
                 for i in range(len(self.valid_values)):
                     if self.valid_values[i][1] is None:
                         self.valid_values[i][1] = "Not Set"
-            print("Safemode ON!")
         else:
             self.valid_values = [[x[3],x[5]] for x in db.get_affix_all()]
             for i in range(len(self.valid_values)):
                 if self.valid_values[i][1] is None:
                     self.valid_values[i][1] = "Not Set"
-            print("Safemode OFF!")
         category = self.entry['category']
         v = tk.StringVar()
         v.set(self.entry['name'])
