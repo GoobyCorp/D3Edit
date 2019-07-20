@@ -33,7 +33,10 @@ class Notebook(ttk.Notebook):
         self.item_frame = None
         self.active_partition = tk.StringVar(value="Non Season")
         self.configure_account_tab()
-        self.remarkfilter = tk.StringVar()
+        self.remarkFlagFilter = tk.StringVar()
+        self.remarkClassFilter = tk.StringVar()
+        self.remarkSlotFilter = tk.StringVar()
+        self.remarkTypeFilter = tk.StringVar()
         self.listboxSelected = tk.IntVar()
 
     def configure_account_tab(self):
@@ -205,13 +208,17 @@ class Notebook(ttk.Notebook):
             self.index = self.listboxSelected
         self.entry = self.item_scrollbar.indexmap[self.index]
         self.affixfilter = tk.StringVar(value="")
-        self.remarkfilter = tk.StringVar(value="")
+        self.remarkFlagFilter = tk.StringVar(value="")
+        self.remarkClassFilter = tk.StringVar(value="")
+        self.remarkSlotFilter = tk.StringVar(value="")
+        self.remarkTypeFilter = tk.StringVar(value="")
         self.item_main_frame = tk.Frame(parent, bg='white')
         self.item_main_frame.grid(column=1, row=0, sticky='WN', rowspan=10, padx=5)
         seframe = tk.Frame(self.item_main_frame, bg='white')
         cb = tk.Checkbutton(seframe, text="Safe Edit Mode", variable=self.safemode, onvalue=1, offvalue=0,
                             command=self.safemode_toggle)
         cb.grid(column=0, row=0, sticky='WNS')
+        cb.deselect()
         tl = tk.Label(seframe, text=' (Try to show only affixes that make sense)')
         tl.grid(column=1, row=0, sticky='WNS')
         seframe.grid(column=0, row=0, sticky='W')
@@ -294,7 +301,7 @@ class Notebook(ttk.Notebook):
             labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=6,row=crow)
             labelSp = ttk.Label(self.item_frame, text=" | ").grid(column=8,row=crow)
             labelRemark = ttk.Label(self.item_frame, text=labelRemark_text).grid(column=9, row=crow, sticky='W')
-        if self.affixfilter.get() or self.remarkfilter.get():
+        if self.affixfilter.get() or self.remarkFlagFilter.get() or self.remarkClassFilter.get() or self.remarkSlotFilter.get() or self.remarkTypeFilter.get():
             self.update_affixes()
         button_frame = tk.Frame(self.item_frame, background='white')
         button_frame.grid(column=0, row=99, columnspan=20, sticky='NW')
@@ -305,11 +312,37 @@ class Notebook(ttk.Notebook):
             search.bind("<space>", self.update_affixes)
             ttk.Label(button_frame, text="Affix Filter:  ").grid(column=0, row=0, sticky='E', pady=5)
             #search Remark
-            EntrySearchRemark = ttk.Entry(button_frame, textvariable=self.remarkfilter, width=40)
-            EntrySearchRemark.grid(column=8, row=0, columnspan=5, sticky='W')
-            EntrySearchRemark.bind("<KeyRelease>", self.update_affixes)
-            EntrySearchRemark.bind("<space>", self.update_affixes)
-            ttk.Label(button_frame, text="Remark Filter: ").grid(column=7, row=0, sticky='E', pady=5)
+            col = 8
+            ttk.Label(button_frame, text="Remark Filter: ").grid(column=col, row=0, sticky='E', pady=5)
+
+            ttk.Label(button_frame, text=" Flag ").grid(column=col+1, row=0, sticky='E', pady=5)
+            EntrySearchRemarkFlag = ttk.Entry(button_frame, textvariable=self.remarkFlagFilter, width=15)
+            EntrySearchRemarkFlag.grid(column=col+2, row=0, columnspan=2, sticky='WE')
+            EntrySearchRemarkFlag.bind("<KeyRelease>", self.update_affixes)
+            EntrySearchRemarkFlag.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text=" [Normal][Ancient]").grid(column=col+1, row=1,columnspan=2, sticky='W', pady=5)
+
+            ttk.Label(button_frame, text=" Class ").grid(column=col+4, row=0, sticky='E', pady=5)
+            EntrySearchRemarkClass = ttk.Entry(button_frame, textvariable=self.remarkClassFilter, width=15)
+            EntrySearchRemarkClass.grid(column=col+5, row=0, columnspan=2, sticky='WE')
+            EntrySearchRemarkClass.bind("<KeyRelease>", self.update_affixes)
+            EntrySearchRemarkClass.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text=" [Wizard]").grid(column=col+4, row=1,columnspan=3, sticky='W', pady=5)
+
+            ttk.Label(button_frame, text=" Slot ").grid(column=col+7, row=0, sticky='E', pady=5)
+            EntrySearchRemarkSlot = ttk.Entry(button_frame, textvariable=self.remarkSlotFilter, width=15)
+            EntrySearchRemarkSlot.grid(column=col+8, row=0, columnspan=2, sticky='WE')
+            EntrySearchRemarkSlot.bind("<KeyRelease>", self.update_affixes)
+            EntrySearchRemarkSlot.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text=" [Shoulders]").grid(column=col+7, row=1,columnspan=3, sticky='W', pady=5)
+
+            ttk.Label(button_frame, text=" Type ").grid(column=col+10, row=0, sticky='E', pady=5)
+            EntrySearchRemarkType = ttk.Entry(button_frame, textvariable=self.remarkTypeFilter, width=15)
+            EntrySearchRemarkType.grid(column=col+11, row=0, columnspan=2, sticky='WE')
+            EntrySearchRemarkType.bind("<KeyRelease>", self.update_affixes)
+            EntrySearchRemarkType.bind("<space>", self.update_affixes)
+            ttk.Label(button_frame, text=" [Primary][Secondary]").grid(column=col+10, row=1,columnspan=3, sticky='W', pady=5)
+
         sb = ttk.Button(button_frame, text="Save Item", command=self.saveitem)
         sb.grid(column=0, row=1, sticky='WE', pady=2)
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
@@ -320,7 +353,7 @@ class Notebook(ttk.Notebook):
             LabelRerollNotes = ttk.Label(button_frame, text="(Reroll only change value, not the Affix; Set to Primal make all possible values to MAX.)")
             LabelRerollNotes.grid(column=4, row=2, columnspan=10, sticky='WE', padx=12, pady=2)
             self.LabelSeed = ttk.Label(button_frame, text="Current Seed: " + str(self.entry['item'].generator.seed))
-            self.LabelSeed.grid(column=5, row=1, columnspan=10, sticky='WE', pady=2)
+            self.LabelSeed.grid(column=5, row=1, columnspan=3, sticky='WE', pady=2)
             cb = ttk.Button(button_frame, text="Duplicate Item",
                             command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
                                                          item=self.entry['item']))
@@ -337,11 +370,14 @@ class Notebook(ttk.Notebook):
 
     def update_affixes(self, event=None):
         fil = self.affixfilter.get()
-        filRemark = self.remarkfilter.get()
+        filRemarkFlag = self.remarkFlagFilter.get()
+        filRemarkClass = self.remarkClassFilter.get()
+        filRemarkSlot = self.remarkSlotFilter.get()
+        filRemarkType = self.remarkTypeFilter.get()
         for cb in self.cbs:
             valid_values = []
             for i in range(len(self.valid_values)):
-                if fil.lower() in self.valid_values[i][0].lower() and filRemark.lower() in self.valid_values[i][1].lower():
+                if fil.lower() in self.valid_values[i][0].lower() and filRemarkFlag.lower() in self.valid_values[i][1].lower() and filRemarkClass.lower() in self.valid_values[i][1].lower() and filRemarkSlot.lower() in self.valid_values[i][1].lower() and filRemarkType.lower() in self.valid_values[i][1].lower():
                     valid_values.append(self.valid_values[i][0])
             valid_values = set(valid_values)
             cb.config(values=list(valid_values))
