@@ -347,20 +347,19 @@ class Notebook(ttk.Notebook):
         sb.grid(column=0, row=1, sticky='WE', pady=2)
         delb = ttk.Button(button_frame, text="Delete Item", command=self.deleteitem)
         delb.grid(column=0, row=2, sticky='WE', pady=2)
+        cb = ttk.Button(button_frame, text="Duplicate Item",
+            command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0, item=self.entry['item']))
+        cb.grid(column=0, row=3, sticky='WE', pady=2)
         if self.entry['affixes']:
             rb = ttk.Button(button_frame, text="Reroll Item", command=self.reroll_item)
             rb.grid(column=4, row=1, sticky='W', padx=12, pady=2)
             LabelRerollNotes = ttk.Label(button_frame, text="(Reroll only change value, not the Affix; Set to Primal make all possible values to MAX.)")
-            LabelRerollNotes.grid(column=4, row=2, columnspan=10, sticky='WE', padx=12, pady=2)
+            LabelRerollNotes.grid(column=3, row=2, columnspan=10, sticky='WE', padx=12, pady=2)
             self.LabelSeed = ttk.Label(button_frame, text="Current Seed: " + str(self.entry['item'].generator.seed))
             self.LabelSeed.grid(column=5, row=1, columnspan=3, sticky='WE', pady=2)
-            cb = ttk.Button(button_frame, text="Duplicate Item",
-                            command=lambda: self.additem(target_stash=self.active_stash.get(), affixnum=0, ids=0,
-                                                         item=self.entry['item']))
-            cb.grid(column=3, row=1, sticky='WE', pady=2)
             #Set to Primal
             xb = ttk.Button(button_frame, text="Set item to Primal", command=self.set_flag)
-            xb.grid(column=3, row=2, sticky='WE', pady=2)
+            xb.grid(column=3, row=1, sticky='WE', pady=2)
         #Add to show some stats
         LabelMessageSP = ttk.Label(self.item_frame, text="=======================================================================================================").grid(column=0, row=100, columnspan=20, sticky='WE')
         self.LabelMessage = ttk.Label(self.item_frame, text=" ")
