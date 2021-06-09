@@ -28,14 +28,14 @@ class D3Edit(object):
     def setupframe(self, wcoords=None):
         self.main_window = tk.Tk()
         self.main_window.title("D3Edit")
-        self.main_window.minsize(0, 450)
+        self.main_window.minsize(1280, 850)
         if wcoords:
             self.main_window.geometry("+{0}+{1}".format(wcoords[0], wcoords[1]))
         self.style = ttk.Style(self.main_window)
         self.style.theme_use('default')
         self.style.configure("TLabel", foreground="black", background="white")
         self.style.configure("TNotebook", background="white")
-        self.style.configure('TCombobox', postoffset=(0, 0, 400, 0))
+        self.style.configure('TCombobox', postoffset=(0, 0, 600, 0))
 
     def draw_welcome(self, message=None):
         if not message:
@@ -43,7 +43,7 @@ class D3Edit(object):
         message_label = ttk.Label(self.main_window, text=message, style="TLabel")
         message_label.grid(column=0, row=0, sticky='NEW')
         message_label.configure(anchor='center')
-        open_file = ttk.Button(self.main_window, text="Open File", command=self.openfile)
+        open_file = ttk.Button(self.main_window, text="\n\n\n          Open File          \n\n\n", command=self.openfile)
         open_file.place(rely=0.5, relx=0.5, anchor='center')
 
     def destroy_loaded_view(self):
@@ -68,7 +68,7 @@ class D3Edit(object):
             self.tabs.configure_hero_tab()
             ttk.Button(self.tabs.hero_tab, text="Save Hero", command=self.savehero).grid(column=0, row=99)
         s = ttk.Button(self.tabs.account_tab, text="Save all changes", command=self.save_account)
-        s.grid(column=1, row=99)
+        s.grid(column=0, row=99)
         self.tabs.configure_stash_frame()
 
     def save_account(self):
