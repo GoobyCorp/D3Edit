@@ -1,15 +1,3 @@
-- Able to change item to Primal (Credit: GBATemp user - RobertIII)
-- Width adjusted
-- Show Affix id next to affix description
-- Tag for Ancient and Primal items
-- Added some missing affix to the database
-
-WIP
-
-
-
-Original README:
-
 ### A program to encrypt/decrypt and modify Diablo III saves
 Instructions:
 - Make sure Python3 is installed.
@@ -37,3 +25,7 @@ Credits:
 > https://github.com/fry -> Diablo III Protobin Decompiler
 
 > https://github.com/VisualStudio-zz -> Original creator of the python CLI tool.
+
+> https://github.com/sixwings -> Primal item affix, various database items and gui improvements.
+
+> GBATemp user - RobertIII -> Identifying the item flag for Primal items.
